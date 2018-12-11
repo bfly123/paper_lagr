@@ -1,0 +1,1917 @@
+\documentclass{article}
+\usepackage{amssymb,lineno}
+\modulolinenumbers[5]
+\usepackage{color}
+\usepackage[colorlinks,linkcolor=black,hyperindex,CJKbookmarks,dvipdfm]{hyperref}
+\usepackage{tikz}
+\usepackage{graphics,graphicx}
+\usepackage{mathrsfs}
+\usepackage{amsmath}
+\usepackage{subfigure}
+\usepackage{booktabs}
+\usepackage{amsthm}
+\usepackage{subfigure}
+\usepackage{listings}
+\usepackage{setspace}
+\usepackage[margin=2.5cm]{geometry}
+\usetikzlibrary{shapes.geometric, arrows,matrix,positioning,calc}
+\intextsep=8pt plus 3pt minus 1pt
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black, fill=red!30]
+\tikzstyle{process} = [rectangle, minimum width=4cm, minimum height=4cm, text centered, draw=black, fill=orange!30]
+\tikzstyle{decision} = [diamond, minimum width=2cm, minimum height=1cm, text centered, draw=black, fill=green!30]
+\theoremstyle{plain}\newtheorem{definition}{\sc{Definition}}
+\theoremstyle{defination}\newtheorem{example}{Example}[section]
+\definecolor{ColorMark}{rgb}{1,1,1}
+\numberwithin{equation}{section}
+\numberwithin{table}{section}
+\graphicspath{{picture/}} 
+\bibliographystyle{elsarticle-num}
+
+\begin{document}
+
+\title{A new HLLC Riemann solver to resolve both elactic and plastic waves}
+\author{Li Liu$^1$,Junbo Cheng $^{1,*}$, Yiqing Shen$^2$}
+\cortext[mycorrespondingauthor]{
+Correspondence to: Yiqing Shen, LHD, Institute of Mechanics, Chinese Academy of Sciences, Beijing 100190, China. E-mail: yqshen@imech.ac.cn}
+\address{$^1$LHD, Institute of Mechanics, Chinese Academy of Sciences, Beijing 100190, China}
+\address{$^2$School of Engineering Science, University of Chinese Academy of Sciences, Beijing 100049, China}
+{
+\begin{abstract}
+In this paper, we construct a new numerical method to solve the reactive Euler equations to cure the numerical stiffness problem.
+The species mass equations are first decoupled from the reactive Euler equations, and then they are further fractionated into the convection step and the reaction step.
+ In the convection
+step, by introducing two kinds of Lagrangian points (cell-point and particle-point), a dual information preserving (DIP) method is proposed to resolve the convection characteristics. In this new method, the 
+ information (including the transport value and the relative coordinates to the center of the current cell) of the cell-point and the paticle-point are updated according to the velocity field. The information of the cell-point in a cell can effectively restrict the incorrect reaction activation maybe caused by the numerical dissipation, while the information of the particle-point can help to preserve the sharp shock front once the strong shock waves formed. Hence, by using the DIP method, the spurious numerical propagation phenomenon in stiff reacting flows is effectively eliminated. In addition, a numerical perturbation method is also developed to solve the fractional reaction step (ODE equation) to improve the stability and efficiency. A series of numerical examples are presented to validate the accuracy and robustness of the new method. 
+\end{abstract}
+\begin{keyword}
+ Stiff reacting flow\sep  Dual information preserving method\sep Numerical perturbation method\sep Shock-capturing scheme 
+\end{keyword}
+
+\maketitle
+\section{Introduction}
+
+In this paper, a new HLLC-type approximate Riemann solver is developed, with the capibility of resolving both elactic and plastic waves theoretically, to solve one-dimensional elastic-plactic solid problems with the isotropic elastic-plastic model and von Mises' yileding condition in the framework of high-order cell-centered Lagrangian scheme. 
+
+Many elastic-plastic solid  problems of interest involve large deformations and are treated as flows. Up till now, elastic-plastic flows can be mainly simulated in three ways, staggered Lagrangian schemes, Eulerian methods and cell-centered Lagrangian schemes which is considered in this paper. 
+
+The earlist simulation is developed by Wilkins with a staggered Lagrangian scheme. In his work, the equations of momentum and specific internal energy are discretized on a staggered mesh and  artificial viscosity is used to restrain  the  numerical oscillation across the shocks. 
+
+The second way to simulate elastic-plastic materials is using  Eulerian methods. Eulerian methods are  suitable for the problems involving large deformations and are  widely applied in the hydordynamics calculations.  However, most of the study of Eulerian methods are just concerned with the hyper-elastic models for isotropic materials, and few of them other invlolve with consititutive models for elastic-plastic materials. 
+
+An alternative way is to derive a Lagrangian scheme based on the Godunov method,  this type of scheme is known as cell-centered Lagrangian schemes.  Recent years, the cell-centered Lagrangian type schemes have attracted a lot of attentions as it has combined many advantages from both staggered Lagrangian schemes and Eulerian methods. First, as a Godunov-type method, it's no need to use artificial viscosity and the schemes are conservative, besides, it's can also be used in both  hyper-elastic models and hypo-elastic models.
+
+In the  Godunov type method  approach,  a core process is to construct the conservative flux by solving  the solution of an  Remainn problem  at each cell face. The property of the  approximate Remainn solver may do a magnitude influence in the simulation results.      
+
+
+%
+%
+%In simulating problems governed by the reactive Euler equations, such as combustion and high-speed chemical reaction,
+%the difference between the timescales of reaction and convection, which limits both the time step and grid spacing, may cause the numerical stiffness problems, for example, the spurious numerical propagation phenomenon of the shock waves in flow fields\cite{colella1986theoretical,leveque1990study,bao2002random}. In order to attenuate the influence of the limited time step, the implicit time method or fractional step method is usually used to calculate the reaction ODE equations. However, if the mesh is not fine enough, the time method cannot remove the incorrect reaction activation caused by the spatial discretization, especially in the flows with shock waves. This is because the numerical dissipation introduced to capture shocks smears the shock front and also leads to the reaction activation in incorrect cells. Although the applications of high order shock capturing schemes can effectively reduce the numerical dissipation and sharpen the discontinuity, the incorrect reaction activation and spurious propagation may still occur.
+%
+%Wang et al.\cite{wang2012high} gave a comprehensive overview of the last two decades of efforts contributed to overcome the spurious numerical phenomenon. Since there is difference between timescales of the convection and the reaction, the fractional step method is usually used to solve the reactive Euler equations.  Bao and Jin \cite{bao2002random,bao2000random,bao2001random} developed a random projection method in the reaction terms to capture the detonations, but the assumption of a priori stiff source limits  the application of this method. Zhang et al.\cite{zhang2014equilibrium} proposed an equilibrium state method (ESM) by using appropriate equilibrium states to activate the stiff source terms. The main defect of the ESM in applications is that it is difficult to determine the equilibrium states, especially in a complex chemical system. 
+%Based on the idea of Harten ENO subcell resolution method\cite{harten1989eno}, Chang\cite{chang1989application} developed a finite volume ENO method in the convection step, while Wang et al.\cite{wang2012high, wang2015high} proposed high order finite difference methods with subcell resolution reconstructing the reaction step. However, as pointed out by Yee et al.\cite{yee2013spurious}, the subcell resolution method and its nonlinear filter counterparts\cite{yee2011high} can delay the onset of the wrong speed of propagation for the stiff detonation problem with coarse grids and moderate stiff source terms, but this kind of method has additional spurious behavior as the grid is refined and the stiffness is further increased.
+%
+%Ideally, the shock wave front can be regarded as an interface, hence, the interfacial tracking methods, such as the level set method, the  VOF method and the front tracking method,  
+% have been used in the premixed combustion with the instantaneous flame viewed as an infinitely thin interface between fresh and burned gases\cite{poinsot1992study, moureau2009level}, and also used in alleviating the nonphysical phenomena\cite{nguyen2002fully} in the simple two-phase detonations by tracking the inert shock as an interface.
+%However, since the
+%general chemical dynamic model is composed of multi-species and finites rate of
+%reactions, there are continuous reacting regions other than a traditional two-phase interface, hence, these interfacial tracking methods mentioned above
+% cannot solve the stiff problem generated in chemical flows well.
+%
+%
+%For solving the interface/free surface fluid flow problems, the marker and cell (MAC) method is regarded as the basis of the interfacial tracking techniques\cite{mckee2008mac}. 
+%The essence of the MAC method is the Lagrangian virtual marker particles and the cells defined on an Eulerian grid. Marker particles, often as many as 16 per cell, are moved from their coordinates at time $t_n$ to their new coordinates at time $t_{n+1}$ according to the newly computed velocity $u$ at the cell center. The cell classification is updated every time step using information provided by the virtual Lagrangian mesh constituted by the marker particles. The MAC method has been applied to interface/free surface flow problems successfully\cite{de2004front,tome2001gensmac3d,yoon2009unstructured}.
+%The main advantages of the MAC method are that it eliminates all logic problems associated with interfaces and readily extended to three-dimension.
+%However, because a large number of the particle coordinates must be stored, the storage increase significantly. Another limitation in the MAC method as well as in the Level-set and the VOF methods is that it is difficult to extend to the case that the interface (free surface) is generated by the flow itself, such as the shock waves and the chemical reaction.
+%
+%Recent years, the Lagrangian-Eulerian (LE) approaches with the combination of Lagrangian particles and the Eulerian background grids have attracted many attentions in solving the convection-diffusion problems\cite{smolianski2007fast, moresi2003lagrangian, dong2012trajectory,liu2015efficient,oliveira2016lagrangian}. The LE method takes advantage of appropriate operator splitting techniques to solve different aspects of the physical model with most suitable Lagrangian or Eulerian formalism\cite{oliveira2016lagrangian}.  Shipilova et al.\cite{shipilova2007particle} applied a LE method (particle transform method) to solve the convection-diffusion-reaction problems, numerical results showed that the PTM can avoid the numerical oscillation even for a very sparse grid.  So far, there is no attempt to use the LE approaches to deal with the spurious numerical propagation phenomenon generated in simulating the reacting flows. 
+%
+%
+%In this paper, by introducing two kinds of Lagrangian points, we propose the dual information preserving method to cure the spurious numerical propagation in the chemical reaction flows. In this method, the information includes the transport value and the relative coordinates to the center of the Eulerian cell containing the point. 
+%The species mass fraction equations are first decoupled from the reactive Euler equations, and then they are further fractionated into the convection step and reaction step. In the species convection step,  
+%one Lagrangian particle-point and  one Lagrangian cell-point are introduced in each cell at the beginning, and all the particle-points are tracked in the whole computation, and the information of the  cell-point is determined as: if there are particle-points in current cell, the information is updated by averaging all the particle-points' information; else if there are cell-points entered, the information is updated by averaging all the entered cell-points' information; otherwise a new cell-point is set at the cell center and its transport value is obtained by interpolating its neighboring cell-points' values. 
+%The information of the cell-point in a cell can effectively restrict the incorrect reaction activation maybe caused by the numerical dissipation, while the information of the  particle-point can help to preserve the sharp shock front once the strong shock waves formed. Hence, the new method can effectively eliminate the spurious numerical propagation phenomenon in the stiff reacting flows.
+%				  Different from the MAC method, the new method does not need cell classification and has only two times of the cell number's points to be stored. As it contains information on two kinds of Lagrangian points, we call the method as dual information preserving (DIP) method.
+%				  In addition, by multiplying a power-series  of the time step to the Euler scheme, 
+%a numerical perturbation method is developed to solve the fractional reaction step (ODE equation) to improve the stability and efficiency.
+%
+%This paper is organized as follows. In section 2, we briefly introduce the decoupling method for solving the reactive Euler equations. In section 3, a dual information preserving method is proposed to solve the convection step of species mass fraction equations. In section 4, a numerical perturbation method is developed to solve the fractional reaction step, analysis of stability and numerical examples are also presented. A series of examples, including one- and two- dimensional problems, simplified reaction model and multi-species reaction models, are given to validate the accuracy and robustness of the new method in section 5. Conclusions are shown in section 6.
+%%\section{Framework of the decoupling method for reactive Euler equations}
+%The one-dimensional governing equations of reacting flows without considering of heat
+%conduction and viscosity is given as
+%\begin{equation} \label{ReactionEuler}
+%  \frac{\partial U}{\partial t}+  \frac{\partial F}{\partial x}=S, 
+% \end{equation}
+% where
+%\begin{eqnarray*}
+%   U=
+%   \left(
+%   \begin{array}{c}
+%	 \rho\\
+%	 \rho u\\
+%	 E\\
+%	 z_1\\
+%	 z_2\\
+%	 \vdots\\
+%	 z_{ns-1}\\
+%	 \end{array}
+%	 \right)
+% ,
+% F=
+%  \left(
+%  \begin{array}{c}
+%	\rho u\\
+%	\rho u^2 + p\\
+%	u (E+p)\\
+%	\rho z_1\\
+%	\rho z_2\\
+%	\vdots\\
+%	\rho z_{ns-1}
+%	\end{array}
+% \right)
+%,
+%S=
+% \left(
+%  \begin{array}{c}
+%	0\\
+%	0\\
+%	0\\
+%	\omega_1\\
+%	\omega_2\\
+%	\vdots\\
+%	\omega_{ns-1}
+%	\end{array}
+% \right)
+%,
+%\end{eqnarray*}
+%$ns$ is the number of reaction species, $z_i$ and $\omega_i$ are the mass fraction and the production rate of $i$th species. The mass fraction of the $ns$th species is given by 
+%\begin{eqnarray*}
+%  z_{ns}=1-\sum_{i=1}^{ns-1}z_i.
+%\end{eqnarray*}
+%And the pressure is 
+%\begin{eqnarray*}
+%  p=(\gamma-1)(E-\frac{1}{2}\rho u^2 -\rho \sum_{i=1}^{ns}q_i z_i),
+%\end{eqnarray*}
+%where $q_i$ is the molar formation enthalpy of $i$ species.
+%
+%The decoupling method is usually used to split the governing equations into different parts\cite{issa1986solution, barton1998comparison,cai2016modelling}. In our method, 
+%Eq.(\ref{ReactionEuler}) is split into two parts, the 
+%Euler equations
+%\begin{equation}
+%  \frac{\partial U_{1}}{\partial t}+\frac{\partial F_{1}}{\partial x}=0, 
+%  \label{EulerEquation}
+%\end{equation}
+%and the species equations (for the sake of describing the algorithm conveniently later, here, the non-conservation form is given directly)   
+% \begin{equation}
+%   \frac{\partial Z}{\partial t}+u\frac{\partial Z}{\partial x}=S_{e}, 
+%  \label{Zequation}
+%\end{equation}
+%where
+% \begin{eqnarray*}
+%   U_{1}=
+%   \left(
+%   \begin{array}{c}
+%	 \rho\\
+%	 \rho u\\
+%	 E\\
+%	 \end{array}
+%	 \right)
+%   \label{<++>}
+% ,
+% F_{1}=
+%  \left(
+%  \begin{array}{c}
+%	\rho u\\
+%	\rho u^2 + p\\
+%	u (E+p)\\
+%	\end{array}
+% \right)
+%,
+%\end{eqnarray*}
+%
+%\begin{eqnarray*}
+%Z=
+% \left(
+% \begin{array}{c}
+%   z_{1}\\
+%   z_{2}\\
+%   \vdots\\
+%   z_{ns-1}\\
+% \end{array}
+% \right)
+% ,
+% S_{e}=
+%\left(
+%\begin{array}{c}
+%  \omega_{1}/\rho\\
+%  \omega_{2}/\rho\\
+%  \vdots\\
+%  \omega_{ns-1}/\rho\\
+%\end{array}
+%\right)
+%.
+% \end{eqnarray*}
+%The Euler equations (\ref{EulerEquation}) can be solved by using the conventional numerical methods. In this paper, the Lax-Friedrichs flux splitting, the fifth-order weighted essentially non-oscillatory (WENO) scheme\cite{jiang1996efficient} and the fourth-order Runge-Kutta scheme\cite{shu1988efficient} are used for the spatial discretization and temporal discretization, respectively. 
+%
+%Similar as 
+% the fractional step method used for the reaction Euler equations\cite{leveque1990study,geiser2008iterative} the species equations (\ref{Zequation}) are further fractionated into convection step  
+%\begin{equation}
+%   \frac{\partial Z}{\partial t}+u\frac{\partial Z}{\partial x}=0, t_{n} \leqslant t \leqslant t_{n+1},
+%   \label{Afrac}
+% \end{equation}
+%and reaction step
+%\begin{equation}
+%  \frac{dZ}{dt}=S_{e}, t_{n} \leqslant t \leqslant t_{n+1}.
+%  \label{Rfrac}
+%\end{equation}
+%The numerical solution at $n+1$ time step is obtained by 
+% \begin{equation}
+%   Z^{n+1}=RA(\hat{U_1}^m, Z^n).
+%   \label{fracstep}
+% \end{equation}
+% The framework for solving the whole governing equations are shown in Fig.\ref{figflowchat}. The variable $\hat{U_1}^m$ in Eq.(\ref{fracstep}) is the intermediate value calculated by Eq.(\ref{EulerEquation}).  $E$, $A$ and $R$ denote the operators for solving the Euler equations (\ref{EulerEquation}),
+%the convection equation (\ref{Afrac}) and  the reaction equation (\ref{Rfrac}) on the time interval $[t_n,t_{n+1}]$, respectively. 
+%
+% In the next two sections, we will introduce the new methods, i.e., the dual information preserving (DIP) method and the numerical perturbation (NP) method, for solving the convection equations (\ref{Afrac}) and reaction equations (\ref{Rfrac}), respectively.
+%
+% \begin{figure*}
+%  \centering
+%\begin{tikzpicture}% \label{figflowchat} 
+%[auto,
+%decision/.style={diamond, draw=blue!60, thick, text width=4em,align=flush center,inner sep=2pt},
+%block/.style   ={rectangle, draw=blue!60, thick, text width=8em,align=center,minimum height=3em},
+%line/.style    ={draw=black!60, thick, -latex,shorten >=2pt},
+%begin/.style   ={rectangle, draw=black!70, thick, text width=3.0em,align=center, rounded corners,minimum height=2em},
+%end/.style   ={rectangle, draw=black!70, thick, text width=5.0em,align=center, rounded corners,minimum height=2em},
+%cloud/.style   ={rectangle, draw=blue!60,minimum height=3em, text width=3.5em, thick},%minimum height=1cm}]
+%cloud2/.style   ={rectangle, draw=red,minimum height=3em} ]%minimum height=1cm}]
+%\coordinate (input);
+%\node [begin,right=0.6cm  of input] (init) {\scriptsize $ U_1 ^ {n}$\\$Z_1 ^ {n}$ };
+%\node [cloud,right =0.4cm of init] (pro13) {\scriptsize $\hat{U_1\!}^{0}\!=\!U_1^n$\\ $\hat{Z}^0=\!Z^n$};
+%\matrix[right =0.4cm of pro13](pro1){
+%\node [block] (pro12) {\scriptsize  $\hat{U_1\!}^{\!m\!+1}\!=E(U_1\!^n\!,\!\hat{Z}^m)$};\\
+%\node [block] (pro22) {\scriptsize $\hat{\!Z}^{m\!+1}\!=RA(\hat{U_1\!}^m\!,\!Z^n)$ };\\
+%};
+%\node [decision,right=0.4cm of pro1] (dec) {\scriptsize $\hat{U_1}\!^{\!m+\!1}\!-\!\hat{U_1}\!^{m}$ \\ \tiny Convergence?};
+%\node [end, right= 0.8cm of dec]   (end) {\tiny ${U_1\!}^{\!n+1}\!=\!\hat{U_1\!}^{\!m\!+\!1}$ \\$Z^{n+1}=\hat{Z}^{m+1}$};
+% 
+%
+%\begin{scope}[every path/.style=line]
+%\path           (init)    --    (pro13);
+%\path            (pro13)     --    (pro1);
+%\path            (pro1)     --    (dec);
+%\path            (dec)     --  node [midway] {\tiny Yes} (end);
+%\path            (dec)     -- node [near start]  {\tiny No} (9.15,1.7)-|  (5,1.0);
+%\end{scope}
+%
+%\draw[draw=black!60,line width=1pt] (2.25,-1.5) rectangle (10.4,2);
+%
+%\end{tikzpicture} 
+%\caption{The framework of the solving process for the decoupling method.}
+%\label{figflowchat} 
+%
+%\end{figure*} 
+%
+%
+%\section{Dual Information Preserving method}
+%The numerical stiff problems may be generated in simulating the chemical reaction flows due to the difference between the timescales of the convection and the chemical reaction, if there exist shock waves, the application of shock capturing schemes  makes the problem more complex.
+%In this section, a new method is proposed to cure the stiff problem, especially for that caused by the numerical dissipation generated 
+%by the strong shock capturing in the chemical reaction flows.
+%
+%The two dimensional convection equation 
+%\begin{equation}
+%  \frac{\partial z}{\partial t}+u \frac{\partial z}{\partial x}+v \frac{\partial z}{\partial y}=0.
+%  \label{eq2d}
+%\end{equation}
+%is taken as an example to describe the numerical method.
+%
+%There are two comments for this method: 
+%
+%\textbf{Dual information}: means the information on two different kinds of Lagrangian points (cell-points and particle-points).
+%
+%\textbf{Information}: includes the transport value and the relative coordinates to the center of the Eulerian cell containing the point.
+%
+%The main idea of the DIP method is described as below:
+%
+%(1) One Lagrangian particle-point and one Lagrangian cell-point are introduced in each Eulerian cell at the beginning. The locations of all points are updated by using the velocity field (obtained from the computation of the Euler equation). 
+%
+%
+%(2) For cell-point: if there are particle-points in the current cell, the information is updated by averaging all the particle-points' information; else if there are cell-points entered, the information is updated by averaging all the entered cell-points' information; otherwise a new cell-point is set at the cell center and its transport value is obtained by interpolating its neighboring cell-points' values. 
+%
+%(3) Transport values of two kinds of points are updated by solving the reaction equation.
+%
+%(4) The transport value of the cell-point is used as the current cell's value for solving the equation of state.
+%
+%
+%Clearly,
+%%
+%there is only one cell-point in each cell after a time step, and the particle-points are tracked and preserved all the time except those moved out of the computation domain.
+%%
+%
+%The detailed algorithm is given in Appendix I.
+%%
+%\subsection{Numerical test for the DIP method}
+%In this subsection, we test the capability of the DIP method in discontinuities/interface cases.
+%
+%\begin{example}
+%  \label{exp31}
+%\end{example}
+%
+%The linear equation
+%\begin{eqnarray*}
+%  \frac{\partial u}{\partial t}+  \frac{\partial u}{\partial x}=0, 
+%\end{eqnarray*}
+%with following initial condition is solved as the  first example to test the DIP algorithm.
+%\begin{eqnarray}\label{initialwave}
+% u_0(x)\!=\!\left\{\!
+%   \begin{array}{lll} 
+%	\! \frac{1}{6} \left( G(x,\beta ,z\!-\!\delta)\! +\! G(x, \beta, z\!+\!\delta)\! +\!4 G(x,\beta, z) \right)\!,\!   &&\! {\!-0.8\! \leqslant\! x\! \leqslant\! -0.6},\\
+%	\! 1,                                                                                         \! &&\! {\!-0.4\! \leqslant\! x\! \leqslant\! -0.2},\\
+%	\! 1-|10(x-0.1)|,                                                                             \! &&\! {\!0\! \leqslant \! x \! \leqslant \! 0.2},\\
+%	\! \frac{1}{6} \left( F(x,\alpha ,a\!-\!\delta)\! +\! F(x, \alpha, a\!+\!\delta)\! +\!4 F(x,\alpha, a) \right)\!,\!&&\! {\!0.4\! \leqslant\! x\! \leqslant\! 0.6},\\
+%	 0,                                                                                          \!&&\! otherwise,
+%   \end{array}  \right.
+%\end{eqnarray}
+%and 
+%\begin{eqnarray*}
+%  G(x,\beta ,z)=exp(-\beta (x-z)^2),
+%\end{eqnarray*}
+%\begin{eqnarray*}
+%  F(x, \gamma,a)=\sqrt{max(1-\alpha^2(x-a^2),0)}.
+%\end{eqnarray*}
+%Where $a=0.5$, $z=-0.7$, $\delta=0.05$ and $\beta=log2/36\delta^2$. The grid number is $N=200$. Fig.\ref{combinationwave} gives the comparison of the results of the fifth-order WENO scheme and the DIP method. For the linear equation, as the velocity is constant, the DIP method is a Lagrangian point tracking method, and hence there is no numerical dissipation introduced in the propagation process. The solution obtained by the DIP method is the exact solution.
+%\begin{figure*}
+%  \centering
+%	\includegraphics[width=10cm]{zuhebo.eps}
+%	\caption{Numerical solution of Example \ref{exp31}, T=6, CFL=0.6.}
+%\label{combinationwave}
+%\end{figure*}
+%
+%\begin{example}
+%  \label{exp34}
+%\end{example}
+%The inviscid Burgers equation is calculated as the  second example. 
+%\begin{eqnarray}\label{exburges}
+%  \frac{\partial u}{\partial t}+ u \frac{\partial u}{\partial x}=0, u_0(x)=sin(\pi x), 0\le x \le 2.
+%  \end{eqnarray}
+%  Fig.\ref{burges} shows the results at $T=0.4$ with $N=200$. It can be seen that, for nonlinear convection equation, even if the initial condition is a smooth solution, the discontinuity is generated with time advancing. The numerical results show that the DIP method can capture this kind of discontinuity well.
+%
+%\begin{figure*}
+%\centering
+%\includegraphics[width=10.cm]{burges.eps}
+%\caption{Numerical solution of Example \ref{exp34}, T=0.4, CFL=0.6.}
+%\label{burges}
+%\end{figure*}
+%
+%\begin{example}\label{exp41}
+%\end{example}
+%
+%
+%Zalesak's disk \cite{zalesak1979fully} is a classical example to exam the capability of interface-tracking of a method\cite{zhang2014equilibrium}. The governing equation is a 2D scalar equation
+%\begin{equation}
+%  \frac{\partial u}{\partial t}+v_x \frac{\partial u}{\partial x}+v_y \frac{\partial u}{\partial y}=0.
+%  \label{eq2d2}
+%\end{equation}
+%The velocity field is taken as
+%\begin{eqnarray*}
+% \left\{
+%   \begin{array}{lll}
+%  v_x(x,y)& = &2\pi y ,\\
+%  v_y(x,y)& = &-2 \pi x,\\
+%\end{array}
+%\right.
+%\end{eqnarray*}
+%and the initial conditions are
+%\begin{eqnarray*}
+%  u(x,y)=\left\{
+%  \begin{array}{lcl}
+%	0,& & \sqrt{x^2+y^2} >0.4,\\
+%	0,&  & 0.4<y<0.6 and x >0.5,\\
+%	1,&  & else.\\
+%	\end{array}
+%	\right.
+%\end{eqnarray*}
+%The computation domain is $[0,1]\times[0,1]$. Fig.\ref{figdisk200} shows the results at the time ($T_1=0$, $T_2=0.25$, $T_3=0.5$, $T_4=0.75$, $T_5=1$ and $T_6=20$) with $N=200\times200$.  The DIP method can keep the shape of the disk well.
+%%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[angle=-90,width=4.5cm]{linear2D0p0N200.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[angle=-90,width=4.5cm]{linear2D0p25N200.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[angle=-90,width=4.5cm]{linear2D0p5N200.eps}};\\
+%				\node[rectangle]{
+%	\includegraphics[angle=-90,width=4.5cm]{linear2D0p75N200.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[angle=-90,width=4.5cm]{linear2D1p0N200.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[angle=-90,width=4.5cm]{linear2D20pN200.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{exp41} with $N=200\times 200$ at different time ($T_1=0$, $T_2=0.25$, $T_3=0.5$, $T_4=0.75$, $T_5=1$ and $T_6=20$). The exact initial value is given by the black line.}
+%
+%	\label{figdisk200}
+%\end{figure}
+%\begin{example}\label{exp42}
+%\end{example}
+%
+%Using the same equation (\ref{eq2d2}), another 2D interfacial problem is calculated\cite{olsson2005conservative, aulisa2003mixed}. At the initial time, a circle with the radius of 0.2 is located at 
+%\begin{eqnarray*}
+%  u(x,y)=\left\{
+%	\begin{array}{lcl}
+%	  1, &  & \sqrt{(x-0.5\pi)^2+(y-0.7)^2} \leqslant 0.2,\\
+%	  0, &  & else.\\
+%	\end{array}
+%	\right.
+%\end{eqnarray*}
+%The velocity field is taken as
+%\begin{eqnarray*}
+% \left\{
+%   \begin{array}{lll}
+%  v_x(x,y)& = & cos(x-0.5\pi) sin (y-0.5\pi),\\
+%  v_y(x,y)& = & -sin(x-0.5\pi) cos (y-0.5\pi).\\
+%\end{array}
+%\right.
+%\end{eqnarray*}
+%
+%The computation domain is $[0,\pi]\times [0,\pi]$. The interface is stretched up to time $T=t/2$, and then is brought back to its initial configuration at time $T=t$. Fig.\ref{figrotate} shows the results at the time $t=2\pi$ and $t=8\pi$ with $N=200\times 200$. The shape of the circle at the time $T=t$ is in agreement well with the initial shape even after a long time.     
+%
+%\begin{figure}
+%  \begin{minipage}[t]{0.5\textwidth}
+%	\centering
+%	\includegraphics[angle=-90,width=7cm]{2Dlinear_case2pi.eps}
+%	\centerline{$T=t/2=\pi$.}
+%\end{minipage}
+%\hfill
+%  \begin{minipage}[t]{0.5\textwidth}
+%	\centering
+%	\includegraphics[angle=-90,width=7cm]{2Dlinear_case2pirotate.eps}
+%	\hspace{0.2cm}
+%	\centerline{$T=t=2\pi$.}
+%\end{minipage}
+%\vfill
+%\vspace{0.5cm}
+%  \begin{minipage}[t]{0.5\textwidth}
+%	\centering
+%	\includegraphics[angle=-90,width=7cm]{2Dlinear_case24pi.eps}
+%	\hspace{0.2cm}
+%	\centerline{$T=t/2=4\pi$.}
+%\end{minipage}
+%\hfill
+%  \begin{minipage}[t]{0.5\textwidth}
+%	\centering
+%	\includegraphics[angle=-90,width=7cm]{2Dlinear_case24pirotate}
+%	\hspace{0.2cm}
+%	\centerline{$T=t=8\pi$.}
+%\end{minipage}
+%	\caption{Numerical results of Example \ref{exp42}, $N=200\times 200$. The exact value is given by the black line.}
+%	\label{figrotate}
+%  \end{figure}
+%
+%\section{Numerical perturbation method for reactive ordinary differential equations}
+%The NP method was first proposed by Gao\cite{zhi2000advances,gao2010numerical} to solve the convective-diffusion equations.  The main idea of constructing the algorithm is as follows: the coefficient of the convective derivative in the basic discretization schemes (the first-order upwind scheme, the second-order central scheme) are reconstructed as a power-series of grid intervals; using the convective-diffusion equation itself, the high order mathematical relation is obtained; by eliminating truncated error terms in the modified differential equation of the reconstructed scheme, the coefficients in the power-series are determined and finally the numerical perturbation algorithms are obtained.
+%In the fractional method, the reaction step forms a set of ordinary differential equations (ODE). In this section, we construct several efficient schemes for solving the reaction ODE based on the idea of numerical perturbation (NP).
+%\subsection{The numerical perturbation schemes}
+%Usually, the ODE equation is given as 
+%
+%\begin{equation}\label{ode}
+%  \frac{dx}{dt}=f(t,x),x(0)=x_0, (x\in \mathbb{R}^{s},t\leqslant 0).
+%\end{equation}
+%
+%
+%The first-order explicit Euler scheme 
+%\begin{equation}\label{frstod}
+%  x_{n+1}-x_n=\Delta tf(t,x_n),
+%\end{equation}
+%is taken as the basic discretization scheme for the numerical perturbation.
+%Applying Tayler expansion, we get the modified differential equation of Eq.(\ref{frstod}) as
+%\begin{equation}\label{tay}
+%  \frac{dx}{dt}=f(t,x)-\frac{1}{2}\Delta t\frac{d^2 x}{dt^2}-O(\Delta t^2).
+%\end{equation}
+%Similar as the construction of the numerical perturbation method for convective diffusion equation\cite{zhi2000advances,gao2010numerical}, a perturbation polynomial $p$ is used to multiply  the left of Eq.(\ref{frstod}), i.e.,   
+%\begin{equation}\label{kfrstod}
+%  p(x_{n+1}-x_n)=\Delta tf(t,x_n),
+%\end{equation}
+%where the polynomial $p$ is defined as
+%\begin{equation}\label{k}
+%  p=1+\sum\limits_{i=1}^{\infty}a_i\Delta t^i.
+%\end{equation}
+%Substituting Eq.(\ref{k}) into Eq.(\ref{kfrstod})
+%and using Taylor expansion, we get
+%\begin{equation}\label{ep}
+%  \frac{dx}{dt}=f(t,x)-\left(\frac{1}{2} \frac{d^2x}{dt^2}+a_1\frac{dx}{dt}\right)\Delta t-\left(\frac{1}{6}\frac{d^3x}{dt^3}+\frac{a_1}{2}\frac{d^2x}{dt^2}+a_2\frac{dx}{dt}\right)\Delta t^2+O\left(\Delta t^4\right).
+%  \end{equation}
+%  Clearly, if the second term in the right hand side of Eq.(\ref{ep}) becomes zero,
+%  \begin{equation}
+%	\frac{1}{2} \frac{d^2x}{dt^2}+a_1\frac{dx}{dt}=0,
+% \end{equation}
+% then the scheme (\ref{kfrstod}) has second-order accuracy. Similarly, we can get higher order schemes by eliminating more terms of Eq.(\ref{ep}). Since all derivatives can be calculated by using Eq.(\ref{ode})
+%\begin{eqnarray*}
+%  \frac{dx}{dt}=f,
+%  \frac{d^2x}{dt^2}=f'_t+f'_xf,
+%  \cdots.
+%\end{eqnarray*}
+%We can find the perturbation coefficients as follows,
+%\begin{equation*}\label{a_1xt}
+%  a_1=-\frac{f'_t+f'_xf}{2f},
+%\end{equation*}
+%\begin{equation*}\label{a_2xt}
+%  a_2=\frac{-2f(f''_{tt}+2f''_{tx}f+f'_xf'_t+f'_xf'_xf+f''_{xx}f^2)+3(f'_t+f'_xf)^2}{12f^2},
+%  \end{equation*}
+%\begin{equation*}
+%  \cdots
+%\end{equation*}
+%Specially, if $f$ is the function only respecting to  $x$, these coefficients $a_i$ have simple formulas as follows, 
+%\begin{equation}\label{a_12}
+%  a_1=-\frac{f'}{2}, \hspace{0.2cm}
+%  a_2=\frac{1}{12}f'^2-\frac{1}{6}f''f, \hspace{0.2cm}
+%	\cdots.
+%\end{equation}
+%
+%For expressing conveniently, the perturbation polynomial for a Nth-order NP scheme is denoted as $$p_N=1+\sum\limits_{i=1}^{N-1}a_i\Delta t^i,$$ and the $N$th-order NP scheme for the equation (\ref{ode}) can be written as
+%\begin{equation}\label{NP}
+%x_{n+1}=x_n+\Delta x f(t, x_n)/p_N.
+%\end{equation}
+%In addition, we construct a transformed function to replace the original perturbation polynomial to improve the stability of the third-order NP(3NP) scheme. The function can be expressed as  
+%\begin{eqnarray}\label{3TNP}
+%  \overline{p}_3=\frac{1+b_1\Delta t+b_2 \Delta t^2}{1-b_2 \Delta t},
+%\end{eqnarray}
+%Requiring $\overline{p}_3$ to be a second-order approximation of $p_3$ we get
+%\begin{equation}\label{b_12}
+%  b_1=a_1-\frac{a_2}{a_1+1}, \hspace{0.2cm}
+%  b_2=\frac{a_2}{a_1+1}.
+%  \end{equation}
+%  The new third-order transformed NP (3TNP) scheme with the transformed function $\overline{p}_3$  has third-order accuracy, but its stability region is larger than the 3NP scheme. The analysis and comparison will be given in the next subsection. 
+%\subsection{The stability analysis of the NP schemes}
+%The stability is necessary and important for a scheme to solve the ODE equations system with stiffness\cite{shampine1994numerical}. Generally, the scalar equation 
+%\begin{equation}\label{qx}
+%  x'=qx, Re(q)<0,
+%\end{equation}
+% is used to study the stability.
+%For a scheme, the solution of Eq.(\ref{qx}) can be expressed as
+%\begin{equation}\label{Eq.1}
+%  x_{n+1}=E(h)x_n, 
+%\end{equation}
+%where $h=q\Delta t$.
+%The A-stability was proposed and used to analyze a numerical scheme in Refs.\cite{dahlquist1963special,hairer1999stiff,chipman1971stable}.
+%
+%Two definitions for A-stability are given in Ref.\cite{chipman1971stable}:
+%\begin{definition}[A-stable]
+%A scheme is A-stable, in the sense of Dahlquist\cite{dahlquist1963special}, if $E(h)<1$ for all complex $h$ with negative real part.
+%\end{definition}
+%\begin{definition}[Strong A-stable]
+%  A scheme is strongly A-stable, if it is A-stable and $\lim \limits_{Re(h) \to -\infty}E(h)=0$.
+%  \end{definition}
+%In order to show the performance of the stability of NP schemes, several conventional schemes, include the first-order explicit Euler scheme (1EE), the first-order implicit Euler scheme (1IE), the second-order linearized implicit Euler scheme (2LIE) and the third-order explicit Runge-Kutta scheme (3RK), are analyzed and compared. 
+%
+%(1) The first-order explicit Euler scheme
+%\begin{eqnarray}
+%  x_{n+1}-x_n=\Delta tf(t,x_{n}),
+%  \end{eqnarray}
+%  and 
+%\begin{eqnarray}
+%  E^{1EE}(h)=1+h.
+%  \end{eqnarray}
+%
+%(2) The first-order implicit Euler scheme
+%\begin{eqnarray}
+%  x_{n+1}-x_n=\Delta tf(t,x_{n+1}),
+%  \label{frstrdr}
+%\end{eqnarray}
+%and
+%\begin{eqnarray}
+%  E^{1IE}(h)=\frac{1}{1-h}.
+%  \end{eqnarray}
+%
+%  (3) The second-order linearized trapezoidal method \cite{wang2012high,zhang2014equilibrium}
+%\begin{eqnarray}
+%  x_{n+1}-x_n=\frac{\Delta tf(t,x_n)}{1-1/2\Delta tf'_x(t,x_n)},
+%\end{eqnarray}
+%and
+%\begin{eqnarray}
+%  E^{2LIE}(h)=\frac{1+\frac{1}{2}h}{1-\frac{1}{2}h}.
+%  \end{eqnarray}
+%Notice that, it has the same form as the 2NP scheme.
+%
+%(4) The third-order explicit Runge-Kutta scheme
+%\begin{eqnarray}
+%  \begin{array}{l}
+%  x_{n+1}=x_n+\frac{1}{4}k_1+\frac{3}{4}k_3,\\
+%  k_1=\Delta tf(t_n,x_n),\\
+%  k_2=\Delta tf(t_n+\frac{1}{3} \Delta t,x_n+\frac{1}{3}k_1),\\
+%  k_3=\Delta tf(t_n+\frac{2}{3} \Delta t,x_n+\frac{2}{3}k_2),\\
+%  \end{array}
+%  \end{eqnarray}
+%and
+%\begin{eqnarray}
+%  E^{3RK}(h)=1+h+\frac{1}{2}h^2+\frac{1}{6}h^3.
+%  \end{eqnarray}
+%  For Eq.(\ref{qx}), it's easy to find the perturbation coefficients as 
+%$a_1=-\frac{1}{2}q$,
+%$a_2=\frac{1}{12}q^2$,
+%$\cdots$.
+%	Hence, the functions $E(h)$ for the NP schemes are
+%\begin{eqnarray*}
+%  E^{2NP}(h)&=&\frac{1+\frac{1}{2}h}{1-\frac{1}{2}h},\\
+%  E^{3NP}(h)&=&\frac{1+\frac{1}{2}h+\frac{1}{12}h^2}{1-\frac{1}{2}h+\frac{1}{12}h^2},\\
+%  E^{3TNP}(h)&=&\frac{1+\frac{1}{3}h}{1-\frac{2}{3}h+\frac{1}{6}h^2}.\\
+%\end{eqnarray*}
+%Fig.\ref{fig1} gives the stable region for different schemes in the complex $h$ plane. It shows that the first-order implicit, the second-order perturbation, the third-order NP and the transformed third-order NP schemes are A-stable. The transformed third-order NP scheme has a larger stable region than its counterpart, moreover, only this scheme and the first-order implicit Euler scheme are strongly A-stable schemes.   
+%\begin{figure*}[h]\centering
+%  \begin{tikzpicture}
+%\matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%				  \includegraphics[width=5cm]{1orderexplicit.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[width=5.cm]{1orderImplicit.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[width=5.cm]{2orderpertur.eps}};\\
+%				\node[rectangle]{
+%				  \includegraphics[width=5.cm]{3orderRunge-Kutta.eps}};&
+%				  \node[rectangle]{
+%					\includegraphics[width=5.cm]{3orderper.eps}};&
+%				\node[rectangle]{
+%				  \includegraphics[width=5cm]{3orderTNP.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Region of the stability in complex $h$ plane for different schemes. }\label{fig1}
+%\end{figure*}
+% 
+%It is worthy to point out that, different from the implicit schemes, the NP schemes do not need iterations and hence are more efficient.
+%
+%\subsection{Numerical comparison of different schemes}
+%Before used to solve chemical equations, the stability and accuracy of perturbation schemes are tested and compared with other schemes used in ODEs.
+%\begin{example}\label{example1}
+%\end{example}
+%  \begin{equation}\label{eqexample1}
+%	\frac{dx}{dt}=f(t,x)=-50(x-\cos t).
+%  \end{equation}
+%  This equation is calculated by Hairer\cite{hairer1999stiff} and used as the first case in this section.
+%  The perturbation coefficients in Eq.(\ref{a_12}) are
+%  \begin{equation*}
+%	a_1=25-\frac{\sin t_n}{2(x_n-\cos t_n)}, \hspace{0.3cm}
+%  a_2=\frac{1}{4} \left(\frac{ \sin t_n}{x-\cos t_n} -50 \right)^2-\frac{\cos t_n -50\sin t_n}{6(x-\cos t_n)}.
+%\end{equation*}
+%\begin{figure}\label{unlinear1}
+%	\centering
+%	\begin{tikzpicture}
+%	\node(0,0) [rectangle,inner sep=0](big) 
+%	{
+%	\includegraphics[width=9cm]{scheme30.eps}};
+%\matrix[left =1cm of big,column sep=0mm]
+%		{
+%				\node[rectangle,inner sep=0](small1)
+%				{
+%					\includegraphics[width=4.5cm]{explicitEuler.eps}
+%				};\\
+%				\node[rectangle]{
+%					 \includegraphics[width=4.5cm]{rungeKutta.eps}
+%				};\\};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{example1}. Exact solution with $N=3000$.}
+%\end{figure}
+%
+%Fig.\ref{unlinear1} shows the results of different schemes. We can see the 1EE scheme and the 3RK schemes are not stable to solve Eq.(\ref{eqexample1}). While the 2NP scheme has one point overshot. The 3NP, the 3TNP and  the 1IE schemes are stable. It also can be seen that the 3NP and the 3TNP are more accuracy than the 1IE scheme. It should be noted that, although the implicit scheme can get a stable solution, they need iteration in every time step.
+%
+%
+%\begin{example}\label{example2}
+%\end{example}
+% The equation 
+%	\begin{equation}
+%		\frac{dx}{dt}=f(t,x)=-x^3, x_0=1, t=[0,1],
+%	\end{equation}
+%is calculated as the second case. In this case, the analytic solution is 
+%\begin{eqnarray*}
+%	  x=\frac{1}{\sqrt{2t+1}}.
+%\end{eqnarray*}
+%The perturbation coefficients of the second-order and the third-order schemes are
+%\begin{eqnarray*}
+%  a_1=\frac{3x_n^2}{2}, 
+%	  a_2=-\frac{x_n^4}{4}.
+%\end{eqnarray*}
+%
+%Table.\ref{table1} gives the errors and accuracy orders of different schemes. It shows that the second-order, the third-order and the transformed NP schemes can get their theoretical accuracy orders. The errors of the third-order NP and transformed NP schemes are lower than the third-order Runge-Kutta schemes, though all of them are third-order accuracy.
+%
+%\begin{table}[htbp]
+%  \small
+%  \centering
+%\setlength{\belowcaptionskip}{10pt}
+%\caption{\small The accuracy of different schemes used in Example \ref{example2}.}
+%  \begin{tabular}{cccccc}
+%	\toprule
+%	Scheme        & N       & $L_1$ error  & $L_1$ order & $L_{\infty}$ error & $L_{\infty}$ order \\
+%	\midrule
+%	1IE&20       &7.7149d-3     &---          &  8.7737d-3         & ---  \\
+%				  &40       &3.9062d-3     &0.98         &  4.4879d-3         & 0.97 \\
+%           		  &80       &1.9656d-3     &0.99         &  2.2712d-3         & 0.98 \\
+%           		  &160      &9.8594d-4     &1.00         &  1.1426d-3         & 0.99 \\
+%           		  &320      &4.9377d-4     &1.00         &  5.7304d-4         & 1.00 \\
+%	\midrule
+%	3RK   &20       &1.3696d-5     &---          &  1.7438d-5         & ---  \\
+%		          &40       &1.6161d-6     &3.08         &  2.0646d-6         & 3.08 \\
+%   		          &80       &1.9601d-7     &3.04         &  2.5119d-7         & 3.04 \\
+%   		          &160      &2.4128d-8     &3.02         &  3.0964d-8         & 3.02 \\
+%   		          &320      &2.9924d-9     &3.01         &  3.8433d-9         & 3.01 \\
+%	\midrule
+%  2NP       &20       &5.0683d-5    &---           &  6.0346d-5         & ---  \\
+%      &40       &1.2338d-5    &2.04          &  1.4812d-5         & 2.03 \\
+%           	      &80       &3.0414d-6    &2.02          &  3.6679d-6         & 2.01 \\
+%           	      &160      &7.5487d-7    &2.01          &  9.1226d-7         & 2.01 \\
+%           	      &320      &1.8803d-7    &2.01          &  2.2750d-7         & 2.00 \\
+%	\midrule
+%3NP         &20       &1.9980d-6    &---           &  2.5388d-6         & ---  \\
+%      &40       &2.3999d-7    &3.06          &  3.0629d-7         & 3.05 \\
+%                  &80       &2.9376d-8    &3.03          &  3.7628d-8         & 3.03 \\
+%                  &160      &3.6325d-9    &3.03          &  4.6607d-9         & 3.01 \\
+%                  &320      &4.5143d-10   &3.01          &  5.7972d-10        & 3.01 \\
+%	\midrule
+%3TNP              &20       &1.8060d-6    &---           &  2.2866d-6         & ---  \\
+%                  &40       &2.1766d-7    &3.06          &  2.7702d-7         & 3.05 \\                                     
+%                  &80       &2.6685d-8    &3.03          &  3.4085d-8         & 3.02 \\                                                 
+%                  &160      &3.3025d-9    &3.01          &  4.2255d-9         & 3.01 \\                                                   
+%                  &320      &4.1057d-10   &3.01          &  5.2582d-10        & 3.01 \\                                       
+%	\bottomrule
+%	\end{tabular}
+%\label{table1}
+%\end{table}
+%
+%\section{Applications in the reactive Euler equations}
+%In this section we apply the methods proposed in Section 2-4 to solve various reactive problems.
+%\subsection{Numerical examples for scalar problems}
+%
+%\begin{example}\label{example51}
+%\end{example}
+%Consider a scalar model problem\cite{leveque1990study}
+%  \begin{eqnarray}\label{eqscalar}
+%\frac{\partial u}{\partial t}+  \frac{\partial u}{\partial x}=-\mu u(u-0.5)(u-1).
+%\end{eqnarray}
+%It's initial condition is given as
+%\begin{eqnarray*}
+%  u_0(x)=\left\{
+%\begin{array}{lcl}
+%	1,&  & {x \leqslant 0.3},\\
+%	0,&  & {x > 0.3}.
+%\end{array} \right.
+%\end{eqnarray*}
+%The exact solution is
+%\begin{eqnarray*}
+%  u_0(x)=\left\{
+%\begin{array}{lcl}
+%	1,&  & {x \leqslant t+0.3},\\
+%	0,&  & {x > t+0.3}.
+%\end{array} \right.
+%\end{eqnarray*}
+%The source term should always be zero theoretically. However, if $\mu$ in Eq.(\ref{eqscalar}) is very large, the wrong numerical result may appear in the transition region without a suitable method. Using the fractional method, the   
+%convection step 
+%\begin{eqnarray*}
+%A: \frac{\partial u}{\partial t}+\frac{\partial u}{\partial x}=0,& & t_n\leqslant t \leqslant t_{n+1},
+%\end{eqnarray*}
+%is solved by the DIP method, and the reaction step
+%\begin{eqnarray*}
+%  R: \frac{du}{dt}=f(u)=-\mu u (u-0.5)(u-1), & &  t_n\leqslant t \leqslant t_{n+1},
+%\end{eqnarray*}
+%is solved by the 3TNP scheme.
+%For this case, it is easy to find the
+%first-order and the second-order derivatives of $f$ for calculating the perturbation coefficients.
+%
+%Notice that, the scheme for ODE equations mainly influences the stability of computation and the time step (the CFL number).  
+%Due to its high order and stability, only the third-order transformed NP scheme is used in this paper.
+%
+%Fig.\ref{fig51} gives the numerical results calculated by the present method (DIP) and the  WENO method for the non-stiff case $\mu=10$ and stiff case $\mu=10,000$. We can see the present method can resolve Eq.(\ref{eqscalar}) with both cases, while the result calculated by the WENO method for the stiff case has a spurious propagation phenomenon.
+%
+%\begin{figure}
+%\centering
+%\includegraphics[width=7cm]{nostiff.eps}
+%\includegraphics[width=7cm]{stiff.eps}
+%\caption{The numerical results of Example \ref{example51}, $t=0.3$. Left:the non-stiff case; Right: the stiff case.}
+%\label{fig51}
+%\end{figure}
+%
+%
+%\subsection{Simplified reactive Euler system}
+%In this system, the reaction has only two states, burnt and un-burnt. Un-burnt gas convert to burnt gas via a single irreversible reaction. The governing equation is Eq.(\ref{ReactionEuler}), its  mass fraction is controlled by a scalar equation 
+%\begin{equation}
+%  \frac{\partial z}{\partial t}+u\frac{\partial z}{\partial x}= s_1,
+%\end{equation}
+%and the source term expresses as
+%\begin{eqnarray*}
+%  s_1=-K(T)z.
+%\end{eqnarray*}
+%The reaction rate $K$ determines the stiffness and can be modeled by the Arrhenius law
+%\begin{eqnarray*}
+%  K(T)=K_0 exp{(\frac {-T_{ign}}{T})},
+%\end{eqnarray*}
+%or by the Heaviside law
+%\begin{eqnarray*}
+%  K(T)=\left\{ 
+%  \begin{array}{lcl}
+%	 1/\epsilon, &  & T \geqslant T_{ign},\\
+%	 0,          &  & T <         T_{ign},
+%	 \end{array}
+%	 \right.
+%\end{eqnarray*}
+%where $K_0$  is the reaction rate constant, $T_{ign}$ is the ignition temperature and $\epsilon$ is the reaction time. 
+%
+%	\begin{example}\label{exp53}%[C-J detonation wave(Heaviside case)]
+%\end{example}
+%
+%  The first example is an ozone decomposition Chapman-Jouguet (C-J) detonation, which has been computed and discussed in\cite{colella1986theoretical,wang2012high,bao2000random,ben1989generalized}. The Arrhenius source term is used with the following parameter values
+%\begin{eqnarray*}
+%  (\gamma, q_0, K_0,T_{ign})= (1.4,0.5196 \times 10^{10}, 0.5825\times 10^{10},0.1155 \times 10^{10}).
+%\end{eqnarray*}
+%The initial values are piecewise constants with burnt gas on the left-hand side and un-burnt gas on the right-hand side, given as 
+%\begin{eqnarray*}
+%  (\rho, u,p,z)=\left\{
+%	\begin{array}{lcl}
+%	  (\rho_b,u_b,p_b,0), &  & x\leqslant 0.005,\\
+%	  (\rho_0,u_0,p_0,1),          &  & x>    0.005,
+%   \end{array}\right.
+%\end{eqnarray*}
+%where $\rho_0=1.201\times 10^{-3}$, $p_0=8.321 \times 10^5$ and $u_0=0$. The states of the C-J initial burnt gas are obtained by\cite{colella1986theoretical,chorin1977random,colella1982glimm,courant1999supersonic}
+%
+%\begin{equation}\label{eqcjstate}
+%  \begin{array}{lcl}
+%  p_b   &= & -b+(b^2-c)^{1/2},\\
+%  \rho_b&= & \rho_u[p_b(\gamma+1)-p_u]/(\gamma p_b),\\
+%  S_{cj}&= & [\rho_0 u_0+(\gamma p_b \rho_b)^{1/2}]/\rho_0,\\
+%  u_b   &= & S_{cj} -(\gamma p_b/\rho_b)^{1/2},\\
+%  b     &= & -p_u- \rho_u q_0 (\gamma-1),\\
+%  c     &=&  p_u^2+2(\gamma -1) p_u \rho_u q_0/ (\gamma+1),
+%  \end{array}
+%\end{equation}
+%where $S_{cj}$ is the speed of the detonation front. 
+%
+%This problem is solved on the interval $[0,0.05]$. The ``exact'' solutions are obtained by using the direct WENO method in a refined mesh with the size $\Delta x=5 \times 10^{-6}$ (i.e., $N=10,000$), which is suggested to resolve the reaction scale\cite{ colella1986theoretical, bao2000random,ben1989generalized}.  In this paper, as those methods are called as "the standard method" in Refs. \cite{zhang2014equilibrium,wang2012high,bao2000random}, ``the direct WENO method'' means using the fifth-order WENO scheme \cite{jiang1996efficient} and the fourth-order Runge-Kutta method\cite{shu1988efficient} to discretize the spatial derivatives and temporal derivatives in the homogeneous Euler equations ( Eq.(\ref{ReactionEuler}) without source term) in the conventional fractional step method, and the same 3TNP method is used to solve the reaction equation. The results obtained by the direct WENO method is symboled as ``WENO'' in all figures. 
+%
+%The solutions at the time $t=3\times 10^{-7}$ with two meshes of $N=50$ and $N=300$ are displayed in Fig.\ref{fig53n50} and Fig.\ref{fig53n300}, respectively. 
+%They show that, the present method can capture the correct profile of detonation wave even the coarse mesh $N=50$ is used, while applying the direct WENO method, a spurious weak detonation appears ahead of the detonation wave. 
+%
+%
+%Kotov et al. \cite{kotov2012spurious}
+%shown that the spurious behavior is influenced significantly by the CFL number, and increasing the stiffness coefficient may generate large derivation for predicting the shock location. To test the influence of the CFL on the new method , we change $K_0$ to $100K_0$.  Three different meshes of $N=50, N=100$ and $N=300$ are used. Numerical results show that the influence of the CFL number on the new method can be neglected. Fig.\ref{fig52CFL} gives the pressure and the mass fraction distribution of $N=300$ obtained by the new method. 
+%
+%In this example, we also test the convergence of the iteration in the decoupling process, which is given in the framework of the solving process in Fig.\ref{figflowchat}. The error is measured by  
+%\begin{equation}
+%  error=\frac{|u^{m+1}-u^{m}|}{dt},
+%\end{equation}
+%and used to estimate the convergence rate. The convergence history is plotted in Fig.\ref{iteration_speed}. It can be seen that, the iteration is converged only after a few steps. Our numerical tests also show that the difference between the results by using different iteration steps can be neglected, hence, in this paper, only one step is adopt.  
+%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase2N50P.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase2N50T.eps}};\\
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase2N50D.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase2N50Z.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{exp53}, $T=3\times 10^{-7}$, $N=50$.} 
+%	\label{fig53n50}
+%\end{figure}
+%
+%
+%\begin{figure*}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase2N300P.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase2N300T.eps}};\\
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase2N300D.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase2N300Z.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{exp53}, $T=3\times 10^{-7}$, $N=300$.} 
+%	\label{fig53n300}
+%\end{figure*}
+%%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm](up)
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase2CFLP.eps}};&
+%				\node[rectangle]{
+%				  \includegraphics[width=8cm]{single1DCase2CFLZ.eps}};\\
+%				};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{exp53} with $100/\epsilon$, $T=3\times 10^{-7}$, $N=300$.} 
+%	\label{fig53CFL}
+%\end{figure}
+%%
+%\begin{figure}
+%  \centering
+%
+%	\includegraphics[width=10cm]{iteration_speed.eps}
+%
+%	\caption{Convergence history of Example \ref{exp53}. } 
+%	\label{iteration_speed}
+%\end{figure}
+%
+%\begin{example}\label{exp52} %[C-J detonation wave Arrhenius case]
+%\end{example}
+%This is another C-J detonation, in which the Heaviside source term\cite{wang2012high,helzel2000modified,tosatto2008numerical} with the following parameters
+%is used,
+%\begin{eqnarray*}
+%  (\gamma, q_0, K_0,T_{ign})= (1.4,25,16418,25).
+%\end{eqnarray*}
+%The initial conditions are
+%\begin{eqnarray*}
+%  (\rho, u,p,z)=\left\{
+%	\begin{array}{lcl}
+%	  (\rho_b,u_b,p_b,0), &  & x\leqslant 10,\\
+%	  (1,0,1,1),          &  & x>    10.
+%   \end{array}\right.
+%\end{eqnarray*}
+%The burnt states are calculated by using the same formula Eq.(\ref{eqcjstate}).  
+%
+% The results with $N=50$ and $N=300$ are shown in Fig.\ref{fig52n50} and Fig.\ref{fig52n300}, respectively. The ``exact'' solution is solved by the direct WENO method with $N=10,000$. The new method can capture the correct speed of the strong detonation wave even with the coarse mesh.
+%%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase1N50P.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase1N50T.eps}};\\
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase1N50D.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase1N50Z.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{exp52}, $T=1.8$, $N=50$.} 
+%	\label{fig52n50}
+%\end{figure}
+%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase1N300P.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase1N300T.eps}};\\
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase1N300D.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase1N300Z.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{exp52}, $T=1.8$, $N=300$.} 
+%	\label{fig52n300}
+%\end{figure}
+%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm](up)
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase1CFLP.eps}};&
+%				\node[rectangle]{
+%				  \includegraphics[width=8cm]{single1DCase1CFLZ.eps}};\\
+%				};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{exp52} with $100K_0$,  $T=1.8$, $N=300$.} 
+%	\label{fig52CFL}
+%\end{figure}
+%%
+%\begin{example} \label{exp54}%[A detonation interacting with a rarefaction wave] \label{exp54}
+%\end{example}
+%In this example, we considered a detonation case with more complex waves\cite{ wang2012high, zhang2014equilibrium,bao2001random, hwang2000numerical}.
+%And the Heaviside model with following parameters are used,
+%\begin{eqnarray*}
+%  (\gamma, q_0, 1/\epsilon,T_{ign})= (1.2,50,230.75,3).
+%\end{eqnarray*}
+%The initial conditions of this example are 
+%\begin{eqnarray*}
+%  (\rho, u,p,z)=\left\{
+%	\begin{array}{lcl}
+%	  (2,4,40,0), &  & x\leqslant 10,\\
+%	  (3.64282,6.2489.54.8244,0),          &  &10< x \leqslant 20,\\
+%	  (1,0,1,1),                           &  &x>20.
+%   \end{array}\right.
+%\end{eqnarray*}
+%
+% The solution contains a right moving strong detonation, a right moving rarefaction wave, a right moving contact discontinuity and a left moving rarefaction wave. The ``exact'' solution is  obtained with $N=10,000$. The results at the final time $T=8$ with $N=50$ and $N=300$ (with $100/\epsilon $) are plotted in Fig.\ref{fig54n50} and Fig.\ref{fig54n300}.  
+%It can be seen that the DIP method can capture different structures well, even in the case with more complex waves and more serious stiffness, while the direct WENO method still cannot obtain the correct location of detonation front. 
+%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase3N50P.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase3N50T.eps}};\\
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase3N50D.eps}};&
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase3N50Z.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{exp54}, $T=8$, $N=50$.} 
+%	\label{fig54n50}
+%\end{figure}
+%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase3N300P.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{single1DCase3N300T.eps}};\\
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{single1DCase3N300D.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{single1DCase3N300Z.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{exp54} with $100/\epsilon$, $T=8$,  $N=300$.} 
+%	\label{fig54n300}
+%\end{figure}
+%
+%\begin{example}\label{exp55}%[A detonation interacting with an oscillatory profile(Heaviside case)]
+% \end{example}
+% The last one-dimensional problem in this subsection involves a collision with an oscillatory profile\cite{ wang2012high,bao2000random}. The parameters for the Heaviside model are
+%\begin{eqnarray*}
+%  (\gamma, q_0, 1/\epsilon,T_{ign})= (1.2,50,1000,3).
+%\end{eqnarray*}
+%
+% And the initial conditions are given as
+%\begin{eqnarray*}
+%  (\rho, u,p,z)=\left\{
+%	\begin{array}{lcl}
+%	  (1.79463,3.0151,21.53134,0), &  & x\leqslant \frac{\pi}{2},\\
+%	  (3.64282,6.2489.54.8244,0),          &  &x > \frac{\pi}{2}.
+%   \end{array}\right.
+%\end{eqnarray*}
+%
+%Similarly,  the results of  the direct WENO method with $N=10,000$ are taken as the ``exact'' solution. 
+%Fig.\ref{fig55} gives the comparison at $t=\pi/2$ with the mesh $N=300$. It shows that the present method can not only capture the shocks well, but also obtains good resolution in smooth regions.  
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single1DCase4N300P.eps}};&
+%				\node[rectangle]{             
+%	\includegraphics[width=8cm]{single1DCase4N300T.eps}};\\
+%				\node[rectangle]{             
+%	\includegraphics[width=8cm]{single1DCase4N300D.eps}};&
+%				\node[rectangle]{             
+%	\includegraphics[width=8cm]{single1DCase4N300Z.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{exp55}, $T=\pi/2$, $N=300$.} 
+%	\label{fig55}
+%\end{figure}
+%
+%\begin{example}\label{exp56}%[A 2D detonation wave]
+%\end{example}
+%This is a two-dimensional detonation problem containing a moving detonation wave travels from left to right in a rectangular channel\cite{wang2012high,zhang2014equilibrium,bao2000random}. In this example, the Arrhenius source model is used and the parameters $\gamma, q_0, K_0, T_{ign}$ are the same as those in Example \ref{exp53}.  The initial conditions are given as
+%\begin{eqnarray*}
+%  (\rho, u,v,p,z)=\left\{
+%	\begin{array}{lcl}
+%	  (\rho_b,u_b,0,p_b,0), &  & x\leqslant \xi (y),\\
+%	  (1.201\times 10^{-3},0,0,8.321\times 10^5,1),          &  &x > \xi(y),
+%   \end{array}\right.
+%\end{eqnarray*}
+%\begin{eqnarray*}
+%  \xi(y)=\left\{
+%	\begin{array}{lcl}
+%	  0.004,   &  & |y-0.0025| \geqslant 0.001,\\
+%	  0.005-|y-0.0025|,  &   &  |y-0.0025|< 0.001.
+%	 \end{array} \right.
+%\end{eqnarray*}
+%Where $\rho_b$, $u_b$ and $p_b$ are also calculated by Eq.(\ref{eqcjstate}). 
+%
+%The ``exact'' solution is computed by the direct WENO method with $N=2000\times 400$. Fig.\ref{fig56n2000} gives the density contours at the beginning and the final time ($t=1.4\times 10^{-7}$) with the refined mesh. Fig.\ref{fig56n50} displays the density contours at time ($T=0$, $T_1=0.28\times 10^{-7}$, $T_2=0.7\times 10^{-7}$, $T_3=1.12\times 10^{-7}$ and $T_4=1.4\times 10^{-7}$) with two meshes of $N=150\times50$ and $N=600\times200$. It can be seen that, the shock locations captured with different meshes agree well, and the flow structures are also resolved well even with coarse mesh. The distributions of $N=600\times 200$ on the line of $y=0.0025$ are also given in Fig.\ref{fig56line}, 
+% which shows that, the detonation wave computed by the present method has a good agreement with the reference solution, while the direct WENO method generates unphysical results similar to that in one-dimensional examples.
+%
+%\begin{figure}
+%  \centering
+%\includegraphics[angle=-90,width=13cm]{single2DCase1ExactInitial.eps}
+%\includegraphics[angle=-90,width=13cm]{single2DCase1ExactFinal.eps}
+%\caption{Density contours results of Example \ref{exp56} by the direct WENO method, $T=0$ and $T=1.4\times 10^{-7}$, $N=2000\times 400$.}
+%\label{fig56n2000}
+%\end{figure}
+%%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix%[column sep=0mm, row sep=0mm]
+%		{
+%
+%				\node{
+%	\includegraphics[angle=-90, width=8cm]{2DsingleCase1N50T0.eps}};&
+%				\node{              
+%	\includegraphics[angle=-90,width=8cm]{2DsingleCase1N600T0.eps}};\\
+%				\node{
+%	\includegraphics[angle=-90,width=8cm]{2DsingleCase1N50T1.eps}};&
+%				\node{              
+%	\includegraphics[angle=-90,width=8cm]{2DsingleCase1N600T1.eps}};\\
+%				\node{
+%	\includegraphics[angle=-90,width=8cm]{2DsingleCase1N50T2.eps}};&
+%				\node{              
+%	\includegraphics[angle=-90,width=8cm]{2DsingleCase1N600T2.eps}};\\
+%				\node{
+%	\includegraphics[angle=-90,width=8cm]{2DsingleCase1N50T3.eps}};&
+%				\node{              
+%	\includegraphics[angle=-90,width=8cm]{2DsingleCase1N600T3.eps}};\\
+%				\node{
+%	\includegraphics[angle=-90,width=8cm]{2DsingleCase1N50T4.eps}};&
+%				\node{              
+%	\includegraphics[angle=-90,width=8cm]{2DsingleCase1N600T4.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Density contours of Example \ref{exp56} at time ($0$, $0.25\times 10^{-7}$, $0.7\times 10^{-7}$, $1.12\times 10^{-7}$ and $1.4\times 10^{-7}$). Left: $N=150\times50$. Right: $N=600\times200$. The present method}
+%	\label{fig56n50}
+%\end{figure}
+%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single2DCase1LineP.eps}};&
+%%				\node[rectangle]{              
+%%	\includegraphics[width=8cm]{single2DCase1LineT.eps}};\\
+%%				\node[rectangle]{              
+%%	\includegraphics[width=8cm]{single2DCase1LineD.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{single2DCase1LineZ.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{The distributions on the line $y=0.0025$ of Example \ref{exp56}, $T=1.4\times 10^{-7}$}
+%	\label{fig56line}
+%\end{figure}
+%
+%\begin{example}\label{exp57}%[A 2D detonation wave with radial symmetry]
+%\end{example}
+%This is another two-dimensional detonation wave problem taken from Ref.\cite{helzel2000modified,bao2001random}. The following parameters are used for modeling the Heaviside source term, 
+%\begin{eqnarray*}
+%  (\gamma, q_0, K_0,T_{ign})= (1.2,50, 1000,2).
+%\end{eqnarray*}
+% The initial conditions are given as
+%\begin{eqnarray*}
+%  (\rho, u,v,p,z)=\left\{
+%	\begin{array}{lcl}
+%	  (1.79463,10x/r,10y/r,21.53134,0), &  & r\leqslant 10,\\
+%	  (1,0,0,1,1),          &  &r >10, 
+%   \end{array}\right.
+%\end{eqnarray*}
+%where
+%\begin{eqnarray*}
+%  r=\sqrt{x^2+y^2}.
+%\end{eqnarray*}
+%This problem represents a radial symmetrical detonation wave moving in a rectangular region. The ``exact'' solution is computed by the direct WENO method with a refined mesh of $N=1000\times 500$.
+%The detonation front with the mesh $N=200\times 100$ at time $T_1=0$, $T_2=1$, $T_3=3$ and $T_4=5$ are shown in Fig.\ref{fig57}. We can see the present method can capture the location of the detonation front exactly.
+%Fig.{\ref{fig57line} compares the results at the time $T=5$. The present method obtained the same discontinuity location for pressure, density, temperature and mass fraction, but using the direct WENO method, the mass fraction displays a different behavior due to the stiffness, in addition, the distributions of pressure, density and temperature  are also distorted compared to the ``exact'' solution.   
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[angle=-90,width=7cm]{single2DCase2WL.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[angle=-90,width=7cm]{single2DCase2MT.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{ Mass fraction ($z=0.5$) of Example \ref{exp57}.}
+%	\label{fig57}
+%\end{figure}
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{single2DCase2LineP.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{single2DCase2LineT.eps}};\\
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{single2DCase2LineD.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{single2DCase2LineZ.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Comparison of the numerical results on the diagonal line, Example \ref{exp57}, $T=5$.}
+%	\label{fig57line}
+%\end{figure}
+%
+%\subsection{Multi-specise reactive Euler system}
+%For multi-species reactive Euler equations without heat conduction and viscosity, the decoupled species equations are in the form of 
+%\begin{eqnarray*}
+%   \frac{\partial Z}{\partial t}+u\frac{\partial Z}{\partial x}=S_{e}, 
+%\end{eqnarray*}
+%where 
+%\begin{eqnarray*}
+%Z=
+% \left(
+% \begin{array}{c}
+%   z_{1}\\
+%   z_{2}\\
+%   \vdots\\
+%   z_{ns-1}\\
+% \end{array}
+% \right)
+% ,
+% S_{e}=
+%\left(
+%\begin{array}{c}
+%  s_1\\
+%  s_2\\
+%  \vdots\\
+%  s_{ns-1}\\
+%\end{array}
+%\right)
+%,
+% \end{eqnarray*}
+% with the source terms given as 
+%\begin{eqnarray*}
+%  s_i=\frac{W_i}{\rho} \sum_{k=1}^{nr}{(\mu_{i,k}''-\mu_{i,k}'')} K_k \prod_{j}^{ns}{\left( \frac{\rho z_j}{W_j}\right)^{\mu_{j,k}'} },
+%\end{eqnarray*}
+%where $nr$ is the number of reactions
+% \begin{eqnarray*}
+%   z_{ns}=1-\sum_{i=1}^{ns-1}z_i.
+%\end{eqnarray*}
+%And the pressure is given by
+%\begin{eqnarray*}
+%  p=(\gamma- 1)\left( e-\frac{1}{2}\rho u^2-q_1 \rho z_1 -q_2\rho z_2 - \cdots -q_{ns}\rho z_{ns} \right).
+%\end{eqnarray*}
+%The temperature is defined as $T=p/\rho$. The reaction rate of the irreversible chemical reaction $K_i$ determines the stiffness of the problem and is expressed in the Heaviside form 
+%\begin{eqnarray*}
+%  K_i(T)=\left\{
+%	\begin{array}{lcl}
+%	  1/\epsilon_i,& &  T\geqslant T_{ign},\\
+%	  0,    & & T<T_{ign}.
+%	\end{array} \right.
+% & & i=1,2,\cdots , nr
+% \end{eqnarray*}
+% The transformed third-order perturbation scheme is
+% \begin{eqnarray*}
+%   z_{i,j}^{n+1}=z_{i,j}^n+\frac{1}{\bar{p_i}} \Delta t s_i(z_{i,j}^n), & & i=1,2,\cdots ,ns-1
+%\end{eqnarray*}
+%and 
+%\begin{eqnarray*}
+%  \bar{p_i}=\frac{1+b_{i,1}\Delta t+b_{i,2} \Delta t^2}{1-b_{i,2} \Delta t},
+%\end{eqnarray*}
+%where
+%\begin{eqnarray*}
+%  b_{i,1}=a_{i,1}-\frac{a_{i,2}}{a_{i,1}+1}, \hspace{0.3cm}
+%  b_{i,2}=\frac{a_{i,2}}{a_{i,1}+1},
+%\end{eqnarray*}
+%and
+%\begin{eqnarray*}
+%  a_{i,1}=-\frac{1}{2} \sum_{j=1}^{ns} \frac{\partial s_i}{\partial z_j}s_j/s_i,
+%\end{eqnarray*}
+%\begin{eqnarray*}
+%  a_{i,2}=-\frac{1}{6} \sum_{j=1}^{ns} \sum_{k=1}^{ns}\left( \frac{\partial^2 s_i}{\partial z_j\partial z_k}s_j s_k+\frac{\partial s_i}{\partial z_j} \frac{\partial s_j}{\partial z_k}s_k \right)/s_i+a_{i,1}^2.
+%\end{eqnarray*}
+%
+%In this paper, a numerical approximation is used 
+%$$ \frac{\partial s_i}{\partial z_j}=\frac{s_i(z_j+\Delta z)-s_i(z_j)}{\Delta z},$$
+%where $\Delta z$ is a small value compared to $z_j$, and taken as
+%$$\Delta z= \left\{
+%  \begin{array}{lcl}
+%  z_j/100, & &  z_j \ne 0,\\
+%  0.001, & & z_j= 0.
+%\end{array} \right.
+%$$
+%\begin{example}\label{exp58}
+%\end{example}
+%
+%The first multi-species example is taken from\cite{bao2002random,zhang2014equilibrium}, it uses a simple reaction model 
+%\begin{eqnarray*}
+%  2H_2+O_2 \xrightarrow{} 2H_2O.
+%\end{eqnarray*}
+%
+%The parameters for the Heaviside source term are
+%\begin{eqnarray*}
+%  (\gamma,T_{ign}, 1/\epsilon, q_{H_2},q_{O_2},q_{H_2O},W_{H_2},W_{O_2},W_{H_2O})= (1.4,2,10^6, 100,0,0,2,32,18).
+%\end{eqnarray*}
+%And the initial values are given as following
+%\begin{eqnarray*}
+%  (\rho, u,p,z_{H_2O},z_{O_2},z_{H_2O})=\left\{
+%	\begin{array}{lcl}
+%	  (2,8,20,0,0,1), &  &0\leqslant x\leqslant 2.5,\\
+%	  (1,0,1,1/9,8/9,0),          &  & 2.5<x\leqslant 50.  
+%   \end{array}\right.
+%\end{eqnarray*}
+%The ``exact'' solution is computed by the direct WENO method with a refined mesh of $N=10,000$. The results of $N=200$ at $T=4$ are plotted in Fig.\ref{fig58}.   
+%It shows that both the methods can capture the correct propagation wave. However, if the value of $q_{H_2}$ changes from 100 to 300, as used in \cite{zhang2014equilibrium}, the results plotted in Fig.\ref{fig58m} shows that the WENO method cannot maintain the correct propagation speed, while the present method still performs well.  
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{MultiCase1WENO1.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{MultiCase1WENO2.eps}};\\
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{MultiCase1Present1.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{MultiCase1Present2.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{exp58}, $T=4$ and $N=200$. Top: the direct WENO method; Bottom: the present method.}
+%	\label{fig58}
+%\end{figure}
+%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{MultiCase1NewP.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{MultiCase1NewT.eps}};\\
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{MultiCase1NewD.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{MultiCase1NewZ.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{exp58} with $k_{H_2}=300$, $T=4$, $N = 200$.}
+%	\label{fig58m}
+%\end{figure}
+%
+%\begin{example}\label{exp59}
+%  \end{example}
+%This example has been studied in\cite{bao2002random}, its reaction model is
+%\begin{eqnarray*}
+%  CH_4 +2O_2 \xrightarrow{} CO_2 +2H_2O.
+%\end{eqnarray*}
+%The following parameters are used for modeling the Heaviside source term,
+%\begin{eqnarray*}
+%  (\gamma,T_{ign}, 1/\epsilon, q_{CH_4},q_{O_2},q_{CO_2},q_{H_2O})=(1.4,2,500, 100,0,0),
+% \end{eqnarray*}
+%\begin{eqnarray*}
+%  (W_{CH_4},W_{O_2},W_{CO_2},W_{H_2O})= (16,32,44,18).
+%\end{eqnarray*}
+%The initial conditions are
+%\begin{eqnarray*}
+%  (\rho, u,p,z_{CH_4},z_{O_2},z_{CO_2}, z_{H_2O})=\left\{
+%	\begin{array}{lcl}
+%	  (2,10,40,0.325,0,0,0.675), &  & x\leqslant 2.5,\\
+%	  (1,0,1,0.1,0.4,0.6,0),          &  & x>   2.5. 
+%   \end{array}\right.
+%\end{eqnarray*}
+%The solution of this problem consists of a detonation wave, followed by a contact discontinuity and a shock.
+%The ``exact'' solution is computed with a refined mesh of $N=10,000$.  The results of $N=200$ at $T=3$ are displayed in Fig.\ref{fig59}. It can be seen that, the solution obtained by the present method is in agreement well with the reference solution, while a deviated propagation speed is obtained by the direct WENO method.  
+%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{MultiCase2P.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{MultiCase2T.eps}};\\
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{MultiCase2Z.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{MultiCase2Z2.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{exp59}, $T=3$, $N = 200$.}
+%	\label{fig59}
+%\end{figure}
+%
+%\begin{example}\label{exp510}
+%\end{example}
+%
+%The last one-dimensional multi-species example is taken from \cite{bao2002random,zhang2014equilibrium}. The reaction model consists of five species and two reactions
+%\begin{eqnarray*}
+%  H_2+O_2 \xrightarrow{}2OH, \hspace{0.5cm}  2OH+H_2\xrightarrow{}2H_2O.
+%\end{eqnarray*}
+%The species $N_2$ is used as a catalyst. 
+%All parameters given in \cite{bao2002random} are 
+%\begin{eqnarray*}
+%  (\gamma,T_{ign}, 1/\epsilon_1, 1/\epsilon_2)=(1.4,2,10,10^5,2\times10^4),
+%\end{eqnarray*}
+%\begin{eqnarray*}
+%  (q_{H_2},q_{O_2},q_{OH},q_{H_2O},q_{N_2})=(0,0,-20,-100,0),
+%\end{eqnarray*}
+%\begin{eqnarray*}
+%  (W_{H_2},W_{O_2},W_{OH},W_{H_2O},W_{N_2})=(2,32,17,18,28).
+%\end{eqnarray*}
+%And the initial conditions are  
+%\begin{eqnarray*}
+%  (\!\rho, u,p,z_{H_2},z_{O_2},z_{OH}, z_{H_2O},z_{N_2}\!)\!=\!\left\{
+%	\begin{array}{lcl}
+%	 \! (2,10,40,0,0,0.17,0.63,0.2)\!,\! &  &\! x\!\leqslant\! 0.5,\\
+%	 \! (1,0,1,0.08,0.72,0,0,0.2)\!,    \!     \! &  &\! x>  \! 0.5. 
+%   \end{array}\right.
+%\end{eqnarray*}
+%
+%The computation domain is $[0,50]$. The ``exact'' solution is obtained with a refined mesh of $N=10,000$. Fig.\ref{fig510} gives the results of pressure, temperature, mass fractions of $O_2$ and $OH$.
+%It shows that, with the parameters given by Ref.\cite{bao2002random}, both the two methods can get reasonable results, though the direct WENO method generates oscillation more clear than the present method.
+%
+% The study  showed that\cite{zhang2014equilibrium}, with  a smaller ignition  temperature,  the first reaction equation is easier to be activated, and hence the stiffness increased. Fig.\ref{fig510m} shows the results with $T_{ign}=1.5$ and $q_{H_2}=-50$. For this case, the direct WENO method generates a bifurcating wave pattern and a faster propagation speed similar as the results in \cite{zhang2014equilibrium}, while the present method can capture all waves with correct speeds.
+%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{MultiCase3WENO1.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{MultiCase3WENO2.eps}};\\
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{MultiCase3Present1.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{MultiCase3Present2.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{exp510}, $T=3$, $N = 200$. Top: the direct WENO method; Bottom: the present method.}
+%	\label{fig510}
+%\end{figure}
+%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{MultiCase3P.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{MultiCase3T.eps}};\\
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{MultiCase3Z1.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{MultiCase3Z3.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Numerical results of Example \ref{exp510} with $T_{ign}=1.5$ and $q_{H_2}=-50$. $T=3$, $N=200$.}
+%	\label{fig510m}
+%\end{figure}
+%
+%\begin{example}\label{exp511}
+%\end{example}
+%The last case is a two-dimensional example, which has been studied in \cite{bao2002random}. The source terms are calculated as those in Example \ref{exp510}. The initial conditions are 
+%
+%\begin{eqnarray*}
+%  (\!\rho,\! u,\!v,\!p,\!z_{H_2},\!z_{O_2},\!z_{OH},\! z_{H_2O},\!z_{N_2}\!)\!=\!\left\{
+%	\begin{array}{lcl}
+%	 \! (\!2,10,0,40,0,0,0.17,0.63,0.2\!),\! &  &\! x\!\leqslant\! \xi(y),\\
+%	 \! (\!1,0,1,0.08,0.72,0,0,0.2\!),         \! &  &\! x\!>\!   \xi(y), 
+%   \end{array}\right.
+%\end{eqnarray*}
+%where,
+%\begin{eqnarray*}
+%  \xi(y)=\left\{
+%	\begin{array}{lcl}
+%	  12.5-|y-12.5|,   &  & |y-12.5| \geqslant 7.5,\\
+%	  5,  &   &  |y-0.0025|<7.5. 
+%	 \end{array} \right.
+%\end{eqnarray*}
+%
+%The compute domain is $[0,150]\times[0,25]$. 
+%Fig.\ref{fig511} shows the evolution of the detonation wave at time $T_1=0, T_2=2, T_3=4, T_4=6$ and $T_5=8$ with a mesh $N=300\times50$. In order to compare, the results simulated by the  direct WENO method with a refined mesh of $N=1500\times 250$ are also plotted. This figure shows the present method can resolve all the structures, even using a coarse mesh. Fig.\ref{fig511line} gaves the numerical comparison on the line of $y=12.5$.  The results obtained by the new method agree well with the ``exact'' solution.
+%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix%[column sep=0mm, row sep=0mm]
+%		{
+%				\node{
+%	\includegraphics[angle=-90,width=8cm]{Multi2DT0.eps}};&
+%				\node{              
+%	\includegraphics[angle=-90,width=8cm]{Multi2DT0re.eps}};\\
+%				\node{
+%	\includegraphics[angle=-90,width=8cm]{Multi2DT2.eps}};&
+%				\node{              
+%	\includegraphics[angle=-90,width=8cm]{Multi2DT2re.eps}};\\
+%				\node{
+%	\includegraphics[angle=-90,width=8cm]{Multi2DT4.eps}};&
+%				\node{              
+%	\includegraphics[angle=-90,width=8cm]{Multi2DT4re.eps}};\\
+%				\node{
+%	\includegraphics[angle=-90,width=8cm]{Multi2DT6.eps}};&
+%				\node{              
+%	\includegraphics[angle=-90,width=8cm]{Multi2DT6re.eps}};\\
+%				\node{
+%	\includegraphics[angle=-90,width=8cm]{Multi2DT8.eps}};&
+%				\node{              
+%	\includegraphics[angle=-90,width=8cm]{Multi2DT8re.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Density contours of Example \ref{exp511} at $T_1=0, T_2=2, T_3=4, T_4=6$ and $T_5=8$. Left: the present method, $N=300\times50$. Right: the direct WENO method, $N=1500\times250$.}
+%	\label{fig511}
+%\end{figure}
+%
+%\begin{figure}%\label{1}
+%	\centering
+%	\begin{tikzpicture}
+%    \matrix[column sep=0mm, row sep=0mm]
+%		{
+%				\node[rectangle]{
+%	\includegraphics[width=8cm]{Multi2DLine2.eps}};&
+%				\node[rectangle]{              
+%	\includegraphics[width=8cm]{Multi2DLine1.eps}};\\
+%		};
+%	\end{tikzpicture}
+%	\caption{Distribution on the line of $y=12.5$ for Example \ref{exp511} at $T=8$, $N = 300\times50$.}
+%	\label{fig511line}
+%\end{figure}
+%
+%\section{Conclusions}
+%
+%The dual information preserving method is firstly proposed to cure the numerical stiff problem generated in simulating the reacting flows. First, the species mass fraction equations are decoupled from the reactive Euler equations, and then they are further fractionated into the convection step and reaction step. The DIP method is actually proposed to deal with the species convection step. Two kinds of Lagrangian points are introduced, one is limited in each Eulerian cell, and another one is tracked in the whole computation domain. Each kind of points are the same number of the cells (grids). 
+%The information of the cell-point in a cell can effectively restrict the incorrect reaction activation maybe caused by the numerical dissipation, while the information of the particle-point can help to preserve the sharp shock front once the strong shock waves formed. Hence, by using the DIP method, the spurious numerical propagation phenomenon in stiff reacting flows is effectively eliminated.
+%
+%In this paper, the numerical perturbation (NP) methods are also developed to solve the fractional reaction step (ODE equations). The NP schemes show several advantages, such as no need of iteration, high order accuracy and large stable region.  
+%
+%A series of numerical examples are used to demonstrate the reliability and robustness of the new methods.
+%
+\section*{Acknowledgement} 
+This research work was supported by NSFC 11272324, 11272325, NSAF U1530145 and 2016YFA0401200.
+
+\section*{References}
+
+\bibliography{mybibfile}
+
+\newpage
+  \appendix
+  \renewcommand{\appendixname}{Appendix~}
+
+  \section{The algorithm of the DIP method for solving the convection equations}
+\large {\color{black!60!red!80!}}
+  \color{black}
+
+\hspace{-0.48cm}
+\normalsize
+(0) Initiation 
+\vspace{0.1cm}
+
+\hspace{0.5cm}
+  \scriptsize{\color{black!80}
+  \hspace{-0.7cm}
+  $
+  \left\{
+  \begin{array}{l}
+	X(i,j)=0\\
+	Y(i,j)=0\\
+	\end{array}
+	\right.
+,
+\left\{
+  \begin{array}{l}
+	X_p(i,j)=0\\
+	Y_p(i,j)=0\\
+	\end{array}
+	\right.
+,
+\left\{
+  \begin{array}{l}
+	I(i,j)=i\\
+	J(i,j)=j\\
+	\end{array}
+	\right.
+,
+\left\{
+  \begin{array}{l}
+	\hat{z}(i,j)=z(i,j)\\
+	z_p(i,j)=z(i,j)\\
+	\end{array}
+	\right.
+$
+
+\vspace{0.1cm}
+\hspace{-0.48cm}
+{ \color{black!60!blue!80}DO}
+\color{black!80} $it=1,NT$} {\color{black!60} \hspace{2.3cm} ! Time-Stepping
+  \color{black}
+
+  \small \hspace{-0.0cm}
+\hspace{-0.18cm}
+Solve the decoupled Euler equations (\ref{EulerEquation}) to get $u$, $v$, $\cdots$
+
+\hspace{-0.10cm}
+Following is the DIP  algorithm for the convection equations (\ref{Afrac}).
+\vspace{0.2cm}
+
+ \normalsize (1) Initial values
+  \scriptsize
+  { \color{black!80}  
+  \vspace{0.1cm}
+
+  \hspace{0.5cm}
+$
+Mrk(i,j)=0,
+S_1(i,j)=0,
+S_2(i,j)=0
+$
+\vspace{0.1cm}
+
+\normalsize \color{black}
+(2) Calculate the cell-point
+ \scriptsize 
+ \vspace{0.1cm}
+
+ \hspace{0.6cm}{\color{black!60!blue!80}DO}
+ { \color{black!80} $i=0,NX$}
+
+\hspace{1.1cm} {\color{black!60!blue!80}DO}
+{ \color{black!80} $j=0,NY$
+
+\vspace{0.1cm}
+ \hspace{1.5cm} $s_x=sign(X(i,j)), s_y=sign(Y(i,j))$
+
+ \hspace{1.5cm}	$\left\{
+  \begin{array}{rlr}
+u_c(i,j)=&(1-|X|)u(i,j)&+|X|u(i+s_x,j)\\
+v_c(i,j)=&(1-|Y|)v(i,j)&+|Y|v(i,j+s_y)\\
+	\end{array}
+  \right.$}
+ \hspace{0.8cm}
+   \color{black!60} ! Interpolate velocity according to its location \color{black!80}
+
+ \hspace{1.5cm}	$\left\{
+  \begin{array}{l}
+	L_x=X(i,j)+u_c(i,j)\Delta t/ \Delta x\\
+    L_y=Y(i,j)+v_c(i,j)\Delta t/ \Delta y\\
+	\end{array}
+	\right.$
+
+%%
+ \hspace{1.5cm}	$\left\{
+  \begin{array}{l}
+	M=i+floor(L_x+0.5)\\
+    N=j+floor(L_y+0.5)\\
+	\end{array}
+  \right.$}
+  { \color{black!60} \hspace{3.4cm}
+! $(i,j)$ moves to cell $(M,N)$} {\color{black!80}
+
+ \hspace{1.5cm}	$\left\{
+  \begin{array}{l}
+	X(i,j)=L_x-floor(L_x+0.5)\\
+    Y(i,j)=L_y-floor(L_y+0.5)\\
+	\end{array}
+	\right.$
+	{ \color{black!60} \hspace{2.6cm}
+! The relative location in $(M,N)$} {\color{black!80}
+
+\vspace{0.1cm}
+\hspace{1.5cm} \color{black!60!blue!80} IF
+\color{black!70} ($0 \leqslant M \leqslant NX$ and $0 \leqslant N \leqslant NY$)
+\color{black!60!blue!80} Then
+\color{black!80}
+\vspace{0.1cm}
+
+\hspace{2.cm} $Mrk(M,N)=1$
+
+\hspace{2.cm} $S_1(M,N)=S_1(M,N)+1$
+
+\vspace{0.1cm}
+\hspace{2.cm}	$\left\{
+  \begin{array}{rlr}
+    \hat{X}(M,N)=&\{[S_1(M,N)-1]X(M,N)&+X(i,j)\}/S_1(M,N)\\
+	\hat{Y}(M,N)=&\{[S_1(M,N)-1]Y(M,N)&+Y(i,j)\}/S_1(M,N)\\
+	\hat{z}(M,N)=&\{[S_1(M,N)-1]z(M,N)&+\hat{z}(i,j)\}/S_1(M,N)\\
+	\end{array}
+  \right.$}
+  \hspace{0.0cm}{ \color{black!60} ! Average information} {\color{black!80}}
+
+\vspace{0.1cm}
+\hspace{1.5cm} {\color{black!60!blue!80}ENDIF }
+
+\hspace{1cm} {\color{black!60!blue!80}END DO}
+
+\hspace{0.5cm}{ \color{black!60!blue!80}END DO}
+
+\vspace{0.1cm}
+\hspace{0.5cm}{\color{black!80}
+	$\left\{
+  \begin{array}{l}
+	X(:,:)=\hat{X}(:,:)\\
+	Y(:,:)=\hat{Y}(:,:)\\
+	\end{array}
+  \right.$}
+
+
+  \vspace{0.1cm}
+
+\normalsize 
+{\color{black}
+
+(3) Calculate the particle-point and update the cell-point$(I,J)$ 
+ \scriptsize 
+
+ \vspace{0.1cm}
+\hspace{0.6cm}{\color{black!60!blue!80}DO}
+{ \color{black!80} $i=0,NX$}
+
+\hspace{1cm}{ \color{black!60!blue!80}DO}
+ \color{black!80} $j=0,NY$
+
+\vspace{0.1cm}
+ \hspace{1.5cm} $s_x=sign(X_p(i,j)), s_y=sign(Y_p(i,j))$
+
+ \hspace{1.5cm}	$\left\{
+  \begin{array}{lll}
+u_p(i,j)=&(1-|X_p|)u(I,J)&+|X|u(I+s_x,J)\\
+v_p(i,j)=&(1-|Y_p|)v(I,J)&+|Y|v(I,J+s_y)\\
+	\end{array}
+	\right.$
+ \hspace{0.5cm}
+  \color{black!60} ! Interpolate velocity according to its position \color{black!80}
+
+
+ \hspace{1.5cm}	$\left\{
+  \begin{array}{l}
+	L_x=X_p(i,j)+u_p(i,j)\Delta t/ \Delta x\\
+    L_y=Y_p(i,j)+v_p(i,j)\Delta t/ \Delta y\\
+	\end{array}
+	\right.$
+
+ \hspace{1.5cm}	$\left\{
+  \begin{array}{l}
+	I(i,j)=I(i,j)+floor(L_x+0.5)\\
+    J(i,j)=J(i,j)+floor(L_y+0.5)\\
+	\end{array}
+	\right.$
+  { \color{black!60} \hspace{2.3cm}
+! $(i,j)$ moves to cell $(I,J)$} {\color{black!80}
+
+ \hspace{1.5cm}	$\left\{
+  \begin{array}{l}
+	X_p(i,j)=L_x-floor(L_x+0.5)\\
+    Y_p(i,j)=L_y-floor(L_y+0.5)\\
+	\end{array}
+	\right.$
+	{ \color{black!60} \hspace{2.5cm}
+! The relative location in $(I,J)$} {\color{black!80}
+
+\vspace{0.1cm}
+\hspace{1.5cm} \color{black!60!blue!80} IF
+\color{black!70} ($0 \leqslant I \leqslant NX$ and $0 \leqslant J \leqslant NY$)
+\color{black!60!blue!80} Then
+\color{black!80}
+
+\hspace{2.0cm} $Mrk(I,J)=2$
+
+\hspace{2.0cm} $S_2(I,J)=S_2(I,J)+1$
+
+\hspace{2.0cm}	$\left\{
+  \begin{array}{rlr}
+	\hat{X}(I,J)=&\{[S_2(I,J)-1]X(I,J)&+X(i,j)\}/S_2(I,J)\\  
+	\hat{Y}(I,J)=&\{[S_2(I,J)-1]Y(I,J)&+Y(i,j)\}/S_2(I,J)\\
+	\hat{z}(I,J)=&\{[S_2(I,J)-1]z(I,J)&+z_p(i,j)\}/S_2(I,J)\\
+	\end{array}
+	\right.$
+  }
+  \hspace{0cm}
+  \begin{minipage}{7cm}
+	\color{black!60}
+! Update cell-point $(I,J)$'s 
+ information by averaging 
+
+ \hspace{0.2cm}
+all entered particle-points' information
+\end{minipage}
+
+
+ \hspace{9.25cm} 
+ \color{black!80}
+
+\vspace{0.1cm}
+  \hspace{1.5cm} \color{black!60!blue!80} END IF 
+
+\hspace{1cm} {\color{black!60!blue!80}END DO
+
+\hspace{0.5cm} END DO}
+
+\vspace{0.1cm}
+
+\hspace{0.5cm}{\color{black!80}
+	$\left\{
+  \begin{array}{l}
+	X(:,:)=\hat{X}(:,:)\\
+	Y(:,:)=\hat{Y}(:,:)\\
+	\end{array}
+  \right.$}
+
+  \vspace{0.1cm} 
+\normalsize {\color{black}
+(4) If there is no cell-point in the cell $(i,j)$, i.e, $Mrk(i,j)=0$
+ \scriptsize 
+
+ \vspace{0.1cm} 
+\hspace{0.6cm}{\color{black!60!blue!80}DO}
+{ \color{black!80} $i=0,NX$}
+
+\hspace{1cm}{ \color{black!60!blue!80}DO}
+{ \color{black!80} $j=0,NY$}
+
+\vspace{0.1cm}
+\hspace{1.5cm}{ \color{black!60!blue!80}IF}
+{ \color{black!80} $Mrk(i,j)=0$}{ \color{black!60!blue!80}then}
+{\color{black!80}
+
+\vspace{0.1cm}
+\hspace{2cm}  $\left\{
+  \begin{array}{l}
+	X(i,j)=0\\
+	Y(i,j)=0\\
+	\end{array}
+	\right.$
+  }
+
+\hspace{2cm} {\color{black!60!blue!80}IF}
+{\color{black!80} $|u(i,j)|\geqslant |v(i,j)|$}{ \color{black!60!blue!80}then}
+{ \color{black!60} \hspace{1.4cm} ! Assign a value by interpolating on x-direction}
+{\color{black!80}
+
+\small
+\hspace{2.5cm} \color{black!80} 
+Find two neighboring cell-points located at two sides of $(i,j)$ along x-direction
+
+\scriptsize
+\vspace{0.1cm}
+\color{black!80}
+\hspace{2.5cm} $L=|X(i-il,j)-il)u(i,j)+Y(i-il,j)v(i,j)|$
+
+\hspace{2.5cm} $R=|X(i+ir,j)-ir)u(i,j)+Y(i+ir,j)v(i,j)|$
+
+\hspace{2.5cm} $\hat{z}(i,j)=[R\hat{z}(i-il,j))+L\hat{z}(i+ir,j)]/(R+L)$
+
+\vspace{0.1cm}
+\hspace{2cm}{ \color{black!60!blue!80}ELSE}
+{\color{black!80}
+{ \color{black!60} \hspace{3.9cm} ! Assign a value by interpolating on y-direction}
+{\color{black!80}
+\vspace{0.1cm}
+
+\hspace{2.5cm} \color{black!80} 
+\small
+Find two neighboring cell-points located at two sides of $(i,j)$ along y-direction
+
+\vspace{0.1cm}
+\scriptsize
+\color{black!80}
+\hspace{2.5cm} $L=|X(i,j-jl)u(i,j)+(Y(i,j-jl)-jl)v(i,j)|$
+
+\hspace{2.5cm} $R=|X(i,j+jr))u(i,j)+(Y(i,j+jr)-jr)v(i,j)|$
+
+\hspace{2.5cm} $\hat{z}(i,j)=[R\hat{z}(i,j-jl))+L\hat{z}(i,j+jr)]/(R+L)$
+}
+
+\vspace{0.1cm}
+\hspace{2cm} {\color{black!60!blue!80}END IF
+
+\hspace{1.5cm} END IF}
+
+\hspace{1cm}{ \color{black!60!blue!80}END DO
+
+\hspace{0.5cm} END DO
+
+{\color{black!80}
+
+\vspace{0.1cm}
+\hspace{0.5cm} 
+\small
+Solve the reaction equations (\ref{Rfrac}) to get new $z$ and $z_p$ by using $\hat{z}$
+
+\hspace{0.7cm} 
+and $z_p$ to calculate the source terms, respectively.
+
+
+\vspace{0.1cm}
+\scriptsize
+\hspace{0.1cm}{ \color{black!60!blue!80}END DO
+%
+\end{document}
