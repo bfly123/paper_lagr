@@ -6,7 +6,7 @@
 \usepackage{tikz}
 \usepackage{graphics,graphicx}
 \usepackage{mathrsfs}
-\usepackage{amsmath}
+\usepackage{amsmath,bm}
 \usepackage{subfigure}
 \usepackage{booktabs}
 \usepackage{amsthm}
@@ -31,39 +31,41 @@
 
 \title{A new HLLC Riemann solver to resolve both elactic and plastic waves}
 \author{Li Liu$^1$,Junbo Cheng $^{1,*}$, Yiqing Shen$^2$}
-\cortext[mycorrespondingauthor]{
-Correspondence to: Yiqing Shen, LHD, Institute of Mechanics, Chinese Academy of Sciences, Beijing 100190, China. E-mail: yqshen@imech.ac.cn}
-\address{$^1$LHD, Institute of Mechanics, Chinese Academy of Sciences, Beijing 100190, China}
-\address{$^2$School of Engineering Science, University of Chinese Academy of Sciences, Beijing 100049, China}
-{
-\begin{abstract}
-In this paper, we construct a new numerical method to solve the reactive Euler equations to cure the numerical stiffness problem.
-The species mass equations are first decoupled from the reactive Euler equations, and then they are further fractionated into the convection step and the reaction step.
- In the convection
-step, by introducing two kinds of Lagrangian points (cell-point and particle-point), a dual information preserving (DIP) method is proposed to resolve the convection characteristics. In this new method, the 
- information (including the transport value and the relative coordinates to the center of the current cell) of the cell-point and the paticle-point are updated according to the velocity field. The information of the cell-point in a cell can effectively restrict the incorrect reaction activation maybe caused by the numerical dissipation, while the information of the particle-point can help to preserve the sharp shock front once the strong shock waves formed. Hence, by using the DIP method, the spurious numerical propagation phenomenon in stiff reacting flows is effectively eliminated. In addition, a numerical perturbation method is also developed to solve the fractional reaction step (ODE equation) to improve the stability and efficiency. A series of numerical examples are presented to validate the accuracy and robustness of the new method. 
-\end{abstract}
-\begin{keyword}
- Stiff reacting flow\sep  Dual information preserving method\sep Numerical perturbation method\sep Shock-capturing scheme 
-\end{keyword}
+%\cortext[mycorrespondingauthor]{
+%Correspondence to: Yiqing Shen, LHD, Institute of Mechanics, Chinese Academy of Sciences, Beijing 100190, China. E-mail: yqshen@imech.ac.cn}
+%\address{$^1$LHD, Institute of Mechanics, Chinese Academy of Sciences, Beijing 100190, China}
+%\address{$^2$School of Engineering Science, University of Chinese Academy of Sciences, Beijing 100049, China}
+%{
+%\begin{abstract}
+%In this paper, we construct a new numerical method to solve the reactive Euler equations to cure the numerical stiffness problem.
+%The species mass equations are first decoupled from the reactive Euler equations, and then they are further fractionated into the convection step and the reaction step.
+% In the convection
+%step, by introducing two kinds of Lagrangian points (cell-point and particle-point), a dual information preserving (DIP) method is proposed to resolve the convection characteristics. In this new method, the 
+% information (including the transport value and the relative coordinates to the center of the current cell) of the cell-point and the paticle-point are updated according to the velocity field. The information of the cell-point in a cell can effectively restrict the incorrect reaction activation maybe caused by the numerical dissipation, while the information of the particle-point can help to preserve the sharp shock front once the strong shock waves formed. Hence, by using the DIP method, the spurious numerical propagation phenomenon in stiff reacting flows is effectively eliminated. In addition, a numerical perturbation method is also developed to solve the fractional reaction step (ODE equation) to improve the stability and efficiency. A series of numerical examples are presented to validate the accuracy and robustness of the new method. 
+%\end{abstract}
+%\begin{keyword}
+% Stiff reacting flow\sep  Dual information preserving method\sep Numerical perturbation method\sep Shock-capturing scheme 
+%\end{keyword}
 
 \maketitle
 \section{Introduction}
 
-In this paper, a new HLLC-type approximate Riemann solver is developed, with the capibility of resolving both elactic and plastic waves theoretically, to solve one-dimensional elastic-plactic solid problems with the isotropic elastic-plastic model and von Mises' yileding condition in the framework of high-order cell-centered Lagrangian scheme. 
+In this paper, a new HLLC-type approximate Riemann solver is developed, with the capibility of resolving both elactic and plastic waves, to simulate one-dimensional elastic-plactic solid problems with the isotropic elastic-plastic model\cite{} and von Mises' yielding condition in the framework of high-order cell-centered Lagrangian scheme. 
 
 Many elastic-plastic solid  problems of interest involve large deformations and are treated as flows. Up till now, elastic-plastic flows can be mainly simulated in three ways, staggered Lagrangian schemes, Eulerian methods and cell-centered Lagrangian schemes which is considered in this paper. 
 
-The earlist simulation is developed by Wilkins with a staggered Lagrangian scheme. In his work, the equations of momentum and specific internal energy are discretized on a staggered mesh and  artificial viscosity is used to restrain  the  numerical oscillation across the shocks. 
+The earlist simulation is developed by Wilkins with a staggered Lagrangian scheme. In his work, the equations of momentum and specific internal energy are discretized on a staggered mesh and  artificial viscosity is used to restrain  the  numerical oscillation across the shock waves. 
 
-The second way to simulate elastic-plastic materials is using  Eulerian methods. Eulerian methods are  suitable for the problems involving large deformations and are  widely applied in the hydordynamics calculations.  However, most of the study of Eulerian methods are just concerned with the hyper-elastic models for isotropic materials, and few of them other invlolve with consititutive models for elastic-plastic materials. 
+The second way to simulate elastic-plastic materials is using  Eulerian methods. Eulerian methods are  suitable for the problems involving large deformations and are  widely applied in the hydordynamics calculations.  However, most of the study of Eulerian methods are just concerned with the hyper-elastic models for isotropic materials, and few of them involve with consititutive models for elastic-plastic materials. 
 
-An alternative way is to derive a Lagrangian scheme based on the Godunov method,  this type of scheme is known as cell-centered Lagrangian schemes.  Recent years, the cell-centered Lagrangian type schemes have attracted a lot of attentions as it has combined many advantages from both staggered Lagrangian schemes and Eulerian methods. First, as a Godunov-type method, it's no need to use artificial viscosity and the schemes are conservative, besides, it's can also be used in both  hyper-elastic models and hypo-elastic models.
+An alternative way of above two methods is to derive a Lagrangian scheme based on the Godunov method, this type of scheme is known as cell-centered Lagrangian schemes.  Recent years, the cell-centered Lagrangian type schemes have attracted a lot of attentions as it has combined many advantages from both staggered Lagrangian schemes and Eulerian methods. First, as a Godunov-type method, it's no need to use artificial viscosity and the schemes are conservative, besides, it's can also be used in both  hyper-elastic models and hypo-elastic models.
 
-In the  Godunov type method  approach,  a core process is to construct the conservative flux by solving  the solution of an  Remainn problem  at each cell face. The property of the  approximate Remainn solver may do a magnitude influence in the simulation results.      
+In the  Godunov type method  approach,  a core process is to construct the conservative flux by solving  the solution of a  Remainn problem  at each cell face. As the Remiann problem contains many physical structures especially in elastic-plastic flows, such as elastic shock waves, elastic rare waves, plastic waves and contact waves or interfaces between different materials. The property of the approximate Remainn solver may do a magnitude influence in the simulation. Recently, there is a lot of works have been done in this area. For example, Gavrilyuk et al. analyzed the structure of Riemann solution to construct a Riemann solver for the linear elastic system  of hyperbolic non-conservative models for transverse waves, wherein an extra evolution equation was added in order to make the elastic transformations reversible in the absence of shock waves. Despres built a shock solution to a non-conservations reverisible system of hypo-elasticity models and found that a sonic point is necessary to construct compression solution that begins at a constrained comressed state.  Cheng eta al. analyzed the wave structures of one-dimensional elastic-plastic flows and developed an effective two-rarefaction Riemann solver with elastic waves (TRRSE) and build the second-order and third-order cell-centered Lagrangian schemes based on the TRRSE. In order to improve the efficiency by removing the iteration process in TRRSE, Cheng et. al. extend the HLLC approximate Riemann solver from pure fluids to elastic-plasitc flows, wherein a HLLCE Reimann solvers is constructed with elastic waves for non-conservative system with Wilkins' model and von Mises' yielding criterion. 
+Up till now, in the construction of approximate Reimann solvers, only elastic waves is considered, there are  few studies about the plastic wave in elastic-plastic flows.
+
+In this paper,  we aim to construct a new HLLC Remiann solver for 1D elastic-plastic flows, which can resolve both the elastic waves and plastic waves. Different from elastic waves, the  plastic wave not aways exit, so there needs a pre-determination of plastic wave on each side of the cell face. Besides this, some assumptions in paper \cite{cheng} are also corrected which may not be right with plastic waves, especially in solving the problems with different materials. Finally we use  the new HLLCEP solver to evaluate the numerical flux in cell faces  and give a high-order cell-centered Lagrangian schemes for one-dimensional elastic-plastic flows. 
 
 
-%
 %
 %In simulating problems governed by the reactive Euler equations, such as combustion and high-speed chemical reaction,
 %the difference between the timescales of reaction and convection, which limits both the time step and grid spacing, may cause the numerical stiffness problems, for example, the spurious numerical propagation phenomenon of the shock waves in flow fields\cite{colella1986theoretical,leveque1990study,bao2002random}. In order to attenuate the influence of the limited time step, the implicit time method or fractional step method is usually used to calculate the reaction ODE equations. However, if the mesh is not fine enough, the time method cannot remove the incorrect reaction activation caused by the spatial discretization, especially in the flows with shock waves. This is because the numerical dissipation introduced to capture shocks smears the shock front and also leads to the reaction activation in incorrect cells. Although the applications of high order shock capturing schemes can effectively reduce the numerical dissipation and sharpen the discontinuity, the incorrect reaction activation and spurious propagation may still occur.
@@ -95,7 +97,7 @@ In the  Godunov type method  approach,  a core process is to construct the conse
 %				  In addition, by multiplying a power-series  of the time step to the Euler scheme, 
 %a numerical perturbation method is developed to solve the fractional reaction step (ODE equation) to improve the stability and efficiency.
 %
-%This paper is organized as follows. In section 2, we briefly introduce the decoupling method for solving the reactive Euler equations. In section 3, a dual information preserving method is proposed to solve the convection step of species mass fraction equations. In section 4, a numerical perturbation method is developed to solve the fractional reaction step, analysis of stability and numerical examples are also presented. A series of examples, including one- and two- dimensional problems, simplified reaction model and multi-species reaction models, are given to validate the accuracy and robustness of the new method in section 5. Conclusions are shown in section 6.
+This paper is organized as follows. In section 2, we briefly introduce the goverining equations to be studied. In section 3, the HLLEP method is constructed.  High-order cell-centered Lagrangian schemes for a non-consercative system of elastic plasticity is given in section 4, some numerical examples are presented to validate the method.  Conclusions are shown in section 5.
 %%\section{Framework of the decoupling method for reactive Euler equations}
 %The one-dimensional governing equations of reacting flows without considering of heat
 %conduction and viscosity is given as
@@ -1555,6 +1557,31 @@ In the  Godunov type method  approach,  a core process is to construct the conse
 %In this paper, the numerical perturbation (NP) methods are also developed to solve the fractional reaction step (ODE equations). The NP schemes show several advantages, such as no need of iteration, high order accuracy and large stable region.  
 %
 %A series of numerical examples are used to demonstrate the reliability and robustness of the new methods.
+
+\section{Governing equations} 
+
+The equations for a continuous one-dimensional homogeneous solid in differential form given as
+
+\begin{equation}
+  \partial_t \bm{U} +\partial _x \bm{F}(\bm{U}) = 0, \hspace{0.3cm} x\in \Omega \subset \mathbb{R}, \hspace{0.3cm} t>0,
+\end{equation}
+where
+\begin{equation}
+  \bm{U} = \left[ \begin{array}{l}
+	  \rho \\
+	  \rho u \\
+	  \rho  E \\
+	\end{array}
+  \right],
+  \hspace{0.3cm} 
+  \bm{F} = \left[ \begin{array}{l}
+	  \rho u \\
+	  \rho u^2 -\sigma_x\\
+	  (\rho E -\sigma_x)u\\
+  \end{array} \right],
+\end{equation}
+
+
 %
 \section*{Acknowledgement} 
 This research work was supported by NSFC 11272324, 11272325, NSAF U1530145 and 2016YFA0401200.
