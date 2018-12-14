@@ -1719,7 +1719,113 @@ r_4 = \frac{1}{\phi^2}\left[\begin{array}{l}
 	u_L^* = u_R^*, \hspace{0.3cm} p_L^* = p_R^*, \hspace{0.3cm} s_{xx,L}^* = s_{xx,R}^*.
   \end{equation}
 
-  The HLLCE is given 
+  The HLLCE is given as follows:
+  \begin{equation}
+	\bm{U}^{\text{HLLCE}}(x,t) = \left\{ \begin{aligned}
+		& \bm{U}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\le s_L, \\
+		& \bm{U}_L^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s_L\le \frac{x}{t} \le s^*, \\
+		& \bm{U}_R^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s^*\le \frac{x}{t} \le s_R,\\
+		& \bm{U}_R, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\ge s_R, \\
+	  \end{aligned}
+	\right.
+  \end{equation}
+  where the states of $U_L$ and $U_R$ are known as the initial conditon of the Riemann problem (\ref{eq:1d}) and the states $U_L^*$ and $U_R^*$ in the regions of $Q_L^*$ and $W_R^*$ need to be solved out, respectively.
+
+A HLLCE numerical flux in the Eulerian framework is 
+  \begin{equation}
+	\bm{F}^{\text{Euler}}(x,t) = \left\{ \begin{aligned}
+		& \bm{F}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\le s_L, \\
+		& \bm{F}_L^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s_L\le \frac{x}{t} \le s^*, \\
+		& \bm{F}_R^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s^*\le \frac{x}{t} \le s_R,\\
+		& \bm{F}_R, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\ge s_R, \\
+	  \end{aligned}
+	\right.
+  \end{equation}
+   and the corresonding HLLCE numerical flux in the Lagrangian framework is defined as
+\begin{equation}
+	\bm{F}^{\text{Lag}}(x,t) = \left\{ \begin{aligned}
+		& \bm{f}_L^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s_*\ge \frac{x}{t},\\
+		& \bm{f}_R^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s^*\le \frac{x}{t}\\
+	  \end{aligned}
+	\right.
+  \end{equation}
+  where $\bm{f}(\bm{U}) = (0, -\sigma_x, -\sigma_x u)^T$.
+
+  Applying Rankine-Hugoniot conditions across the waves  with the speed of $s_L$, $s^*$ and $s_R$, one can  get 
+	\begin{align}
+	  &\bm{F}_L^* = \bm{F}_L+s_L (\bm{U}_L^*-\bm{U}_L),\\ \label{eq:RH1}
+	&\bm{F}_R^* = \bm{F}_L^*+s^*(\bm{U}_R^*-\bm{U}_L^*),\\
+	&\bm{F}_R^* = \bm{F}_R+s_R(\bm{U}_R^*-\bm{U}_R).\\
+  \end{align}
+
+  The normal velocity and the normal stress  are unchanged across the contact wave,
+	\begin{align}
+	  & u_L^* = u_R^* =s^*,\\
+	  & \sigma_{x,L}^* = \sigma_{x,R}^* .\\
+	\end{align}
+
+	Using the same strategy with HLL and HLLC. The left and right wave speeds $s_L$ and $s_R$ are estimated as
+	\begin{equation}\label{eq:sLR}
+	  s_L = \text{min} (u_L-c_L, u_R-c_R), \hspace{0.3cm} s_R = \text{max}(u_L+c_L, u_R+c_R).
+	\end{equation}
+
+	Combining all those equations (\ref{eq:RH1}-\ref{eq:sLR}), and using the assumptions in Eq.(\ref{eq:eiv}), we can get the process of HLLCE as follows.
+
+	  Step 1 Evaluate  $\widetilde{s}^*$
+\begin{equation}
+  \widetilde{s}^* = \frac{s_{xx,R}- s_{xx,L}}{\rho_L(s_L-u_L)-\rho_R(s_R-u_R)}.
+\end{equation}
+
+Step 2 Evaluate $s_{xx,L}$ and $s_{xx,R}$,
+\begin{align}
+\widetilde{s}_{xx,L}^* = s_{xx,L} + \rho_L(s_L-u_L) \widetilde{s}^*,\\
+\widetilde{s}_{xx,R}^* = s_{xx,R} + \rho_R(s_R-u_R) \widetilde{s}^*.\\
+\end{align}
+
+Step 3 Use the von Mises' yielding condition to modify $\widetilde{s}_{xx,L}^*$ and $\widetilde{s}_{xx,R}^*$,
+\begin{equation}
+  s_{xx,L}^* = \Upsilon(\widetilde{s}_{xx,L}), \hspace{0.3cm}s_{xx,R}^* = \Upsilon(\widetilde{s}_{xx,R}), 
+\end{equation}
+
+Step 4 Evaluate $s_L^*$ and $s_R^*$,
+\begin{equation}
+  s_L^* = \frac{s_{xx,L}^*-s_{xx,L}}{\rho_L(s_L-u_L)}, \hspace{0.3cm}  s_R^* = \frac{s_{xx,R}^*-s_{xx,R}}{\rho_R(s_R-u_R)}.
+\end{equation}
+
+Step 5 Evaluate $s^*$,
+\begin{equation}
+  s^* = \frac{p_R-p_L+\rho_L(u_L-s_L^*)(s_L-u_L)-\rho_R(u_R-s_{xR}^*)(s_R-u_R)}{\rho_L(s_L-u_L)-\rho_R(s_R-u_R)}.
+\end{equation}
+
+Step 6 Evaluate $p_L^*$ and $p_R^*$,
+\begin{equation}
+  \begin{aligned}
+	p_L^* = p_L + \rho_L(s_L-u_L)(s^*+s_L^*-u_L),\\
+	p_R^* = p_R +\rho_R(s_R-u_R)(s^*+s_{R}^*-u_R).\\
+  \end{aligned}
+\end{equation}
+
+Step 7 Evaluate $\sigma_{x,L}^*$ and $\sigma_{x,R}^*$,
+\begin{equation}
+  \sigma_{x,L}^* = s_{xx,L}^* - p_L^*, \hspace{0.3cm} \sigma_{x,R}^* = s_{xx,R}^*- p_R^*.
+\end{equation}
+\subsubsection{HLLCEP method}
+Although HLLCE Riemann solver can simulate the elastic-plastic flow effectively and efficiently without iterations, but the plastic structure is not considered in and  there are some assumptions that are not so reasonable, especially in the interface between different materials. For example, the normal stresses $\sigma_x$ are  always equavalent across the interface, but the pressures are not always equal, and the consequent evaluation of $\widetilde{s}^*$ may not be of large error. 
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
 
 
 
