@@ -1810,7 +1810,17 @@ Step 7 Evaluate $\sigma_{x,L}^*$ and $\sigma_{x,R}^*$,
   \sigma_{x,L}^* = s_{xx,L}^* - p_L^*, \hspace{0.3cm} \sigma_{x,R}^* = s_{xx,R}^*- p_R^*.
 \end{equation}
 \subsubsection{HLLCEP method}
-Although HLLCE Riemann solver can simulate the elastic-plastic flow effectively and efficiently without iterations, but the plastic structure is not considered in and  there are some assumptions that are not so reasonable, especially in the interface between different materials. For example, the normal stresses $\sigma_x$ are  always equavalent across the interface, but the pressures are not always equal, and the consequent evaluation of $\widetilde{s}^*$ may not be of large error. 
+Although HLLCE Riemann solver can simulate the elastic-plastic flow effectively and efficiently without iterations, but the plastic structure is not considered in and  there are some assumptions that are not so reasonable, especially in the interface between different materials. For example, the normal stresses $\sigma_x$ are  always equavalent across the interface, but the pressures are not always equal, and the consequent evaluation of $\widetilde{s}^*$ may   be of large error. 
+
+In this paper, the plastic wave is considered in between the left-going(right-going) wave and the contact wave. On one side of it, the deviatoric stess $|s_{xx}|<\frac{2}{3}Y_u$ and material is in its elastic phase, and after the pastic wave, material  yields.   Showed in Fig.  there  may be  three to  five waves in the result of the Riemann problem. At first we must determine whether it yields on the region IV and V. 
+
+\begin{figures}
+  \begin{tikzpicture}[>=Stealth]
+
+	\draw[->](0,0) --(2,0);
+
+\end{tikzpicture}
+\end{figures}
 
 
 
