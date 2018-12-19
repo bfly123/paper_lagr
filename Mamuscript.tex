@@ -320,10 +320,11 @@ Step 7 Evaluate $\sigma_{x,L}^*$ and $\sigma_{x,R}^*$,
 \begin{equation}
   \sigma_{x,L}^* = s_{xx,L}^* - p_L^*, \hspace{0.3cm} \sigma_{x,R}^* = s_{xx,R}^*- p_R^*.
 \end{equation}
-\subsection{HLLCEP method}
+\subsection{The constructing details of HLLCEP method}
 Although HLLCE Riemann solver can simulate the elastic-plastic flow effectively and efficiently without iterations, but the plastic structure is not considered in and  there are some assumptions that are not so reasonable, especially in the interface between different materials. For example, the normal stresses $\sigma_x$ are  always equavalent across the interface, but the pressures are not always equal, and the consequent evaluation of $\widetilde{s}^*$ may   be of large error. 
 
-In this paper, the plastic wave is considered in between the left-going(right-going) elastic wave and the contact wave. On one side of the plastic wave, the deviatoric stess $|s_{xx}|<\frac{2}{3}Y_u$ and material is in its elastic phase, and on another side, material yields.   Showed in Fig.  there  are five waves in the result of the Riemann problem, but if the material does not yield in one side, the respective  plastic wave does not exist either. 
+In this paper, the plastic wave is considered in between the left-going(right-going) elastic wave and the contact wave. On one side of the plastic wave, the deviatoric stess $|s_{xx}|<\frac{2}{3}Y_u$ and material is in its elastic phase, and on another side, material yields.   Showed in Fig.  there may be five waves in the result of the Riemann problem, but if the material does not yield in one side, the respective  plastic wave does not exist either.  First we ignor
+
 
 \begin{figure}
   \centering
@@ -552,7 +553,131 @@ The Cauchy stresses  are solved by Eq.(\ref{eq:sigmastar}),
 \end{equation}
 So we can get the pressure by $p =s_{xxL}-\sigma$.
 
-\subsubsection{Summary of HLLCEP}
+\subsection{Summary of HLLCEP}
+Here, we present all the procedures of HLLCEP.
+
+Step 1  Estimate $s^*$
+\begin{equation*}
+  s^* = \frac{\sigma_L-\sigma_R+\rho_L u_L(s_L-u_L)-\rho_R u_R(s_R-u_R)}{\rho_L(s_L-u_L)-\rho_R(s_R-u_R)}.
+\end{equation*}
+
+Step 2  Estimate $\rho_L^*$ and $\rho_R^*$
+\begin{equation*}
+  \rho_L^* = \frac{\rho_L(u_L-s_L)}{s^*-s_L}, \hspace{0.3cm}  \rho_R^* = \frac{\rho_R(u_R-s_R)}{s^*-s_R}.
+\end{equation*}
+
+Step 3   Estimate the deviatoric stress
+\begin{equation*}
+  s_{xxL}^*=-\frac{4}{3}\mu\text{ln}(\frac{\rho_L^*}{\rho_L})+s_{xxL},\hspace{0.2cm}  s_{xxR}^*=-\frac{4}{3}\mu\text{ln}(\frac{\rho_R^*}{\rho_R})+s_{xxR}.
+\end{equation*}
+
+Step 4 Solving the state behind the left  plastic wave
+
+\vspace{0.3cm} \hspace{0.4cm}  If $|s_{xxL}| < \frac{2}{3}Y_0 \le |s_{xxL}^*| $, left plastic wave exists, the deviatoric stress, density and pressure  are given as
+\begin{equation*}
+  \widetilde{s}_{xxL} =\left\{ \begin{aligned}
+	  -\frac{2}{3}Y_0, \hspace{0.3cm} \text{if} \hspace{0.3cm} \rho_L^* > \rho_L,\\
+	  \frac{2}{3}Y_0, \hspace{0.3cm} \text{if} \hspace{0.3cm} \rho_L^* < \rho_L,\\
+	\end{aligned}\right.
+	\hspace{0.2cm} \widetilde{\rho}_{L} = \left\{ \begin{aligned}
+	  & \rho_L \text{exp}\left(\frac{Y_0}{2\mu}+\frac{3 s_{xxL}}{4\mu}\right)  \hspace{0.5cm} \text{if} \hspace{0.3cm} \rho_L^* > \rho_L,\\ 
+& \rho_L \text{exp}\left(-\frac{Y_0}{2\mu}+\frac{3 s_{xxL}}{4\mu}\right) 
+\hspace{0.3cm} \text{if} \hspace{0.3cm} \rho_L^* < \rho_L,\\ 
+  \end{aligned}\right.
+ \end{equation*}
+\begin{equation*}
+  \widetilde{p}_L= \frac{2t(c_1f(\widetilde{\rho}_L)+e_L)-(\sigma_L+\widetilde{s}_{xxL})}{2tc_0-1}, \hspace{0.3cm} 
+t=\frac{\rho_L \widetilde{\rho}_L}{\widetilde{\rho}_L-\rho_L},
+\end{equation*}
+and the Cauchy stress and velocity are
+\begin{equation*}
+\widetilde{\sigma}_L = -\widetilde{p}_L+\widetilde{s}_{xxL},
+\end{equation*}
+\begin{equation*}
+  \widetilde{u}_L= \left\{
+  \begin{aligned}
+	u_L-\sqrt{\frac{\sigma_L-\widetilde{\sigma}_L}{t}} \hspace{0.2cm} \text{if} \hspace{0.2cm} \rho_L^* >\rho_L,\\
+	u_L+\sqrt{\frac{\sigma_L-\widetilde{\sigma}_L}{t}} \hspace{0.2cm} \text{if} \hspace{0.2cm} \rho_L^* <\rho_L.\\
+\end{aligned} \right.
+\end{equation*}
+If left plactic wave does not exist,
+\begin{equation*}
+  \widetilde{\bm{Q}}_L = \bm{Q}_L.
+\end{equation*}
+
+Step 5 Solving the state behind the right plastic wave
+
+\vspace{0.3cm} \hspace{0.4cm}  If $|s_{xxR}| < \frac{2}{3}Y_0 \le |s_{xxR}^*| $, right plastic wave exists, the deviatoric stress, density and pressure  are given as
+\begin{equation*}
+  \widetilde{s}_{xxR} =\left\{ \begin{aligned}
+	  -\frac{2}{3}Y_0, \hspace{0.3cm} \text{if} \hspace{0.3cm} \rho_R^* > \rho_R,\\
+	  \frac{2}{3}Y_0, \hspace{0.3cm} \text{if} \hspace{0.3cm} \rho_R^* < \rho_R,\\
+	\end{aligned}\right.
+	\hspace{0.2cm} \widetilde{\rho}_{R} = \left\{ \begin{aligned}
+	  & \rho_R \text{exp}\left(\frac{Y_0}{2\mu}+\frac{3 s_{xxR}}{4\mu}\right)  \hspace{0.5cm} \text{if} \hspace{0.3cm} \rho_R^* > \rho_R,\\ 
+& \rho_R \text{exp}\left(-\frac{Y_0}{2\mu}+\frac{3 s_{xxR}}{4\mu}\right) 
+\hspace{0.3cm} \text{if} \hspace{0.3cm} \rho_R^* < \rho_R,\\ 
+  \end{aligned}\right.
+ \end{equation*}
+\begin{equation*}
+  \widetilde{p}_R= \frac{2t(c_1f(\widetilde{\rho}_R)+e_R)-(\sigma_R+\widetilde{s}_{xxR})}{2tc_0-1}, \hspace{0.3cm} 
+t=\frac{\rho_R \widetilde{\rho}_R}{\widetilde{\rho}_R-\rho_R},
+\end{equation*}
+and the Cauchy stress and velocity are
+\begin{equation*}
+\widetilde{\sigma}_R = -\widetilde{p}_R+\widetilde{s}_{xxR},
+\end{equation*}
+\begin{equation*}
+  \widetilde{u}_R= \left\{
+  \begin{aligned}
+	u_R+\sqrt{\frac{\sigma_R-\widetilde{\sigma}_R}{t}} \hspace{0.2cm} \text{if} \hspace{0.2cm} \rho_R^* >\rho_R,\\
+	u_R-\sqrt{\frac{\sigma_R-\widetilde{\sigma}_R}{t}} \hspace{0.2cm} \text{if} \hspace{0.2cm} \rho_R^* <\rho_R.\\
+\end{aligned} \right.
+\end{equation*}
+If right  plactic wave does not exist,
+\begin{equation*}
+  \widetilde{\bm{Q}}_R = \bm{Q}_R.
+\end{equation*}
+
+Step 6  Solving the wave speeds,
+\begin{equation*}
+  s_L = \text{min} (\widetilde{u}_L-\widetilde{c}_L, \widetilde{u}_R-\widetilde{c}_R), \hspace{0.3cm} s_R = \text{max}(\widetilde{u}_L+\widetilde{c}_L, \widetilde{u}_R+\widetilde{c}_R),
+	\end{equation*}
+	\begin{equation*}
+	  s^* = \frac{\widetilde{\sigma}_L-\widetilde{\sigma}_R+\widetilde{\rho}_L \widetilde{u}_L(s_L-\widetilde{u}_L)-\widetilde{\rho}_R \widetilde{u}_R(s_R-\widetilde{u}_R)}{\widetilde{\rho}_L(s_L-\widetilde{u}_L)-\widetilde{\rho}_R(s_R-\widetilde{u}_R)}.
+\end{equation*}
+
+Step 7  Solving the densities,
+\begin{equation*}
+  \rho_L^* = \frac{\widetilde{\rho}_L(\widetilde{u}_L-s_L)}{s^*-s_L}, \hspace{0.3cm}  \rho_R^* = \frac{\widetilde{\rho}_R(\widetilde{u}_R-s_R)}{s^*-s_R},
+\end{equation*}
+
+Step 8 Solving the deviatoric stresses,
+ \begin{align*}
+  \hat{s}_{xxL}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_L^*}{\rho_L}  \right)+s_{xxL},\\
+  \hat{s}_{xxR}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_R^*}{\rho_R}  \right)+s_{xxR},\\
+\end{align*}
+then using  the von Mises' yielding condition,
+\begin{equation*}
+  s_{xxL}^* = \Upsilon(\hat{s}_{xxL}^*) , \hspace{0.3cm}  s_{xxR}^* = \Upsilon(\hat{s}_{xxR}^*).
+\end{equation*}
+
+Step 9  Solving the Cauchy stresses,
+\begin{equation*}
+  \sigma_L^*=\sigma_R^*=\widetilde{\sigma}_L -\widetilde{\rho_L} (s_L-\widetilde{u}_L)(s^*-\widetilde{u}_L).
+\end{equation*}
+ Then we can get the pressure by $p =s_{xxL}-\sigma$.
+
+ \section{ A High-order cell-centered Lagrangian scheme for 1D  conservative hydrodynamic equations with Wilkins' model}
+ 
+
+
+
+
+
+
+
+
 
 
 %
