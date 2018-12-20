@@ -126,7 +126,7 @@ Using Eq.(\ref{eq:vare}), Eq.(\ref{eq:sxx1}) can be rewritten as
   \frac{\partial s_{xx}}{\partial t} + u \frac{\partial s_{xx}}{\partial t} =\frac{4}{3}\mu \frac{\partial u}{\partial x}.
 \end{equation}
 
-The VOn Mises' yileding condition is used here to describe the elastic limit. In one spatial dimension, the von Mises' yielding criterion is given by
+The Von Mises' yileding condition is used here to describe the elastic limit. In one spatial dimension, the von Mises' yielding criterion is given by
 \begin{equation}
   |s_{xx}| \le \frac{2}{3}Y_0,
 \end{equation}
@@ -220,6 +220,38 @@ r_4 = \frac{1}{\phi^2}\left[\begin{array}{l}
 	\phi^2 = a^2 -\frac{\rho_0}{\rho^2} \Gamma_0 s_{xx}-c^2 = -\frac{4\mu}{3}\frac{1}{\rho}.
   \end{equation}
 
+
+  \subsection{States between a  contact wave or interface}
+  For an  equations system without molercular diffusion, there is always no materials across the contact wave, so the velocities between the discontinuity is always equal,$u_L^* = u_R^*$. This can also be verified by the eigenvectors (\ref{eq:eiv}), for $\lambda_1$-wave, 
+  \begin{equation}
+	\frac{d\rho}{\frac{1}{b_1}} = \frac{d\rho u}{\frac{u}{b_1}},
+  \end{equation}
+  a relation of velocities can be easily deduced,
+  \begin{equation}
+	du =0,
+  \end{equation}
+
+ For $\lambda_2$-wave,
+ \begin{equation}
+   \frac{d\rho}{\frac{-\Gamma}{b_1}} = \frac{d(\rho u)}{\frac{-u\Gamma}{b_1}},
+\end{equation}
+we also can deduce that
+  \begin{equation}
+	du =0.
+  \end{equation}
+Using  the Rankine-Hugoniot relations between the contact wave  or  the interface
+\begin{equation}
+	\bm{F}_R^* = \bm{F}_L^*+s^*(\bm{U}_R^*-\bm{U}_L^*),
+\end{equation}
+we can get 
+\begin{align}
+  &\rho_R^* u_R^*=\rho_L^* u_L^*+s^*(\rho_R^*-\rho_L^*),\\
+  &\rho_R^* s^{*2}-\sigma^*_R=\rho_L^* u_L^{*2}-\sigma_L^*+s^*(\rho_R^* u_R^*-\rho_L^* u_L^*).
+\end{align}
+take $u_L^* = u_R^*$ in, we can get 
+\begin{equation}
+  s^* = u_L^* = u_R^*, \hspace{0.3cm} \sigma_L^* = \sigma_R^*.
+\end{equation}
 
   \subsection{ A  brief  introduction of HLLCE method \cite{}}
 
@@ -323,32 +355,112 @@ Step 7 Evaluate $\sigma_{x,L}^*$ and $\sigma_{x,R}^*$,
 \subsection{The constructing details of HLLCEP method}
 Although HLLCE Riemann solver can simulate the elastic-plastic flow effectively and efficiently without iterations, but the plastic structure is not considered in and  there are some assumptions that are not so reasonable, especially in the interface between different materials. For example, the normal stresses $\sigma_x$ are  always equavalent across the interface, but the pressures are not always equal, and the consequent evaluation of $\widetilde{s}^*$ may   be of large error. 
 
-In this paper, the plastic wave is considered in between the left-going(right-going) elastic wave and the contact wave. On one side of the plastic wave, the deviatoric stess $|s_{xx}|<\frac{2}{3}Y_u$ and material is in its elastic phase, and on another side, material yields.   Showed in Fig.  there may be five waves in the result of the Riemann problem, but if the material does not yield in one side, the respective  plastic wave does not exist either.  First we ignor
+In this paper, the plastic wave is considered in between the left-going(right-going) elastic wave and the contact wave. On one side of the plastic wave, the deviatoric stess $|s_{xx}|<\frac{2}{3}Y_u$ and material is in its elastic phase, and on another side, material yields.   Showed in Fig.  there may be three  to five waves in the result of the Riemann problem, that  depends on the  yielding state  on the left side and right side.  
+
+\subsubsection{Solving the Riemiann problem with only plastic waves}
+At first we do not know the yielding states, so assume that there is no plastic wave in, we consider structures of Case.1 in Fig.1. If the result contains yielding process, we will turn the case to one in  Case.2-4  in Fig.1.
+
+According to the Rankine-Hugoniot conditions between left elastic wave,
+\begin{equation} \label{eq:RH1}
+	\bm{F}_L^* = \bm{F}_L+s_L (\bm{U}_L^*-\bm{U}_L),
+\end{equation}
+we can  get 
+\begin{equation} \label{eq:rhoLstar}
+  \rho_L^* u^*=\rho_L u_L+s_L(\rho_L^*-\rho_L),
+\end{equation}
+and
+\begin{equation}
+  \rho_L^* s^{*2}-\sigma^*_L=\rho_L u_L^2-\sigma_L+s_L(\rho_L^* s^*-\rho_L u_L).
+\end{equation}
+The Cauchy stress can be  estimated as 
+\begin{equation}\label{eq:sigmastar}
+  \sigma^*_L=\sigma_L + (s_L-u_L)\rho_L u_L +\rho_L^* s^*(s^*-s_L).
+\end{equation}
+
+According to the Rankine-Hugoniot conditions in Eq.(\ref{eq:RH2}). Across the contact wave the Cauchy stresses are equavalent. The speed $s^*$  can be  estimated  as
+\begin{equation}\label{eq:eva_s}
+  s^* = \frac{\sigma_L-\sigma_R+\rho_L u_L(s_L-u_L)-\rho_R u_R(s_R-u_R)}{\rho_L(s_L-u_L)-\rho_R(s_R-u_R)},
+\end{equation}
+where $s_L$ and $s_R$ are given in the same strategy to Eq.(\ref{eq:sLR}). By Eq.(\ref{eq:rhoLstar}),  we can estimate  the density as
+\begin{equation}\label{eq:rhoLs}
+  \rho_L^* = \frac{\rho_L(u_L-s_L)}{s^*-s_L}.
+\end{equation}
 
 
+%
+%\begin{figure}
+%  \centering
+%  \begin{tikzpicture}
+%	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
+%	\draw [line width =1pt] (-4,0) -- (0,0);
+%	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$} ;
+%	\draw (0,0) node [below]{$O$} -- ([turn]-120:3.5) node [above]{Left going};
+%	\draw [double] (0,0) -- ([turn]165:3.5)   node [above]{Contact};
+%	\draw (0,0) -- ([turn]120:3.5)  node [above]{Right going};
+%	\node at (-1.5,0.4) {$\bm{Q}_L$};
+%	\node at (-1.0,1.4) {$\bm{Q}_L^*$};
+%	\node at (1.0,1.4) {$\bm{Q}_R^*$};
+%	\node at (1.5,0.4) {$\bm{Q}_R$};
+%%	\draw [dashed] (0,0) -- ([turn]135:3.5) node [above]{Right plastic};
+%%	\draw [dashed] (0,0) -- ([turn]-135:3.5) node [above]{Left plastic} ;
+%	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
+%\end{tikzpicture}
+%\caption{额鹅鹅鹅}
+%\end{figure}
+%
 \begin{figure}
-  \centering
+  %\centering
   \begin{tikzpicture}
 	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
 	\draw [line width =1pt] (-4,0) -- (0,0);
-	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$} ;
-	\draw (0,0) node [below]{$O$} -- ([turn]-120:3.5) node [above]{Left going};
-	\draw [double] (0,0) -- ([turn]165:3.5)   node [above]{Contact};
-	\draw (0,0) -- ([turn]120:3.5)  node [above]{Right going};
-	\node at (-1.5,0.4) {$\bm{Q}_L$};
-	\node at (-1.0,1.4) {$\bm{Q}_L^*$};
-	\node at (1.0,1.4) {$\bm{Q}_R^*$};
-	\node at (1.5,0.4) {$\bm{Q}_R$};
-%	\draw [dashed] (0,0) -- ([turn]135:3.5) node [above]{Right plastic};
-%	\draw [dashed] (0,0) -- ([turn]-135:3.5) node [above]{Left plastic} ;
+	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
+	%\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
+	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
+	%\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
+	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
+	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
+	\node at (-1.3,0.5) {$\bm{Q}_L$};
+	%\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
+	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
+	\node at (0.7,1.2) {$\bm{Q}_R^*$};
+	%\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
+	\node at (1.3,0.5) {$\bm{Q}_R$};
 	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
 \end{tikzpicture}
-\caption{额鹅鹅鹅}
-\end{figure}
-
-\begin{figure}
-  \centering
   \begin{tikzpicture}
+	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
+	\draw [line width =1pt] (-4,0) -- (0,0);
+	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
+	%\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
+	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
+	\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
+	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
+	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left going} ;
+	\node at (-1.3,0.5) {$\bm{Q}_L$};
+	%\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
+	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
+	\node at (0.7,1.2) {$\bm{Q}_R^*$};
+	\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
+	\node at (1.5,0.28) {$\bm{Q}_R$};
+	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
+\end{tikzpicture}
+\begin{tikzpicture}
+	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
+	\draw [line width =1pt] (-4,0) -- (0,0);
+	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
+	\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
+	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
+	%\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
+	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
+	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
+	\node at (-1.5,0.3) {$\bm{Q}_L$};
+	\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
+	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
+	\node at (0.7,1.2) {$\bm{Q}_R^*$};
+	\node at (1.3,0.5) {$\bm{Q}_R$};
+	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
+\end{tikzpicture}
+\begin{tikzpicture}
 	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
 	\draw [line width =1pt] (-4,0) -- (0,0);
 	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
@@ -425,29 +537,6 @@ If $|s_{xxL}|<\frac{2}{3}Y_0$ and  $|s_{xxL}^*| \ge  \frac{2}{3}Y_0$ there is yi
 
 \subsubsection{ Pre-estimation of  $\rho_L^*$ and  $\rho_R^*$ }
 To verify the plastic wave,  we need is to estimate the densities $\rho_L^*$ and $\rho_R^*$. We can pre-estimate them by ignoring the influence of the plastic waves by assuming $\widetilde{\bm{Q}}_L = \bm{Q}_L$ and $\widetilde{\bm{Q}}_R = \bm{Q}_R$. Notice that, the estimated densities is only used  to verify  the yielding process, but not a final result.
-
-According to the Rankine-Hugoniot conditions in Eq.(\ref{eq:RH1}) we have
-\begin{equation} \label{eq:rhoLstar}
-  \rho_L^* s^*=\rho_L u_L+s_L(\rho_L^*-\rho_L),
-\end{equation}
-and
-\begin{equation}
-  \rho_L^* s^{*2}-\sigma^*_L=\rho_L u_L^2-\sigma_L+s_L(\rho_L^* s^*-\rho_L u_L).
-\end{equation}
-The Cauchy stress can be  estimated as 
-\begin{equation}\label{eq:sigmastar}
-  \sigma^*_L=\sigma_L + (s_L-u_L)\rho_L u_L +\rho_L^* s^*(s^*-s_L).
-\end{equation}
-
-According to the Rankine-Hugoniot conditions in Eq.(\ref{eq:RH2}). Across the contact wave the Cauchy stresses are equavalent. The speed $s^*$  can be  estimated  as
-\begin{equation}\label{eq:eva_s}
-  s^* = \frac{\sigma_L-\sigma_R+\rho_L u_L(s_L-u_L)-\rho_R u_R(s_R-u_R)}{\rho_L(s_L-u_L)-\rho_R(s_R-u_R)},
-\end{equation}
-where $s_L$ and $s_R$ are given in the same strategy to Eq.(\ref{eq:sLR}). By Eq.(\ref{eq:rhoLstar}),  we can estimate  the density as
-\begin{equation}\label{eq:rhoLs}
-  \rho_L^* = \frac{\rho_L(u_L-s_L)}{s^*-s_L}.
-\end{equation}
-
 
 \subsubsection{States of $\widetilde{Q}_L$ and $\widetilde{Q}_R$}
 If  there is not  exist a  plastic wave in the left side, $\widetilde{\bm{Q}}_L = \bm{Q}_L$.  Or we need to solve the state behind the plastic wave of $\widetilde{\bm{Q}}_L$.  According to Rankine-Hugoniot relation we can get 
