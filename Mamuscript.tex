@@ -274,114 +274,13 @@ Take an integration,
   s_{xx1}=-\frac{4}{3}\mu\text{ln}(\frac{\rho_{1}}{\rho_{0}})+s_{xx0}.
 \end{equation}
 This relation always hold if there is no yielding in the integration path. 
-
-
-  \subsection{ A  brief  introduction of HLLCE method \cite{}}
-
-  The structure of the solution considered in Ref.(\cite{}) to the Riemann problem (\ref{eq:1d}) in the $xt$-plane  is dipicted in Fig.1. There are three elastic  waves as contact wave, left-going wave and  right-going  wave  corresponding to the eigenvalues $u$, $u-c$ and $u+c$, respectively. These three waves seprate four  states. The states  form left to right, are  $\bm{W}_L$, $\bm{W}_L^*$, $\bm{W}_R^* $ and $\bm{W}_R$ as marked in Fig.1.
-
-  Across the contact wave, some assumptions are given in Ref.(\cite{}) according to the relations in eiginvectors (\ref{eq:eiv}), 
-  \begin{equation}
-	u_L^* = u_R^*, \hspace{0.3cm} p_L^* = p_R^*, \hspace{0.3cm} s_{xx,L}^* = s_{xx,R}^*.
-  \end{equation}
-
-  The HLLCE is given as follows:
-  \begin{equation}\label{eq:HLLCE}
-	\bm{U}^{\text{HLLCE}}(x,t) = \left\{ \begin{aligned}
-		& \bm{U}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\le s_L, \\
-		& \bm{U}_L^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s_L\le \frac{x}{t} \le s^*, \\
-		& \bm{U}_R^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s^*\le \frac{x}{t} \le s_R,\\
-		& \bm{U}_R, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\ge s_R, \\
-	  \end{aligned}
-	\right.
-  \end{equation}
-  where the states of $U_L$ and $U_R$ are known as the initial conditon of the Riemann problem (\ref{eq:1d}) and the states $U_L^*$ and $U_R^*$ in the regions of $Q_L^*$ and $W_R^*$ need to be solved out, respectively.
-
-A HLLCE numerical flux in the Eulerian framework is 
-  \begin{equation}
-	\bm{F}^{\text{Euler}}(x,t) = \left\{ \begin{aligned}
-		& \bm{F}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\le s_L, \\
-		& \bm{F}_L^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s_L\le \frac{x}{t} \le s^*, \\
-		& \bm{F}_R^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s^*\le \frac{x}{t} \le s_R,\\
-		& \bm{F}_R, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\ge s_R, \\
-	  \end{aligned}
-	\right.
-  \end{equation}
-   and the corresonding HLLCE numerical flux in the Lagrangian framework is defined as
-\begin{equation}
-	\bm{F}^{\text{Lag}}(x,t) = \left\{ \begin{aligned}
-		& \bm{f}_L^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s_*\ge \frac{x}{t},\\
-		& \bm{f}_R^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s^*\le \frac{x}{t}\\
-	  \end{aligned}
-	\right.
-  \end{equation}
-  where $\bm{f}(\bm{U}) = (0, -\sigma_x, -\sigma_x u)^T$.
-
-  Applying Rankine-Hugoniot conditions across the waves  with the speed of $s_L$, $s^*$ and $s_R$, one can  get 
-	\begin{align}
-	  &\bm{F}_L^* = \bm{F}_L+s_L (\bm{U}_L^*-\bm{U}_L),\\ \label{eq:RH1}
-	&\bm{F}_R^* = \bm{F}_L^*+s^*(\bm{U}_R^*-\bm{U}_L^*),\\
-	&\bm{F}_R^* = \bm{F}_R+s_R(\bm{U}_R^*-\bm{U}_R).\\
-  \end{align}
-
-  The normal velocity and the normal stress  are unchanged across the contact wave,
-	\begin{align}
-	  & u_L^* = u_R^* =s^*,\\
-	  & \sigma_{x,L}^* = \sigma_{x,R}^* .\\
-	\end{align}
-
-	Using the same strategy with HLL and HLLC. The left and right wave speeds $s_L$ and $s_R$ are estimated as
-	\begin{equation}\label{eq:sLR}
-	  s_L = \text{min} (u_L-c_L, u_R-c_R), \hspace{0.3cm} s_R = \text{max}(u_L+c_L, u_R+c_R).
-	\end{equation}
-
-	Combining all those equations (\ref{eq:RH1}-\ref{eq:sLR}), and using the assumptions in Eq.(\ref{eq:eiv}), we can get the process of HLLCE as follows.
-
-	  Step 1 Evaluate  $\widetilde{s}^*$
-\begin{equation}
-  \widetilde{s}^* = \frac{s_{xx,R}- s_{xx,L}}{\rho_L(s_L-u_L)-\rho_R(s_R-u_R)}.
-\end{equation}
-
-Step 2 Evaluate $s_{xx,L}$ and $s_{xx,R}$,
-\begin{align}
-\widetilde{s}_{xx,L}^* = s_{xx,L} + \rho_L(s_L-u_L) \widetilde{s}^*,\\
-\widetilde{s}_{xx,R}^* = s_{xx,R} + \rho_R(s_R-u_R) \widetilde{s}^*.\\
-\end{align}
-
-Step 3 Use the von Mises' yielding condition to modify $\widetilde{s}_{xx,L}^*$ and $\widetilde{s}_{xx,R}^*$,
-\begin{equation}
-  s_{xx,L}^* = \Upsilon(\widetilde{s}_{xx,L}), \hspace{0.3cm}s_{xx,R}^* = \Upsilon(\widetilde{s}_{xx,R}), 
-\end{equation}
-
-Step 4 Evaluate $s_L^*$ and $s_R^*$,
-\begin{equation}
-  s_L^* = \frac{s_{xx,L}^*-s_{xx,L}}{\rho_L(s_L-u_L)}, \hspace{0.3cm}  s_R^* = \frac{s_{xx,R}^*-s_{xx,R}}{\rho_R(s_R-u_R)}.
-\end{equation}
-
-Step 5 Evaluate $s^*$,
-\begin{equation}
-  s^* = \frac{p_R-p_L+\rho_L(u_L-s_L^*)(s_L-u_L)-\rho_R(u_R-s_{xR}^*)(s_R-u_R)}{\rho_L(s_L-u_L)-\rho_R(s_R-u_R)}.
-\end{equation}
-
-Step 6 Evaluate $p_L^*$ and $p_R^*$,
-\begin{equation}
-  \begin{aligned}
-	p_L^* = p_L + \rho_L(s_L-u_L)(s^*+s_L^*-u_L),\\
-	p_R^* = p_R +\rho_R(s_R-u_R)(s^*+s_{R}^*-u_R).\\
-  \end{aligned}
-\end{equation}
-
-Step 7 Evaluate $\sigma_{x,L}^*$ and $\sigma_{x,R}^*$,
-\begin{equation}
-  \sigma_{x,L}^* = s_{xx,L}^* - p_L^*, \hspace{0.3cm} \sigma_{x,R}^* = s_{xx,R}^*- p_R^*.
-\end{equation}
 \subsection{The constructing details of HLLCEP method}
 Although HLLCE Riemann solver can simulate the elastic-plastic flow effectively and efficiently without iterations, but the plastic structure is not considered in and  there are some assumptions that are not so reasonable, especially in the interface between different materials. For example, the normal stresses $\sigma_x$ are  always equavalent across the interface, but the pressures are not always equal, and the consequent evaluation of $\widetilde{s}^*$ may   be of large error. 
 
 In this paper, the plastic wave is considered in between the left-going(right-going) elastic wave and the contact wave. On one side of the plastic wave, the deviatoric stess $|s_{xx}|<\frac{2}{3}Y_u$ and material is in its elastic phase, and on another side, material yields.   Showed in Fig.\ref{fig:case1}-Fig.\ref{fig:case4},  there may be three  to five waves in the result of the Riemann problem, that  depends on the  yielding state  on the left side and right side.  
 
-\subsubsection{Solving the Riemann problem without  plastic waves}\label{sec:case1}
-At first we do not know the yielding states, so assume that there is no plastic wave in  and the material is totally yielding or totally not yielding, we consider structures of Fig.\ref{fig:case1}. If the result contains yielding process, we will turn the case into one in Fig.2-4.
+\subsubsection{Case 1: solving the Riemann problem without  plastic waves}\label{sec:case1}
+At first we do not know the yielding states, so assume that there is no plastic wave in  and the material is totally yielding or totally not yielding, we consider structures of Fig.\ref{fig:case1}. If the result contains yielding process, we will turn the case into one in Fig.\ref{fig:case2}-\ref{fig:case4}.
 %
 In this case, the HLLCE is given as follows,
 \begin{equation}\label{eq:HLLCEP}
@@ -430,7 +329,8 @@ In this case, the HLLCE is given as follows,
 	\node at (1.3,0.5) {$\bm{Q}_R$};
 	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
 \end{tikzpicture}
-\caption{The  structures of HLLCEP method, case 1: without plastic wave}
+\caption{The  structures of HLLCEP method, case 1: without plastic wave.}
+\label{fig:case1}
 \end{figure}
 According to the Rankine-Hugoniot conditions between left elastic wave,
 \begin{equation} \label{eq:RH1}
@@ -486,10 +386,13 @@ where,
 \begin{equation*}
   \sigma_L^*=\sigma_R^*=\sigma_L -\rho_L (s_L-u_L)(s^*-u_L).
 \end{equation*}
- Then we can get the pressure by $p =s_{xxL}-\sigma$.
+ Then we can get the pressure by $p =s_{xx}-\sigma$.
+\begin{equation}
+  p_L^* = s_{xxL}^* - \sigma_L^*, \hspace{0.3cm}   p_R^* = s_{xxR}^* - \sigma_R^*.
+\end{equation}
 
- \subsubsection{ With only the left plastic wave}
- If $|s_{xxL}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxL}^*|$, there exists a plastic wave in the left as showed in Fig.\ref{fig:case2}. We need to solve the state  of $\widetilde{\bm{Q}}_L$ at first. The HLLCE is given as follows in this case,
+ \subsubsection{Case 2:  with only the left plastic wave}\label{sec:case2}
+ If $|s_{xxL}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxL}^*|$, there exists a plastic wave in the left as showed in Fig.\ref{fig:case2}. We need to solve the state  of $\widetilde{\bm{Q}}_L$ at first. The HLLCEP is given as follows in this case,
  \begin{equation}\label{eq:HLLCEP2}
    \bm{U}^{\text{HLLCEP}}_{\text{Case2}}(x,t) = \left\{ \begin{aligned}
 	   & \bm{U}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\le \widetilde{s}_L, \\
@@ -648,7 +551,7 @@ and the pressures are
   p_L^* = s_{xxL}^* - \sigma_L^*, \hspace{0.3cm}   p_R^* = s_{xxR}^* - \sigma_R^*.
 \end{equation}
 
-\subsubsection {With only the  right plastic wave}
+\subsubsection {Case 3: with only the  right plastic wave}\label{sec:case3}
 If  $|s_{xxR}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxR}^*|$, there exists a plastic wave in the right as showed in Fig.\ref{fig:case3}. We need to solve the state  of $\widetilde{\bm{Q}}_R$ at first. The HLLCEP is given in this case as,
 
  \begin{equation}\label{eq:HLLCEP3}
@@ -730,6 +633,7 @@ The Cauchy stress and velocity are
 	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
 \end{tikzpicture}
 \caption{The  structures of HLLCEP method, case 3: with only  the right  plastic wave.}
+\label{fig:case3}
 \end{figure}
 
 After solving the state of $\widetilde{\bm{Q}}_R$, we can solve the states of $\bm{Q}_L^*$ and  $\bm{Q}_R^*$.
@@ -764,10 +668,67 @@ and the pressures are
 
 
 
-\subsubsection{With both the left and right plastic waves}
-Case.(1) in Fig.\ref{fig:structure}, we have get the state in 
-Now we have the states of $\widetilde{\bm{Q}}_L$ and  $\widetilde{\bm{Q}}_R$. Then we can solve the states of   $\bm{Q}_L^*$ and $\bm{Q}_R^*$ easily. 
-First we need to pre-estimate the wave speed of $s_L$, $s_R$ and $s^*$ with a same strategy of Eq.(\ref{eq:sLR}) and Eq.(\ref{eq:eva_s}),
+\subsubsection{Case4: with both the left and right plastic waves}
+
+If $|s_{xxL}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxL}^*|$ and  $|s_{xxR}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxR}^*|$. Both  the left side  and right side exist plastic waves, as showed in Fig.\ref{fig:case4}. The HLLCEP Riemann solver is given as
+ \begin{equation}
+   \bm{U}^{\text{HLLCEP}}_{\text{Case4}}(x,t) = \left\{ \begin{aligned}
+		& \bm{U}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\le s_L, \\
+		& \bm{U}_L^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s_L\le \frac{x}{t} \le \widetilde{s}_L, \\
+		& \widetilde{\bm{U}}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \widetilde{s}_L\le \frac{x}{t} \le s^*, \\
+		& \widetilde{\bm{U}}_R, \hspace{0.3cm} \text{if} \hspace{0.3cm} s^*\le \frac{x}{t} \le \widetilde{s}_R, \\
+		& \bm{U}_R^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} \widetilde{s}_R\le \frac{x}{t} \le s_R,\\
+		& \bm{U}_R, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\ge s_R, \\
+	  \end{aligned}
+	\right.
+  \end{equation}
+  and the corresonding Eulerian and Lagrangian numerical flux are 
+ \begin{equation}\label{eq:HLLCEP}
+   \bm{F}^{\text{Euler}}_{\text{Case4}}(x,t) = \left\{ \begin{aligned}
+		& \bm{F}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\le s_L, \\
+		& \bm{F}_L^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} \widetilde{s}_L\le \frac{x}{t} \le s_L, \\
+		& \widetilde{\bm{F}}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} s_L\le \frac{x}{t} \le s^*, \\
+		& \widetilde{\bm{F}}_R, \hspace{0.3cm} \text{if} \hspace{0.3cm} s^*\le \frac{x}{t} \le s_R, \\
+		& \bm{F}_R^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s_R\le \frac{x}{t} \le\widetilde{ s}_R,\\
+		& \bm{F}_R, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\ge s_R, \\
+	  \end{aligned}
+	\right.
+  \end{equation}
+
+\begin{equation}
+\bm{F}^{\text{Lag}}_{\text{Case4}}(x,t) = \left\{ \begin{aligned}
+		& \widetilde{\bm{f}}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} s_*\ge \frac{x}{t},\\
+		& \widetilde{\bm{f}}_R, \hspace{0.3cm} \text{if} \hspace{0.3cm} s^*\le \frac{x}{t}.\\
+	  \end{aligned}
+	\right.
+  \end{equation}
+
+\begin{figure}
+  \centering
+\begin{tikzpicture}
+	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
+	\draw [line width =1pt] (-4,0) -- (0,0);
+	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
+	\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
+	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
+	\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
+	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
+	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
+	\node at (-1.5,0.3) {$\bm{Q}_L$};
+	\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
+	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
+	\node at (0.7,1.2) {$\bm{Q}_R^*$};
+	\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
+	\node at (1.5,0.28) {$\bm{Q}_R$};
+	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
+\end{tikzpicture}
+\caption{The  structures of HLLCEP method, case 4: with both left and right plastic waves.}
+\label{fig:case4}
+\end{figure}
+
+The states of $\widetilde{\bm{Q}}_L$ and   $\widetilde{\bm{Q}}_R$ can be solved by the same process with Section \ref{sec:case2} and Section \ref{sec:case3}. Then the states of $\bm{Q}^*_L$ and $\bm{Q}^*_R$ are given as following.
+
+The speed of waves are evaluted as
 \begin{equation}
   s_L = \text{min} (\widetilde{u}_L-\widetilde{c}_L, \widetilde{u}_R-\widetilde{c}_R), \hspace{0.3cm} s_R = \text{max}(\widetilde{u}_L+\widetilde{c}_L, \widetilde{u}_R+\widetilde{c}_R),
 	\end{equation}
@@ -780,162 +741,44 @@ Then we can get the density using Eq.(\ref{eq:rhoLs}),
 \end{equation}
 and the deviatoric stress using Eq.(\ref{eq:sxxrho}),
   \begin{align}
-  \hat{s}_{xxL}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_L^*}{\rho_L}  \right)+s_{xxL},\\
-  \hat{s}_{xxR}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_R^*}{\rho_R}  \right)+s_{xxR},\\
+  \overline{s}_{xxL}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_L^*}{\rho_L}  \right)+s_{xxL},\\
+  \overline{s}_{xxR}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_R^*}{\rho_R}  \right)+s_{xxR},\\
 \end{align}
 then using  the von Mises' yielding condition,
 \begin{equation}
-  s_{xxL}^* = \Upsilon(\hat{s}_{xxL}^*) , \hspace{0.3cm}  s_{xxR}^* = \Upsilon(\hat{s}_{xxR}^*).
+  s_{xxL}^* = \Upsilon(\overline{s}_{xxL}^*) , \hspace{0.3cm}  s_{xxR}^* = \Upsilon(\overline{s}_{xxR}^*).
 \end{equation}
-The Cauchy stresses  are solved by Eq.(\ref{eq:sigmastar}),
+The Cauchy stresses  are solved as 
 \begin{equation}
   \sigma_L^*=\sigma_R^*=\widetilde{\sigma}_L -\widetilde{\rho_L} (s_L-\widetilde{u}_L)(s^*-\widetilde{u}_L).
 \end{equation}
-So we can get the pressure by $p =s_{xxL}-\sigma$.
-
-
-
-\begin{equation}\label{eq:sigmastar}
-  \sigma^*_L=\sigma_L + (s_L-u_L)\rho_L u_L +\rho_L^* s^*(s^*-s_L).
-\end{equation}
-%
-\begin{figure}
-  %\centering
-  \begin{tikzpicture}
-	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
-	\draw [line width =1pt] (-4,0) -- (0,0);
-	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
-	%\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
-	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
-	%\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
-	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
-	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
-	\node at (-1.3,0.5) {$\bm{Q}_L$};
-	%\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
-	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
-	\node at (0.7,1.2) {$\bm{Q}_R^*$};
-	%\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
-	\node at (1.3,0.5) {$\bm{Q}_R$};
-	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
-\end{tikzpicture}
-  \begin{tikzpicture}
-	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
-	\draw [line width =1pt] (-4,0) -- (0,0);
-	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
-	%\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
-	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
-	\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
-	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
-	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left going} ;
-	\node at (-1.3,0.5) {$\bm{Q}_L$};
-	%\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
-	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
-	\node at (0.7,1.2) {$\bm{Q}_R^*$};
-	\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
-	\node at (1.5,0.28) {$\bm{Q}_R$};
-	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
-\end{tikzpicture}
-\begin{tikzpicture}
-	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
-	\draw [line width =1pt] (-4,0) -- (0,0);
-	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
-	\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
-	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
-	%\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
-	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
-	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
-	\node at (-1.5,0.3) {$\bm{Q}_L$};
-	\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
-	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
-	\node at (0.7,1.2) {$\bm{Q}_R^*$};
-	\node at (1.3,0.5) {$\bm{Q}_R$};
-	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
-\end{tikzpicture}
-\begin{tikzpicture}
-	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
-	\draw [line width =1pt] (-4,0) -- (0,0);
-	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
-	\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
-	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
-	\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
-	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
-	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
-	\node at (-1.5,0.3) {$\bm{Q}_L$};
-	\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
-	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
-	\node at (0.7,1.2) {$\bm{Q}_R^*$};
-	\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
-	\node at (1.5,0.28) {$\bm{Q}_R$};
-	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
-\end{tikzpicture}
-\caption{额鹅鹅鹅}
-\end{figure}
-
-Similar to the HLLCE method in Eq.(\ref{eq:HLLCE}), the HLLCEP method is give as follows,
-  \begin{equation}\label{eq:HLLCEP}
-	\bm{U}^{\text{HLLCEP}}(x,t) = \left\{ \begin{aligned}
-		& \bm{U}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\le s_L, \\
-		& \bm{U}_L^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s_L\le \frac{x}{t} \le \widetilde{s}_L, \\
-		& \widetilde{\bm{U}}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \widetilde{s}_L\le \frac{x}{t} \le s^*, \\
-		& \widetilde{\bm{U}}_R, \hspace{0.3cm} \text{if} \hspace{0.3cm} s^*\le \frac{x}{t} \le \widetilde{s}_R, \\
-		& \bm{U}_R^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} \widetilde{s}_R\le \frac{x}{t} \le s_R,\\
-		& \bm{U}_R, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\ge s_R, \\
-	  \end{aligned}
-	\right.
-  \end{equation}
-  and the corresonding Eulerian and Lagrangian numerical flux are 
- \begin{equation}\label{eq:HLLCEP}
-	\bm{F}^{\text{Euler}}(x,t) = \left\{ \begin{aligned}
-		& \bm{F}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\le s_L, \\
-		& \bm{F}_L^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} s_L\le \frac{x}{t} \le \widetilde{s}_L, \\
-		& \widetilde{\bm{F}}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \widetilde{s}_L\le \frac{x}{t} \le s^*, \\
-		& \widetilde{\bm{F}}_R, \hspace{0.3cm} \text{if} \hspace{0.3cm} s^*\le \frac{x}{t} \le \widetilde{s}_R, \\
-		& \bm{F}_R^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} \widetilde{s}_R\le \frac{x}{t} \le s_R,\\
-		& \bm{F}_R, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\ge s_R, \\
-	  \end{aligned}
-	\right.
-  \end{equation}
-
+So we can get the pressure by $p =s_{xx}-\sigma$,
 \begin{equation}
-	\bm{F}^{\text{Lag}}(x,t) = \left\{ \begin{aligned}
-		& \widetilde{\bm{f}}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} s_*\ge \frac{x}{t},\\
-		& \widetilde{\bm{f}}_R, \hspace{0.3cm} \text{if} \hspace{0.3cm} s^*\le \frac{x}{t}.\\
-	  \end{aligned}
-	\right.
-  \end{equation}
+  p_L^* = s_{xxL}^* - \sigma_L^*, \hspace{0.3cm}   p_R^* = s_{xxR}^* - \sigma_R^*.
+\end{equation}
 
-  \subsubsection{ Verifying the plastic waves}
-  At first, we need to pre-estimate the deviatoric stresses in regions $\bm{Q}_L^*$ and $\bm{Q}_R^*$ to see if there are yielding happened in the left and right. And to  verify the exists of left and right going plastic waves.  
- 
-If $|s_{xxL}|<\frac{2}{3}Y_0$ and  $|s_{xxL}^*| \ge  \frac{2}{3}Y_0$ there is yielding happened and  plastic wave exists in the left side. On the right side we can take a similar  verifying prcoess.
-
-\subsubsection{ Pre-estimation of  $\rho_L^*$ and  $\rho_R^*$ }
-To verify the plastic wave,  we need is to estimate the densities $\rho_L^*$ and $\rho_R^*$. We can pre-estimate them by ignoring the influence of the plastic waves by assuming $\widetilde{\bm{Q}}_L = \bm{Q}_L$ and $\widetilde{\bm{Q}}_R = \bm{Q}_R$. Notice that, the estimated densities is only used  to verify  the yielding process, but not a final result.
-
-\subsubsection{States of $\widetilde{Q}_L$ and $\widetilde{Q}_R$}
-If  there is not  exist a  plastic wave in the left side, $\widetilde{\bm{Q}}_L = \bm{Q}_L$.  Or we need to solve the state behind the plastic wave of $\widetilde{\bm{Q}}_L$.  According to Rankine-Hugoniot relation we can get 
 
 \subsection{Summary of HLLCEP}
-Here, we present all the procedures of HLLCEP.
+Here, we present all the procedures of HLLCEP in  a more simple way.
 
-Step 1  Estimate $s^*$
+Step 1  Evaluate  $\hat{s}^*$
 \begin{equation*}
-  s^* = \frac{\sigma_L-\sigma_R+\rho_L u_L(s_L-u_L)-\rho_R u_R(s_R-u_R)}{\rho_L(s_L-u_L)-\rho_R(s_R-u_R)}.
+  \hat{s}^* = \frac{\sigma_L-\sigma_R+\rho_L u_L(s_L-u_L)-\rho_R u_R(s_R-u_R)}{\rho_L(s_L-u_L)-\rho_R(s_R-u_R)}.
 \end{equation*}
 
-Step 2  Estimate $\rho_L^*$ and $\rho_R^*$
+Step 2  Evaluate  $\hat{\rho}_L^*$ and $\hat{\rho}_R^*$
 \begin{equation*}
-  \rho_L^* = \frac{\rho_L(u_L-s_L)}{s^*-s_L}, \hspace{0.3cm}  \rho_R^* = \frac{\rho_R(u_R-s_R)}{s^*-s_R}.
+  \hat{\rho}_L^* = \frac{\rho_L(u_L-s_L)}{s^*-s_L}, \hspace{0.3cm}  \hat{\rho}_R^* = \frac{\rho_R(u_R-s_R)}{s^*-s_R}.
 \end{equation*}
 
-Step 3   Estimate the deviatoric stress
+Step 3  Evaluate  the deviatoric stress
 \begin{equation*}
-  s_{xxL}^*=-\frac{4}{3}\mu\text{ln}(\frac{\rho_L^*}{\rho_L})+s_{xxL},\hspace{0.2cm}  s_{xxR}^*=-\frac{4}{3}\mu\text{ln}(\frac{\rho_R^*}{\rho_R})+s_{xxR}.
+  \hat{s}_{xxL}^*=-\frac{4}{3}\mu\text{ln}(\frac{\hat{\rho}_L^*}{\rho_L})+s_{xxL},\hspace{0.2cm}  \hat{s}_{xxR}^*=-\frac{4}{3}\mu\text{ln}(\frac{\hat{\rho}_R^*}{\rho_R})+s_{xxR}.
 \end{equation*}
 
-Step 4 Solving the state behind the left  plastic wave
+Step 4 Solve the state behind the left  plastic wave
 
-\vspace{0.3cm} \hspace{0.4cm}  If $|s_{xxL}| < \frac{2}{3}Y_0 \le |s_{xxL}^*| $, left plastic wave exists, the deviatoric stress, density and pressure  are given as
+\vspace{0.3cm} \hspace{0.4cm}  If $|s_{xxL}| < \frac{2}{3}Y_0 \le |\hat{s}_{xxL}^*| $, left plastic wave exists, the deviatoric stress, density and pressure  are given as
 \begin{equation*}
   \widetilde{s}_{xxL} =\left\{ \begin{aligned}
 	  -\frac{2}{3}Y_0, \hspace{0.3cm} \text{if} \hspace{0.3cm} \rho_L^* > \rho_L,\\
@@ -967,9 +810,9 @@ If left plactic wave does not exist,
   \widetilde{\bm{Q}}_L = \bm{Q}_L.
 \end{equation*}
 
-Step 5 Solving the state behind the right plastic wave
+Step 5 Solve the state behind the right plastic wave
 
-\vspace{0.3cm} \hspace{0.4cm}  If $|s_{xxR}| < \frac{2}{3}Y_0 \le |s_{xxR}^*| $, right plastic wave exists, the deviatoric stress, density and pressure  are given as
+\vspace{0.3cm} \hspace{0.4cm}  If $|s_{xxR}| < \frac{2}{3}Y_0 \le |\hat{s}_{xxR}^*| $, right plastic wave exists, the deviatoric stress, density and pressure  are given as
 \begin{equation*}
   \widetilde{s}_{xxR} =\left\{ \begin{aligned}
 	  -\frac{2}{3}Y_0, \hspace{0.3cm} \text{if} \hspace{0.3cm} \rho_R^* > \rho_R,\\
@@ -1001,7 +844,7 @@ If right  plactic wave does not exist,
   \widetilde{\bm{Q}}_R = \bm{Q}_R.
 \end{equation*}
 
-Step 6  Solving the wave speeds,
+Step 6  Solve the wave speeds,
 \begin{equation*}
   s_L = \text{min} (\widetilde{u}_L-\widetilde{c}_L, \widetilde{u}_R-\widetilde{c}_R), \hspace{0.3cm} s_R = \text{max}(\widetilde{u}_L+\widetilde{c}_L, \widetilde{u}_R+\widetilde{c}_R),
 	\end{equation*}
@@ -1009,12 +852,12 @@ Step 6  Solving the wave speeds,
 	  s^* = \frac{\widetilde{\sigma}_L-\widetilde{\sigma}_R+\widetilde{\rho}_L \widetilde{u}_L(s_L-\widetilde{u}_L)-\widetilde{\rho}_R \widetilde{u}_R(s_R-\widetilde{u}_R)}{\widetilde{\rho}_L(s_L-\widetilde{u}_L)-\widetilde{\rho}_R(s_R-\widetilde{u}_R)}.
 \end{equation*}
 
-Step 7  Solving the densities,
+Step 7  Solve the densities,
 \begin{equation*}
   \rho_L^* = \frac{\widetilde{\rho}_L(\widetilde{u}_L-s_L)}{s^*-s_L}, \hspace{0.3cm}  \rho_R^* = \frac{\widetilde{\rho}_R(\widetilde{u}_R-s_R)}{s^*-s_R},
 \end{equation*}
 
-Step 8 Solving the deviatoric stresses,
+Step 8 Solve the deviatoric stresses,
  \begin{align*}
   \hat{s}_{xxL}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_L^*}{\rho_L}  \right)+s_{xxL},\\
   \hat{s}_{xxR}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_R^*}{\rho_R}  \right)+s_{xxR},\\
@@ -1028,9 +871,32 @@ Step 9  Solving the Cauchy stresses,
 \begin{equation*}
   \sigma_L^*=\sigma_R^*=\widetilde{\sigma}_L -\widetilde{\rho_L} (s_L-\widetilde{u}_L)(s^*-\widetilde{u}_L).
 \end{equation*}
- Then we can get the pressure by $p =s_{xxL}-\sigma$.
+ Then we can get the pressure by $p =s_{xx}-\sigma$.
 
  \section{ A High-order cell-centered Lagrangian scheme for 1D  conservative hydrodynamic equations with Wilkins' model}
+Here, we consider the following governing equations with Wilkins' model,
+
+ \begin{equation}
+   \left\{ \begin{aligned}
+	   & \partial _t \rho +\partial_x(\rho u)=0,\\
+	   & \partial _t (\rho u)+\partial_x(\rho u^2 + p -s_{xx})=0,\\
+	   &\partial _t (\rho E)+\partial_x([\rho E + p -s_{xx}]u)=0,\\
+	   &\partial _t s_{xx}+u\partial_xs_{xx}-\frac{4}{3}\partial_x u=0,\\
+	   \end{aligned}\right.
+\end{equation}
+where $Q = (\rho, \rho u, \rho E, s_{xx})^T$.  For a Lagrangian scheme, the governing equations also include the equation for moving the coordinates at the vertex of the mesh,
+\begin{equation}
+  \frac{dx(t)}{dt} = u(x,t).
+\end{equation}
+
+The spatial domain is discretized into $N$ cells $I_i = [x_{i-1/2}, x_{i+1/2}]$ of space sizes $\Delta x_i = x_{i+1/2} - x_{i-1/2}$ for $i = 1,2,\cdots,N$. For a given cell $I_i$, the cell center is denoted by $x_i$. The velocity $u_{i+1/2}$ is defined at the vertex of the mesh. The  value of the cell average for the cell $I_i$ is defined by
+\begin{equation}
+  \overline{\bm{Q}}_i = \frac{1}{\Delta x_i} \int_{I_i} \bm{Q} dx.
+\end{equation}
+\subsection{Spatial discretization}
+
+
+
  
 
 
