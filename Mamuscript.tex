@@ -31,25 +31,23 @@
 
 \begin{document}
 
-\title{A new HLLC Riemann solver to resolve both elactic and plastic waves}
-\author{Li Liu$^1$,Junbo Cheng $^{1,*}$, Yiqing Shen$^2$}
+\title{A new HLLCEP Riemann solver with both elactic and plastic waves for 1D elastic-plastic flows}
+\author{Li Liu$^1$,Junbo Cheng $^{1,*}$}
 %\cortext[mycorrespondingauthor]{
-%Correspondence to: Yiqing Shen, LHD, Institute of Mechanics, Chinese Academy of Sciences, Beijing 100190, China. E-mail: yqshen@imech.ac.cn}
-%\address{$^1$LHD, Institute of Mechanics, Chinese Academy of Sciences, Beijing 100190, China}
-%\address{$^2$School of Engineering Science, University of Chinese Academy of Sciences, Beijing 100049, China}
-%{
-%\begin{abstract}
-%In this paper, we construct a new numerical method to solve the reactive Euler equations to cure the numerical stiffness problem.
-%The species mass equations are first decoupled from the reactive Euler equations, and then they are further fractionated into the convection step and the reaction step.
-% In the convection
-%step, by introducing two kinds of Lagrangian points (cell-point and particle-point), a dual information preserving (DIP) method is proposed to resolve the convection characteristics. In this new method, the 
-% information (including the transport value and the relative coordinates to the center of the current cell) of the cell-point and the paticle-point are updated according to the velocity field. The information of the cell-point in a cell can effectively restrict the incorrect reaction activation maybe caused by the numerical dissipation, while the information of the particle-point can help to preserve the sharp shock front once the strong shock waves formed. Hence, by using the DIP method, the spurious numerical propagation phenomenon in stiff reacting flows is effectively eliminated. In addition, a numerical perturbation method is also developed to solve the fractional reaction step (ODE equation) to improve the stability and efficiency. A series of numerical examples are presented to validate the accuracy and robustness of the new method. 
-%\end{abstract}
+%Correspondence to: Junbo Cheng, Institute of Applied Physics and Computational Mathematics, Beijing 100094, China. E-mail: Cheng\_junbo@iapcm.ac.cn}
+
+\maketitle
+
+\address{$^1$  Institute of Applied Physics and Computational Mathematics, Beijing 100094, China }
+
+\begin{abstract}
+
+  A new  HLLC-type  approximate Riemann solver is constructed with both the structures of elastic and plastic waves for 1D elastic-plastic flows with the hypo-elastic constitutive model and the von Mises yield criterion. The process of the new HLLCEP is in two steps. In the first step, a pre-evaluation is taken with only a  simple three waves structure to analysis the local yielding states in the left going  and right going regions in the $x$ -$t$ plane. Depending on the local yielding states, there are four probable cases with the structures of zero to two plastic waves and three elastic waves, repectively. In the second step,  in every cell's face, one case will be  choosed and all the unknowns in every regions will be evaluated by the control equations and Rankine-Hugoniot relations.  Combining with the third-order WENO scheme and third-order Runge-Kutta scheme, a high-order cell-centered Lagrangian scheme for 1D elastic-plastic flows is used in this paper. A number of numerical expriments are carried out.  And showed by the numerical results, due to the rationable  consideration  of the plastic waves, the most attractive advantage of the new HLLCEP solver is the accurate resolution of the interface between different materials.  
+\end{abstract}
 %\begin{keyword}
 % Stiff reacting flow\sep  Dual information preserving method\sep Numerical perturbation method\sep Shock-capturing scheme 
 %\end{keyword}
 
-\maketitle
 \section{Introduction}
 
 In this paper, a new HLLC-type approximate Riemann solver is developed, with the capibility of resolving both elactic and plastic waves, to simulate one-dimensional elastic-plactic solid problems with the isotropic elastic-plastic model\cite{} and von Mises' yielding condition in the framework of high-order cell-centered Lagrangian scheme. 
