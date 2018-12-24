@@ -122,7 +122,7 @@ and
 \end{equation}
 
 Using Eq.(\ref{eq:vare}), Eq.(\ref{eq:sxx1}) can be rewritten as 
-\begin{equation}
+\begin{equation}\label{eq:sxx}
   \frac{\partial s_{xx}}{\partial t} + u \frac{\partial s_{xx}}{\partial t} =\frac{4}{3}\mu \frac{\partial u}{\partial x}.
 \end{equation}
 
@@ -133,7 +133,7 @@ The Von Mises' yileding condition is used here to describe the elastic limit. In
 where $Y_0$ is the yield strength of the material in simple tension.
 
 
-\section{HLLCEP}
+\section{HLLCEP}\label{sec:HLLCEP}
 \subsection{The Riemann problem}
 
 The Riemann problem for the 1D time dependent elastic-plastic equations is given as follows:
@@ -876,7 +876,7 @@ Step 9  Solving the Cauchy stresses,
  \section{ A High-order cell-centered Lagrangian scheme for 1D  conservative hydrodynamic equations with Wilkins' model}
 Here, we consider the following governing equations with Wilkins' model,
 
- \begin{equation}
+\begin{equation}\label{eq:gveq}
    \left\{ \begin{aligned}
 	   & \partial _t \rho +\partial_x(\rho u)=0,\\
 	   & \partial _t (\rho u)+\partial_x(\rho u^2 + p -s_{xx})=0,\\
@@ -885,7 +885,7 @@ Here, we consider the following governing equations with Wilkins' model,
 	   \end{aligned}\right.
 \end{equation}
 where $Q = (\rho, \rho u, \rho E, s_{xx})^T$.  For a Lagrangian scheme, the governing equations also include the equation for moving the coordinates at the vertex of the mesh,
-\begin{equation}
+\begin{equation}\label{eq:dxt}
   \frac{dx(t)}{dt} = u(x,t).
 \end{equation}
 
@@ -894,12 +894,124 @@ The spatial domain is discretized into $N$ cells $I_i = [x_{i-1/2}, x_{i+1/2}]$ 
   \overline{\bm{Q}}_i = \frac{1}{\Delta x_i} \int_{I_i} \bm{Q} dx.
 \end{equation}
 \subsection{Spatial discretization}
+The  semi-discrete finite volume scheme of the conservative equations (\ref{eq:gveq}) in the cell $I_i$ is written as
+\begin{equation}\label{eq:sem}
+  \frac{d(\overline{\bm{U}}_i\Delta x_i)}{dt} = -(\bm{F}_{i+\frac{1}{2}} - \bm{F}_{i-\frac{1}{2}}),
+\end{equation}
+where 
+\begin{equation}
+  \bm{F}_{i+\frac{1}{2}} = \bm{\Phi} (\bm{Q}_{L,i+\frac{1}{2}}, \bm{Q}_{R,i+\frac{1}{2}})  = \left[ 
+	\begin{array}{l}
+	  0\\
+	  p_{i+\frac{1}{2}} - (s_{xx})_{i+\frac{1}{2}}\\
+	  (p_{i+\frac{1}{2}} - (s_{xx})_{i+\frac{1}{2}})u_{i+\frac{1}{2}}\\
+	\end{array}
+  \right],
+\end{equation}
+$\bm{Q}_{L,i+\frac{1}{2}}$ and $\bm{Q}_{R,i+\frac{1}{2}}$ represent the left and right values of $\bm{Q}$ at the cell's boundary $x_{i+\frac{1}{2}}$, and  $p_{i+\frac{1}{2}}$, $(s_{xx})_{i+\frac{1}{2}}$ and $u_{i+\frac{1}{2}}$ denote the Godunov values at $x_{i+\frac{1}{2}}$, respectively. 
+
+The Godunov values  $\bm{Q}_{i+\frac{1}{2}}$  can be solved  by the Riemiann problem  (\ref{eq:1d}) at $x_{i+\frac{1}{2}}$, 
+\begin{equation}
+  \bm{Q}_{i+\frac{1}{2}} = \left\{ \begin{aligned}
+	\bm{Q}_L^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{dx}{dt} \le  s^*,\\
+	\bm{Q}_R^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{dx}{dt} > s^*,\\
+  \end{aligned} \right.
+\end{equation}
+where $\bm{Q}_L^*$, $\bm{Q}_R^*$ and $s^*$ are evaluated by the HLLCEP in section \ref{sec:HLLCEP}.
+
+Before this, we must give the left  and right initial value ($\bm{Q}_{L,i+\frac{1}{2}}$ and $\bm{Q}_{R,i+\frac{1}{2}}$) by the cell average value $\overline{\bm{Q}}$ ($i = 1,2,\cdots,N$). This process is done by the spatial reconstruction.
+
+\subsubsection{High-order reconstruction} 
+The construction is carried out in the characteristic variables  space in this paper, which is   more stable  and accurate  than constructing  $\bm{Q}_L$ and $\bm{Q}_R$ in the primative variables space or the conservative viables space.
+
+First, we transform the conservative variables to local characteristic variables,
+\begin{equation}
+  \bm{W} = \bm{L} \cdot \overline{\bm{Q}},
+\end{equation}
+where $\bm{L}$ is the left eigenvectors of $\bm{J}$, and $\bm{J}_i$ is the Jacobian matrix  (\ref{eq:Jcb}) in $I_i$. 
+
+Here, we  use a third-order WENO scheme to reconstruct the characteristic variables at the  left and right interfaces ($\bm{W}_L$ and $\bm{W}_R$)  of every cell using  $\bm{W}$. Then projecting  back to the consrvative variables space, 
+\begin{equation}
+  \bm{Q}_L = \bm{R} \cdot \bm{W}_L, \hspace{0.3cm}   \bm{Q}_R = \bm{R} \cdot \bm{W}_R,
+\end{equation}
+where $\bm{R}$ is the right eigenvectors of $\bm{J}$.
+
+\subsubsection{Spatial discretization of the constitutive equation}
+In the Lagrangian frame, the equation of the constitute model (\ref{eq:sxx}) can be written as 
+\begin{equation}
+  \frac{ds_{xx}}{dt} = \frac{4\mu }{3} \frac{\partial u}{\partial x}, 
+\end{equation}
+
+In order to satisfy the geometrical conservation, the volume of the cell $I_i$ is evaluated by 
+\begin{equation}\label{eq:V}
+  V_i(t) = x_{i+\frac{1}{2}}(t) - x_{i-\frac{1}{2}}(t).
+\end{equation}
+Taking the material derivative at both sides, we can get
+\begin{equation}\label{eq:dotV}
+  \dot{V}_i(t) = \dot{x}_{i+\frac{1}{2}}(t) - \dot{x}_{i-\frac{1}{2}}(t),
+\end{equation}
+as a result of (\ref{eq:dxt}), it becomes 
+\begin{equation}\label{eq:dotV}
+  \dot{V}_i(t) = u_{i+\frac{1}{2}}(t) - u_{i-\frac{1}{2}}(t),
+\end{equation}
+combining (\ref{eq:V}), it becomes
+\begin{equation}
+  \frac{\dot{V}_i(t)}{V_i} =\frac{ u_{i+\frac{1}{2}}(t) - u_{i-\frac{1}{2}}(t)}{ x_{i+\frac{1}{2}}(t) - x_{i-\frac{1}{2}}(t)},
+\end{equation}
+Using Eq.(\ref{eq:vare}), we can get
+\begin{equation}
+  \frac{\partial u}{\partial x} =\frac{ u_{i+\frac{1}{2}}(t) - u_{i-\frac{1}{2}}(t)}{ x_{i+\frac{1}{2}}(t) - x_{i-\frac{1}{2}}(t)}.
+\end{equation}
+Then  the  discretization of the constitutive equation is given as
+\begin{equation}\label{eq:semSxx}
+  \frac{d s_{xx}}{dt } =\frac{4\mu}{3} \frac{ u_{i+\frac{1}{2}}(t) - u_{i-\frac{1}{2}}(t)}{ x_{i+\frac{1}{2}}(t) - x_{i-\frac{1}{2}}(t)}.
+\end{equation}
+
+subsubsection{Time discretization}
+We use the third-order TVD-Runge-Kutta method  as the time marching method, the TVD-Runge-Kutta method used in the Lagrangian schemes with von Mises' yielding condition is given in Ref.( )<++> as follows.
+
+Step 1, 
+\begin{equation}
+  \begin{aligned}
+	& x_{i+\frac{1}{2}}^{(1)} = x_{i+\frac{1}{2}}^{(0)}+\Delta t^n u_{i+\frac{1}{2}}^{(0)},\\
+	& \Delta x_i^{(1)} =  x_{i+\frac{1}{2}}^{(1)}- x_{i-\frac{1}{2}}^{(1)},\\
+    & \Delta x_i^{(1)} \overline{\bm{U}}_i^{(1)}= \Delta x_i^{(0)} \overline{\bm{U}}_i^{(0)}+\Delta t^n \bm{L}(\overline{U}_i^{(0)}, (\overline{s_{xx}})_i^{(0)}, x_{i+\frac{1}{2}}^{(0)}),\\
+	& (\overline{\hat{s}_{xx}})_i^{(1)} = (\overline{s_{xx}})_i^{(0)} +\Delta t^ n  \varTheta (u_{i+\frac{1}{2}}^{(0)}, x_{i+\frac{1}{2}}^{(0)}),\\
+  & (\overline{s_{xx}})_i^{(1)} = \Upsilon((\overline{\hat{s}_{xx}})_i^{(1)}).
+\end{aligned}
+\end{equation}
+
+
+Step 2, 
+\begin{equation}
+  \begin{aligned}
+	& x_{i+\frac{1}{2}}^{(2)} = \frac{3}{4} x_{i+\frac{1}{2}}^{(0)}+\frac{1}{4} \left( x_{i+\frac{1}{2}}^{(1)}+\Delta t^n u_{i+\frac{1}{2}}^{(1)}\right),\\
+	& \Delta x_i^{(2)} =  x_{i+\frac{1}{2}}^{(2)}- x_{i-\frac{1}{2}}^{(2)},\\
+	& \Delta x_i^{(2)} \overline{\bm{U}}_i^{(2)}  = \frac{3}{4} \Delta x_i^{(0)} \overline{\bm{U}}_i^{(0)}+ \frac{1}{4} \left(  \Delta x_i^{(1)} \overline{\bm{U}}_i^{(1)} + \Delta t^n \bm{L}(\overline{U}_i^{(1)}, (\overline{s_{xx}})_i^{(1)}, x_{i+\frac{1}{2}}^{(1)}\right),\\
+	& (\overline{\hat{s}_{xx}})_i^{(2)} =\frac{3}{4} (\overline{s_{xx}})_i^{(0)} + \frac{1}{4} \left(  (\overline{s_{xx}})_i^{(1)}+\Delta t^ n \varTheta (u_{i+\frac{1}{2}}^{(1)}, x_{i+\frac{1}{2}}^{(1)})\right),\\
+  & (\overline{s_{xx}})_i^{(2)} = \Upsilon((\overline{\hat{s}_{xx}})_i^{(2)}).
+\end{aligned}
+\end{equation}
+
+
+Step 3, 
+\begin{equation}
+  \begin{aligned}
+	& x_{i+\frac{1}{2}}^{(3)} = \frac{1}{3} x_{i+\frac{1}{2}}^{(0)}+\frac{2}{3} \left( x_{i+\frac{1}{2}}^{(2)}+\Delta t^n u_{i+\frac{1}{2}}^{(2)}\right),\\
+	& \Delta x_i^{(3)} =  x_{i+\frac{1}{3}}^{(2)}- x_{i-\frac{1}{2}}^{(3)},\\
+	& \Delta x_i^{(3)} \overline{\bm{U}}_i^{(2)}  = \frac{1}{3} \Delta x_i^{(0)} \overline{\bm{U}}_i^{(0)}+ \frac{2}{3} \left(  \Delta x_i^{(1)} \overline{\bm{U}}_i^{(2)} + \Delta t^n \bm{L}(\overline{U}_i^{(2)}, (\overline{s_{xx}})_i^{(2)}, x_{i+\frac{1}{2}}^{(2)} \right),\\
+	& (\overline{\hat{s}_{xx}})_i^{(3)} =\frac{1}{3} (\overline{s_{xx}})_i^{(0)} + \frac{2}{3} \left(  (\overline{s_{xx}})_i^{(2)}+\Delta t^ n \varTheta (u_{i+\frac{1}{2}}^{(2)}, x_{i+\frac{1}{2}}^{(2)})\right),\\
+  & (\overline{s_{xx}})_i^{(3)} = \Upsilon((\overline{\hat{s}_{xx}})_i^{(3)}).
+\end{aligned}
+\end{equation}
+Where $\bm{L}$ and $\varTheta$ are the numerical spatial operators representing the right hands of Eq.(\ref{eq:sem}) and Eq.(\ref{eq:semSxx}), respectively, and the variables with the superscripts $n$ and $n+1$ denote the values of the corresponding variables at the $n$-th and ($n+1$)-th time steps, respectively.
+
+
+
 
 
 
  
-
-
 
 
 
@@ -920,351 +1032,4 @@ This research work was supported by NSFC 11272324, 11272325, NSAF U1530145 and 2
   \appendix
   \renewcommand{\appendixname}{Appendix~}
 
-  \section{The algorithm of the DIP method for solving the convection equations}
-\large {\color{black!60!red!80!}}
-  \color{black}
-
-\hspace{-0.48cm}
-\normalsize
-(0) Initiation 
-\vspace{0.1cm}
-
-\hspace{0.5cm}
-  \scriptsize{\color{black!80}
-  \hspace{-0.7cm}
-  $
-  \left\{
-  \begin{array}{l}
-	X(i,j)=0\\
-	Y(i,j)=0\\
-	\end{array}
-	\right.
-,
-\left\{
-  \begin{array}{l}
-	X_p(i,j)=0\\
-	Y_p(i,j)=0\\
-	\end{array}
-	\right.
-,
-\left\{
-  \begin{array}{l}
-	I(i,j)=i\\
-	J(i,j)=j\\
-	\end{array}
-	\right.
-,
-\left\{
-  \begin{array}{l}
-	\hat{z}(i,j)=z(i,j)\\
-	z_p(i,j)=z(i,j)\\
-	\end{array}
-	\right.
-$
-
-\vspace{0.1cm}
-\hspace{-0.48cm}
-{ \color{black!60!blue!80}DO}
-\color{black!80} $it=1,NT$} {\color{black!60} \hspace{2.3cm} ! Time-Stepping
-  \color{black}
-
-  \small \hspace{-0.0cm}
-\hspace{-0.18cm}
-Solve the decoupled Euler equations (\ref{EulerEquation}) to get $u$, $v$, $\cdots$
-
-\hspace{-0.10cm}
-Following is the DIP  algorithm for the convection equations (\ref{Afrac}).
-\vspace{0.2cm}
-
- \normalsize (1) Initial values
-  \scriptsize
-  { \color{black!80}  
-  \vspace{0.1cm}
-
-  \hspace{0.5cm}
-$
-Mrk(i,j)=0,
-S_1(i,j)=0,
-S_2(i,j)=0
-$
-\vspace{0.1cm}
-
-\normalsize \color{black}
-(2) Calculate the cell-point
- \scriptsize 
- \vspace{0.1cm}
-
- \hspace{0.6cm}{\color{black!60!blue!80}DO}
- { \color{black!80} $i=0,NX$}
-
-\hspace{1.1cm} {\color{black!60!blue!80}DO}
-{ \color{black!80} $j=0,NY$
-
-\vspace{0.1cm}
- \hspace{1.5cm} $s_x=sign(X(i,j)), s_y=sign(Y(i,j))$
-
- \hspace{1.5cm}	$\left\{
-  \begin{array}{rlr}
-u_c(i,j)=&(1-|X|)u(i,j)&+|X|u(i+s_x,j)\\
-v_c(i,j)=&(1-|Y|)v(i,j)&+|Y|v(i,j+s_y)\\
-	\end{array}
-  \right.$}
- \hspace{0.8cm}
-   \color{black!60} ! Interpolate velocity according to its location \color{black!80}
-
- \hspace{1.5cm}	$\left\{
-  \begin{array}{l}
-	L_x=X(i,j)+u_c(i,j)\Delta t/ \Delta x\\
-    L_y=Y(i,j)+v_c(i,j)\Delta t/ \Delta y\\
-	\end{array}
-	\right.$
-
-%%
- \hspace{1.5cm}	$\left\{
-  \begin{array}{l}
-	M=i+floor(L_x+0.5)\\
-    N=j+floor(L_y+0.5)\\
-	\end{array}
-  \right.$}
-  { \color{black!60} \hspace{3.4cm}
-! $(i,j)$ moves to cell $(M,N)$} {\color{black!80}
-
- \hspace{1.5cm}	$\left\{
-  \begin{array}{l}
-	X(i,j)=L_x-floor(L_x+0.5)\\
-    Y(i,j)=L_y-floor(L_y+0.5)\\
-	\end{array}
-	\right.$
-	{ \color{black!60} \hspace{2.6cm}
-! The relative location in $(M,N)$} {\color{black!80}
-
-\vspace{0.1cm}
-\hspace{1.5cm} \color{black!60!blue!80} IF
-\color{black!70} ($0 \leqslant M \leqslant NX$ and $0 \leqslant N \leqslant NY$)
-\color{black!60!blue!80} Then
-\color{black!80}
-\vspace{0.1cm}
-
-\hspace{2.cm} $Mrk(M,N)=1$
-
-\hspace{2.cm} $S_1(M,N)=S_1(M,N)+1$
-
-\vspace{0.1cm}
-\hspace{2.cm}	$\left\{
-  \begin{array}{rlr}
-    \hat{X}(M,N)=&\{[S_1(M,N)-1]X(M,N)&+X(i,j)\}/S_1(M,N)\\
-	\hat{Y}(M,N)=&\{[S_1(M,N)-1]Y(M,N)&+Y(i,j)\}/S_1(M,N)\\
-	\hat{z}(M,N)=&\{[S_1(M,N)-1]z(M,N)&+\hat{z}(i,j)\}/S_1(M,N)\\
-	\end{array}
-  \right.$}
-  \hspace{0.0cm}{ \color{black!60} ! Average information} {\color{black!80}}
-
-\vspace{0.1cm}
-\hspace{1.5cm} {\color{black!60!blue!80}ENDIF }
-
-\hspace{1cm} {\color{black!60!blue!80}END DO}
-
-\hspace{0.5cm}{ \color{black!60!blue!80}END DO}
-
-\vspace{0.1cm}
-\hspace{0.5cm}{\color{black!80}
-	$\left\{
-  \begin{array}{l}
-	X(:,:)=\hat{X}(:,:)\\
-	Y(:,:)=\hat{Y}(:,:)\\
-	\end{array}
-  \right.$}
-
-
-  \vspace{0.1cm}
-
-\normalsize 
-{\color{black}
-
-(3) Calculate the particle-point and update the cell-point$(I,J)$ 
- \scriptsize 
-
- \vspace{0.1cm}
-\hspace{0.6cm}{\color{black!60!blue!80}DO}
-{ \color{black!80} $i=0,NX$}
-
-\hspace{1cm}{ \color{black!60!blue!80}DO}
- \color{black!80} $j=0,NY$
-
-\vspace{0.1cm}
- \hspace{1.5cm} $s_x=sign(X_p(i,j)), s_y=sign(Y_p(i,j))$
-
- \hspace{1.5cm}	$\left\{
-  \begin{array}{lll}
-u_p(i,j)=&(1-|X_p|)u(I,J)&+|X|u(I+s_x,J)\\
-v_p(i,j)=&(1-|Y_p|)v(I,J)&+|Y|v(I,J+s_y)\\
-	\end{array}
-	\right.$
- \hspace{0.5cm}
-  \color{black!60} ! Interpolate velocity according to its position \color{black!80}
-
-
- \hspace{1.5cm}	$\left\{
-  \begin{array}{l}
-	L_x=X_p(i,j)+u_p(i,j)\Delta t/ \Delta x\\
-    L_y=Y_p(i,j)+v_p(i,j)\Delta t/ \Delta y\\
-	\end{array}
-	\right.$
-
- \hspace{1.5cm}	$\left\{
-  \begin{array}{l}
-	I(i,j)=I(i,j)+floor(L_x+0.5)\\
-    J(i,j)=J(i,j)+floor(L_y+0.5)\\
-	\end{array}
-	\right.$
-  { \color{black!60} \hspace{2.3cm}
-! $(i,j)$ moves to cell $(I,J)$} {\color{black!80}
-
- \hspace{1.5cm}	$\left\{
-  \begin{array}{l}
-	X_p(i,j)=L_x-floor(L_x+0.5)\\
-    Y_p(i,j)=L_y-floor(L_y+0.5)\\
-	\end{array}
-	\right.$
-	{ \color{black!60} \hspace{2.5cm}
-! The relative location in $(I,J)$} {\color{black!80}
-
-\vspace{0.1cm}
-\hspace{1.5cm} \color{black!60!blue!80} IF
-\color{black!70} ($0 \leqslant I \leqslant NX$ and $0 \leqslant J \leqslant NY$)
-\color{black!60!blue!80} Then
-\color{black!80}
-
-\hspace{2.0cm} $Mrk(I,J)=2$
-
-\hspace{2.0cm} $S_2(I,J)=S_2(I,J)+1$
-
-\hspace{2.0cm}	$\left\{
-  \begin{array}{rlr}
-	\hat{X}(I,J)=&\{[S_2(I,J)-1]X(I,J)&+X(i,j)\}/S_2(I,J)\\  
-	\hat{Y}(I,J)=&\{[S_2(I,J)-1]Y(I,J)&+Y(i,j)\}/S_2(I,J)\\
-	\hat{z}(I,J)=&\{[S_2(I,J)-1]z(I,J)&+z_p(i,j)\}/S_2(I,J)\\
-	\end{array}
-	\right.$
-  }
-  \hspace{0cm}
-  \begin{minipage}{7cm}
-	\color{black!60}
-! Update cell-point $(I,J)$'s 
- information by averaging 
-
- \hspace{0.2cm}
-all entered particle-points' information
-\end{minipage}
-
-
- \hspace{9.25cm} 
- \color{black!80}
-
-\vspace{0.1cm}
-  \hspace{1.5cm} \color{black!60!blue!80} END IF 
-
-\hspace{1cm} {\color{black!60!blue!80}END DO
-
-\hspace{0.5cm} END DO}
-
-\vspace{0.1cm}
-
-\hspace{0.5cm}{\color{black!80}
-	$\left\{
-  \begin{array}{l}
-	X(:,:)=\hat{X}(:,:)\\
-	Y(:,:)=\hat{Y}(:,:)\\
-	\end{array}
-  \right.$}
-
-  \vspace{0.1cm} 
-\normalsize {\color{black}
-(4) If there is no cell-point in the cell $(i,j)$, i.e, $Mrk(i,j)=0$
- \scriptsize 
-
- \vspace{0.1cm} 
-\hspace{0.6cm}{\color{black!60!blue!80}DO}
-{ \color{black!80} $i=0,NX$}
-
-\hspace{1cm}{ \color{black!60!blue!80}DO}
-{ \color{black!80} $j=0,NY$}
-
-\vspace{0.1cm}
-\hspace{1.5cm}{ \color{black!60!blue!80}IF}
-{ \color{black!80} $Mrk(i,j)=0$}{ \color{black!60!blue!80}then}
-{\color{black!80}
-
-\vspace{0.1cm}
-\hspace{2cm}  $\left\{
-  \begin{array}{l}
-	X(i,j)=0\\
-	Y(i,j)=0\\
-	\end{array}
-	\right.$
-  }
-
-\hspace{2cm} {\color{black!60!blue!80}IF}
-{\color{black!80} $|u(i,j)|\geqslant |v(i,j)|$}{ \color{black!60!blue!80}then}
-{ \color{black!60} \hspace{1.4cm} ! Assign a value by interpolating on x-direction}
-{\color{black!80}
-
-\small
-\hspace{2.5cm} \color{black!80} 
-Find two neighboring cell-points located at two sides of $(i,j)$ along x-direction
-
-\scriptsize
-\vspace{0.1cm}
-\color{black!80}
-\hspace{2.5cm} $L=|X(i-il,j)-il)u(i,j)+Y(i-il,j)v(i,j)|$
-
-\hspace{2.5cm} $R=|X(i+ir,j)-ir)u(i,j)+Y(i+ir,j)v(i,j)|$
-
-\hspace{2.5cm} $\hat{z}(i,j)=[R\hat{z}(i-il,j))+L\hat{z}(i+ir,j)]/(R+L)$
-
-\vspace{0.1cm}
-\hspace{2cm}{ \color{black!60!blue!80}ELSE}
-{\color{black!80}
-{ \color{black!60} \hspace{3.9cm} ! Assign a value by interpolating on y-direction}
-{\color{black!80}
-\vspace{0.1cm}
-
-\hspace{2.5cm} \color{black!80} 
-\small
-Find two neighboring cell-points located at two sides of $(i,j)$ along y-direction
-
-\vspace{0.1cm}
-\scriptsize
-\color{black!80}
-\hspace{2.5cm} $L=|X(i,j-jl)u(i,j)+(Y(i,j-jl)-jl)v(i,j)|$
-
-\hspace{2.5cm} $R=|X(i,j+jr))u(i,j)+(Y(i,j+jr)-jr)v(i,j)|$
-
-\hspace{2.5cm} $\hat{z}(i,j)=[R\hat{z}(i,j-jl))+L\hat{z}(i,j+jr)]/(R+L)$
-}
-
-\vspace{0.1cm}
-\hspace{2cm} {\color{black!60!blue!80}END IF
-
-\hspace{1.5cm} END IF}
-
-\hspace{1cm}{ \color{black!60!blue!80}END DO
-
-\hspace{0.5cm} END DO
-
-{\color{black!80}
-
-\vspace{0.1cm}
-\hspace{0.5cm} 
-\small
-Solve the reaction equations (\ref{Rfrac}) to get new $z$ and $z_p$ by using $\hat{z}$
-
-\hspace{0.7cm} 
-and $z_p$ to calculate the source terms, respectively.
-
-
-\vspace{0.1cm}
-\scriptsize
-\hspace{0.1cm}{ \color{black!60!blue!80}END DO
-%
 \end{document}
