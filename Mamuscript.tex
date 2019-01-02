@@ -1000,7 +1000,7 @@ Step 3,
 Where $\bm{L}$ and $\varTheta$ are the numerical spatial operators representing the right hands of Eq.(\ref{eq:sem}) and Eq.(\ref{eq:semSxx}), respectively, and the variables with the superscripts $n$ and $n+1$ denote the values of the corresponding variables at the $n$-th and ($n+1$)-th time steps, respectively.
 
 \section{Numerical tests}
-In this section, the new HLLCEP method  is tested  in different problems to see the capibility of  capturing elastic-plastic waves, espicially in the problems  with different materials interface. 
+In this section, the new HLLCEP method  is tested  in different problems to see the capibility of  capturing elastic-plastic waves, espicially in the problem  with different materials interface. 
 
 \subsection{Accuracy test}
 In the first test, a smooth solutions is used to test the accuracy of the scheme. The computational domian is $[0,1]$, and a periodic boundary condition is used. The EOS is given by the Mie-Gr\"uneisen model with the parameters $\rho_0 = 8930 \text{kg}/\text{m}^3$, $a_0 = 3940 \text{m}/\text{s}$, $Gamma_0 =2$, and $s=1.49$. The constitutive model has the parameters, $\mu = 4.5\times 10^10 \text{Pa}$ and $Y^0 = 9\times 10^10 \text{Pa}$.  The initial conditions are given as 
@@ -1081,15 +1081,43 @@ This problem, first introduced by Wilkins, is used to test the  ability of captu
 \end{equation}
 The left boundary is set as free boundary and on  the right boundary  we use a wall boundary condtion. The final time is $t =5\times 10^{-6} \text{s}$. In Fig.\ref{fig:Wilkins1}, we give the results  simulated with 200, 400 and 800 cells, the reference result is given by a refined mesh with 4000 cells. Showed in the figures and these locally enlarged plots, the elastic  and plastic right-going shocks and the reflected elastic and plastic rarefaction waves are well resloved without oscillation.
 
-\subsection{Two materials problem 2}
-In this test, we consider a problem with a moving  copper stricking on an  aluminium plate, to test the HLLCEP method in the capturing of interface. The parameters for the EOSs and constitutive model for  aluminum and copper  are  $ (\rho_0, a_0, \Gamma_0, s, \mu, Y^0)_{\text{aluminium}} =(8930 \text{kg}/\text{m}^3, 3940 \text{m}/\text{s},2, 1.49, 2.76 ,2.76\times 10^{10} \text{Pa},3\times 10^8 \text{Pa} )$ and   $(\rho_0, a_0, \Gamma_0, s)_{\text{copper}} =(2785 \text{kg}/\text{m}^3, 5328 \text{m}/\text{s},2, 1.338,4.5\times 10^{10}\text{Pa},9\times 10^7 \text{Pa})$, respectively. The initial conditions are  given as
-\begin{equation}
+
+\subsection{Multi-material problem 1}
+We first consider a multi-material problem without the plasticity effect. A similar case is used in Ref.(\ref{ghaisas2016high}). In this test, a moving  copper stricks on an aluminium plate. The parameters for the EOSs and constitutive model for aluminum and copper  are  
+$ (\rho_0, a_0, \Gamma_0, s, \mu)_{\text{Al}} =(8930 \text{kg}/\text{m}^3, 3940 \text{m}/\text{s},2, 1.49, 2.76 ,2.76\times 10^{10} \text{Pa} )$ and   $(\rho_0, a_0, \Gamma_0, s, \mu)_{\text{Cu}} =(2785 \text{kg}/\text{m}^3, 5328 \text{m}/\text{s},2, 1.338,4.5\times 10^{10}\text{Pa})$, respectively. In order to remove the influence of the plasticity effect, we use a very large unphysics yield strength $Y_0 = 3\times 10^{12} \text{Pa}$.  The initial conditions of this problem are  
+\begin{equation}\label{eq:init_multi}
   \left\{ \begin{aligned}
-	  \text{matter} = \text{alumimium}, \rho = 2785 \text{kg}/\text{m}^3, \hspace{0.2cm} u = 60\text{m}/\text{s}, \hspace{0.2cm} p = 10^{-12}\text{Pa}, s_{xx} = 0, \hspace{0.2cm} \text{if} \hspace{0.2cm} 0\text{m} \le x \le 2.5\times 10^{-2} \text{m},\\
-	  \text{matter} = \text{copper}, \rho = 8930 \text{kg}/\text{m}^3, \hspace{0.2cm} u = 0\text{m}/\text{s}, \hspace{0.2cm} p = 10^{-12}\text{Pa}, s_{xx} = 0, \hspace{0.2cm} \text{if} \hspace{0.2cm} 2.5 \times 10^{-2}\text{m} \le x \le 50\times 10^{-2} \text{m}.\\
+	& \rho = 2785 \text{kg}/\text{m}^3, \hspace{0.2cm} u = u_0, \hspace{0.2cm} p = 10^{-12}\text{Pa}, s_{xx} = 0, \hspace{0.2cm} \text{if} \hspace{0.2cm} 0\text{m} \le x \le 2.5\times 10^{-2} \text{m},\\
+	&  \rho = 8930 \text{kg}/\text{m}^3, \hspace{0.2cm} u = 0\text{m}/\text{s}, \hspace{0.2cm} p = 10^{-12}\text{Pa}, s_{xx} = 0, \hspace{0.2cm} \text{if} \hspace{0.2cm} 2.5 \times 10^{-2}\text{m} \le x \le 50\times 10^{-2} \text{m}.\\
 	\end{aligned}
   \right.
 \end{equation}
+In this case we take $U_0 = 100 \text{m}/\text{s}$.Figure  shows  the numerical results computed by HLLCE and HLLCEP at the final time $ t= 2 \times 10^{-6}s$, the reference is given by a refined mesh  with 4000 cells.  We can see there is little difference between the two schemes  in  the multi-material case without plastic wave.     
+\begin{figure}
+  \begin{tikzpicture}
+	\matrix[column sep=0mm, row sep = 0mm]
+	{
+	  \node[rectangle](1){
+		\includegraphics[width = 7cm]{Mult-MaterialsRho.eps}};&
+	  \node[rectangle](2){
+		\includegraphics[width = 7cm]{Mult-MaterialsU.eps}};\\
+	  \node[rectangle](3){
+		\includegraphics[width = 7cm]{Mult-MaterialsSxx.eps}};&
+	  \node[rectangle](4){
+		\includegraphics[width = 7cm]{Mult-MaterialsSigma.eps}};\\
+	  };
+	  \node  at (-7,3) [rotate = 90] {$\rho$ ($\text{kg}/\text{m}^3$)};
+	  \node at (0.6,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
+	  \node  at (-7,-3)[ rotate = 90]{$p$ ($\text{Pa}$)};
+	  \node at (0.6,-3)[ rotate = 90]{$\sigma_{xx}$ ($\text{Pa}$)};
+	  \end{tikzpicture}
+	  \caption{ The result of two-materials  problem 1}
+	\end{figure}
+
+\subsection{Two materials problem 2}
+Next, we consider a similar problem but with plastic waves. All the parameters are same to above problem but the yield strengths are  $Y_{0\text{Cu}} = 9\times 10^7$ and $Y_{0\text{Al}} = 3\times 10^8$, respectively. The inital conditions are same to Eq.(\ref{eq:init_multi}), we consider two cases with $u_0 = 60 \text{m}/\text{s}$ and 
+
+
 In Fig.\ref{fig:twomatter1} we give the result at final time $ t= 2 \times 10^{-6} \text{s}$ with 200 cell, the solution computed by  the HLLCE scheme is taken as a comparasion. The reference solution is given by a refine mesh with 4000 cells. We can see that using HLLCE, the Cauchy stress is not constitutive across the interface, this does not confirm with the relation of Eq.(\ref{eq:sigmaLR}), while with the new HLLCEP scheme, we can get a correct and stable result. 
 \begin{figure}
   \begin{tikzpicture}
@@ -1111,9 +1139,6 @@ In Fig.\ref{fig:twomatter1} we give the result at final time $ t= 2 \times 10^{-
 	  \end{tikzpicture}
 	  \caption{ The result of two-materials  problem 1}
 	\end{figure}
-
-\subsection{Two materials problem 1}
-Then we considered 
 
 \section{Conclutions}
 
