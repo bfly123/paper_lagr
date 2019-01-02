@@ -18,11 +18,6 @@
 \usepackage[margin=2.5cm]{geometry}
 \usetikzlibrary{shapes.geometric, arrows,matrix,positioning,calc}
 \intextsep=8pt plus 3pt minus 1pt
-\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=2cm, minimum height=1cm,text centered, draw=black, fill=red!30]
-\tikzstyle{process} = [rectangle, minimum width=4cm, minimum height=4cm, text centered, draw=black, fill=orange!30]
-\tikzstyle{decision} = [diamond, minimum width=2cm, minimum height=1cm, text centered, draw=black, fill=green!30]
-\theoremstyle{plain}\newtheorem{definition}{\sc{Definition}}
-\theoremstyle{defination}\newtheorem{example}{Example}[section]
 \definecolor{ColorMark}{rgb}{1,1,1}
 \numberwithin{equation}{section}
 \numberwithin{table}{section}
@@ -249,7 +244,7 @@ we can get
   &\rho_R^* u_R^{*2}-\sigma^*_R=\rho_L^* u_L^{*2}-\sigma_L^*+s^*(\rho_R^* u_R^*-\rho_L^* u_L^*).
 \end{align}
 take $u_L^* = u_R^*$ in, we can get 
-\begin{equation}\label{eq:contact}\label{eq:sigmaLR}
+\begin{equation}\label{eq:sigmaLR}
   s^* = u_L^* = u_R^*, \hspace{0.3cm} \sigma_L^* = \sigma_R^*.
 \end{equation}
 
@@ -342,7 +337,7 @@ and
 \begin{equation}\label{eq:sigma}
   \rho_L^* u_R^{*2}-\sigma^*_L=\rho_L u_L^2-\sigma_L+s_L(\rho_L^* u_L^*-\rho_L u_L).
 \end{equation}
-Using the relation of $u_L^* =u_R^* = s^*$ in Eq.(\ref{eq:contact}), the speed of contact wave can be evaluated as 
+Using the relation of $u_L^* =u_R^* = s^*$ in Eq.(\ref{eq:sigmaLR}), the speed of contact wave can be evaluated as 
 \begin{equation}
  \hat{s}^* = \frac{\sigma_L-\sigma_R+\rho_L u_L(s_L-u_L)-\rho_R u_R(s_R-u_R)}{\rho_L(s_L-u_L)-\rho_R(s_R-u_R)},
 \end{equation}
@@ -1008,13 +1003,13 @@ Where $\bm{L}$ and $\varTheta$ are the numerical spatial operators representing 
 In this section, the new HLLCEP method  is tested  in different problems to see the capibility of  capturing elastic-plastic waves, espicially in the problems  with different materials interface. 
 
 \subsection{Accuracy test}
-In the first test, a smooth solutions is used to test the accuracy of the scheme. The computational domian is $[0,1]$, and a periodic boundary condition is used. The EOS is given by the Mie-Gr\"uneisen model with the parameters $\rho_0 = 8930 \test{kg}/\text{m}^3$, $a_0 = 3940 \text{m}/\text{s}$, $Gamma_0 =2$, and $s=1.49$. The constitutive model has the parameters, $\mu = 4.5\times 10^10 \text{Pa}$ and $Y^0 = 9\times 10^10 \text{Pa}$.  The initial conditions are given as 
+In the first test, a smooth solutions is used to test the accuracy of the scheme. The computational domian is $[0,1]$, and a periodic boundary condition is used. The EOS is given by the Mie-Gr\"uneisen model with the parameters $\rho_0 = 8930 \text{kg}/\text{m}^3$, $a_0 = 3940 \text{m}/\text{s}$, $Gamma_0 =2$, and $s=1.49$. The constitutive model has the parameters, $\mu = 4.5\times 10^10 \text{Pa}$ and $Y^0 = 9\times 10^10 \text{Pa}$.  The initial conditions are given as 
 \begin{equation}
   \rho = \rho_0(1-b \text{sin}(2\pi x)), u = a, p = 1.1\rho u^2, s_{xx} = s_0 \text{sin}(2\pi x),
 \end{equation}
 where $a = 10,000\text{m}/\text{s}$, $ b = 0.1$  and  $s_0 = 6\times 10^5 \text{Pa}$.
 
-The final results are given at time $t = 1.0 \time 10^{-4}$. The reference  result is computed with a refined mesh of $N = 2000$, the  $L_1 $- and $ L_\inf $-norm  errors  are showed in Table \ref{tab:1}. We can see that,  with a third-order WENO scheme, the high-order cell-centered Lagrangian scheme can  achieve the designed  accuracy.     
+The final results are given at time $t = 1.0 \time 10^{-4}$. The reference  result is computed with a refined mesh of $N = 2000$, the  $L_1 $- and $ L_\inf$-norm  errors  are showed in Table \ref{tab:1}. We can see that,  with a third-order WENO scheme, the high-order cell-centered Lagrangian scheme can  achieve the designed  accuracy.     
 
 \begin{table}[htbp]
   \small
@@ -1029,7 +1024,7 @@ The final results are given at time $t = 1.0 \time 10^{-4}$. The reference  resu
 			      &100          &  $9.84\times 10^{-6}$     &2.97        &  $3.47\times 10^{-5}$         & 3.27 \\
 	              &200          &  $1.40\times 10^{-6}$     &2.81        &  $6.85\times 10^{-6}$		 & 2.34 \\
 				  &400          &  $2.25\times 10^{-7}$     &2.63        &  $1.33\times 10^{-6}$         & 2.36 \\
-	$\s_{xx}$     &50           &  $8.21\times 10^{-4}$     &---         &  $3.55\times 10^{-3}$         & ---  \\
+	$s_{xx}$     &50           &  $8.21\times 10^{-4}$     &---         &  $3.55\times 10^{-3}$         & ---  \\
 				  &100          &  $1.04\times 10^{-4}$     &2.98        &  $3.68\times 10^{-4}$         & 3.27 \\
 				  &200          &  $1.48\times 10^{-5}$     &2.81        &  $7.27\times 10^{-5}$         & 2.33 \\
 				  &400          &  $2.39\times 10^{-6}$     &2.63        &  $1.42\times 10^{-4}$         & 2.36 \\
@@ -1045,15 +1040,35 @@ In the second test, we consider the  piston problem\ref{} with a piece of copper
 \end{equation}
 The EOS for copper is given by  the Mie-Gr\"uneisen model with the parameters,
 \begin{equation}
-  \rho_0 = 8930 \text{kg}/\text{m}^3, \hsapce{0.3cm} a_0 = 3940\text{m}/\text{s}, \hspace{0.3cm}, \Gamma_0 = 2,\hspace{0.3cm} s = 1.49.
+  \rho_0 = 8930 \text{kg}/\text{m}^3, \hspace{0.3cm} a_0 = 3940\text{m}/\text{s}, \hspace{0.3cm}, \Gamma_0 = 2,\hspace{0.3cm} s = 1.49.
 \end{equation}
 The constitutive model is characterized by the following parameters,
 \begin{equation}
   \mu = 4.5\times 10^{10}\text{Pa}, \hspace{0.3cm} Y^0 = 9\times 10^7 \text{Pa}.
 \end{equation}
-The left boundary condtion is a velocity boundary condition with $u_{\text{\piston}} = 20 \text{m}/\text{s}$, and the right boundary is  a  wall boundary condition.
+The left boundary condtion is a velocity boundary condition with $u_{\text{piston}} = 20 \text{m}/\text{s}$, and the right boundary is  a  wall boundary condition.
 
 In Fig.\ref{fig:piston1}, we test the convergence of the scheme with different meshes of 100, 200 and 400 cells. The final time is $t = 150 \mu s $.  We can  see that the current scheme can capture the leading elastic shock wave and the floowed plastic wave well without oscillation. 
+\begin{figure}
+  \begin{tikzpicture}
+	\matrix[column sep=0mm, row sep = 0mm]
+	{
+	  \node[rectangle](1){
+		\includegraphics[width = 7cm]{PistonRho.eps}};&
+	  \node[rectangle](2){
+		\includegraphics[width = 7cm]{PistonU.eps}};\\
+	  \node[rectangle](3){
+		\includegraphics[width = 7cm]{PistonP.eps}};&
+	  \node[rectangle](4){
+		\includegraphics[width = 7cm]{PistonSxx.eps}};\\
+	  };
+	  \node  at (-7,3) [rotate = 90] {$\rho$ ($\text{kg}/\text{m}^3$)};
+	  \node at (0.3,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
+	  \node  at (-7,-3)[ rotate = 90]{$p$ ($\text{Pa}$)};
+	  \node at (0.3,-3)[ rotate = 90]{$s_{xx}$ ($\text{Pa}$)};
+	  \end{tikzpicture}
+	  \caption{ The result of Piston problem}
+	\end{figure}
 
 \subsection{Wilkins' problem}
 This problem, first introduced by Wilkins, is used to test the  ability of capturing rarefaction waves of scheme. In this problem, a moving alumimium plate strking on another alumimium plate. The EOS for aluminium is given by the Mie-Gr\"uneisen model with the parameters $\rho_0 = 2785 \text{kg}/\text{m}^3$, $ a_0 = 5328 \text{m} /\text{s}$, $\Gamma_0 =2$ and $s = 1.338$. The constitutive model is characterized by the parameters $\mu = 2.76\times 10^{10} \text{Pa}$ and $Y^0 = 3\times 10^8 \text{Pa}$. The initial condtions are given as
@@ -1066,18 +1081,39 @@ This problem, first introduced by Wilkins, is used to test the  ability of captu
 \end{equation}
 The left boundary is set as free boundary and on  the right boundary  we use a wall boundary condtion. The final time is $t =5\times 10^{-6} \text{s}$. In Fig.\ref{fig:Wilkins1}, we give the results  simulated with 200, 400 and 800 cells, the reference result is given by a refined mesh with 4000 cells. Showed in the figures and these locally enlarged plots, the elastic  and plastic right-going shocks and the reflected elastic and plastic rarefaction waves are well resloved without oscillation.
 
-\subsection{Two materials problem 1}
+\subsection{Two materials problem 2}
 In this test, we consider a problem with a moving  copper stricking on an  aluminium plate, to test the HLLCEP method in the capturing of interface. The parameters for the EOSs and constitutive model for  aluminum and copper  are  $ (\rho_0, a_0, \Gamma_0, s, \mu, Y^0)_{\text{aluminium}} =(8930 \text{kg}/\text{m}^3, 3940 \text{m}/\text{s},2, 1.49, 2.76 ,2.76\times 10^{10} \text{Pa},3\times 10^8 \text{Pa} )$ and   $(\rho_0, a_0, \Gamma_0, s)_{\text{copper}} =(2785 \text{kg}/\text{m}^3, 5328 \text{m}/\text{s},2, 1.338,4.5\times 10^{10}\text{Pa},9\times 10^7 \text{Pa})$, respectively. The initial conditions are  given as
 \begin{equation}
   \left\{ \begin{aligned}
-	  \text{matter} = \text{alumimium}, \rho = 2785 \text{kg}/\text{m}^3, \hspace{0.2cm} u = 50\text{m}/\text{s}, \hspace{0.2cm} p = 10^{-12}\text{Pa}, s_{xx} = 0, \hspace{0.2cm} \text{if} \hspace{0.2cm} 0\text{m} \le x \le 2.5\times 10^{-2} \text{m},\\
+	  \text{matter} = \text{alumimium}, \rho = 2785 \text{kg}/\text{m}^3, \hspace{0.2cm} u = 60\text{m}/\text{s}, \hspace{0.2cm} p = 10^{-12}\text{Pa}, s_{xx} = 0, \hspace{0.2cm} \text{if} \hspace{0.2cm} 0\text{m} \le x \le 2.5\times 10^{-2} \text{m},\\
 	  \text{matter} = \text{copper}, \rho = 8930 \text{kg}/\text{m}^3, \hspace{0.2cm} u = 0\text{m}/\text{s}, \hspace{0.2cm} p = 10^{-12}\text{Pa}, s_{xx} = 0, \hspace{0.2cm} \text{if} \hspace{0.2cm} 2.5 \times 10^{-2}\text{m} \le x \le 50\times 10^{-2} \text{m}.\\
 	\end{aligned}
   \right.
 \end{equation}
 In Fig.\ref{fig:twomatter1} we give the result at final time $ t= 2 \times 10^{-6} \text{s}$ with 200 cell, the solution computed by  the HLLCE scheme is taken as a comparasion. The reference solution is given by a refine mesh with 4000 cells. We can see that using HLLCE, the Cauchy stress is not constitutive across the interface, this does not confirm with the relation of Eq.(\ref{eq:sigmaLR}), while with the new HLLCEP scheme, we can get a correct and stable result. 
+\begin{figure}
+  \begin{tikzpicture}
+	\matrix[column sep=0mm, row sep = 0mm]
+	{
+	  \node[rectangle](1){
+		\includegraphics[width = 7cm]{TwoMatterRho.eps}};&
+	  \node[rectangle](2){
+		\includegraphics[width = 7cm]{TwoMatterU.eps}};\\
+	  \node[rectangle](3){
+		\includegraphics[width = 7cm]{TwoMatterP.eps}};&
+	  \node[rectangle](4){
+		\includegraphics[width = 7cm]{TwoMatterSigma.eps}};\\
+	  };
+	  \node  at (-7,3) [rotate = 90] {$\rho$ ($\text{kg}/\text{m}^3$)};
+	  \node at (0.6,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
+	  \node  at (-7,-3)[ rotate = 90]{$p$ ($\text{Pa}$)};
+	  \node at (0.6,-3)[ rotate = 90]{$\sigma_{xx}$ ($\text{Pa}$)};
+	  \end{tikzpicture}
+	  \caption{ The result of two-materials  problem 1}
+	\end{figure}
 
-\subsection{Two materials problem 2}
+\subsection{Two materials problem 1}
+Then we considered 
 
 \section{Conclutions}
 
@@ -1093,7 +1129,6 @@ In Fig.\ref{fig:twomatter1} we give the result at final time $ t= 2 \times 10^{-
 
 %
 \section*{Acknowledgement} 
-This research work was supported by NSFC 11272324, 11272325, NSAF U1530145 and 2016YFA0401200.
 
 \section*{References}
 
