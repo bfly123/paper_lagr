@@ -67,6 +67,69 @@ For the above consideration, in this paper, we aim to construct a new HLLC-type 
 Combined with an improved third-order WENO scheme\ref{liu2018novel} and Runge-Kutta scheme, a high-order cell-centered Lagrangian scheme is given in this paper for one-dimensional elastic-plastic flows with multi-materials. 
 
 This paper is organized as follows. In section 2, we briefly introduce the goverining equations to be studied. In section 3, the HLLEP method is constructed.  Then, high-order cell-centered Lagrangian schemes for a non-conservative system of elastic plasticity is given in section 4, some numerical examples are presented to validate the method.  Conclusions are shown in section 5.
+\section{Governing equations}
+
+The equations for a continuous one-dimensional homogeneous solid in differential form given as
+
+\begin{equation*}
+\partial_t \mathbf{{U}} + \partial _x \bm{F}(\mathbf{{U}}) = 0, \   x \in \   \Omega \subset \mathbf{R}, \  t>0,
+\end{equation*}
+where
+\begin{equation}
+  \bm{U} = \left[ \begin{array}{l}
+	  \rho \\
+	  \rho u \\
+	  \rho  E \\
+	\end{array}
+  \right],
+  \hspace{0.3cm}
+  \bm{F} = \left[ \begin{array}{l}
+	  \rho u \\
+	  \rho u^2 -\sigma_x\\
+	  (\rho E -\sigma_x)u\\
+  \end{array} \right],
+\end{equation}
+$\rho$, $u$, $\sigma_x$ and $E$ are  the density, velocity in $x-$direction, Cauchy stress and total energy per unit volume, respectively, $E$ has the relation with specific internal energy $e$ as
+\begin{equation}
+  E = e+\frac{1}{2}u^2,
+\end{equation}
+\begin{equation}
+  \sigma_x = -p +s_{xx},
+\end{equation}
+where $p$ and $s_{xx}$ denote hydrostatic pressure and deviatoric stress in the $x-$ direction, respectively.
+
+In this paper, the elastic energy is not included in the total energy. The exclution of the elastic energy is usual for practical engineering problems\ref{} and is different from that in Ref.\ref{}.
+
+The relation of the pressure with  the density and the specific internal energy is gotten from the equation of state (EOS). In this paper, we consider the Mie-Gr\"uneisen EOS,
+\begin{equation}\label{eq:mie}
+  p(\rho,e) = \rho_0 a_0^2f(\eta)+ \rho_0 \Gamma_0 e,
+\end{equation}
+where $f(\eta) = \frac{(\eta-1)(\eta-\Gamma_0(\eta-1)/2)}{(\eta-s(\eta-1))^2}$, $\eta = \frac{\rho}{\rho_0}$, $\rho_0$, $a_0$, $s$, and $\Gamma_0$ are constant parameters of the Mie-Gr\"uneisen EOS.
+
+Hooke's law is used here to describe the relationship between the deviatoric stress and the strain,
+\begin{equation}\label{eq:sxx1}
+\dot{s}_{xx} = 2\mu \left(\dot{\varepsilon}_x-\frac{1}{3}\frac{\dot{V}}{V}\right),
+\end{equation}
+where $\mu$ is the shear modulus, $V$ is the volume, and the dot means the material time derivative,
+\begin{equation}\label{eq:mt}
+  \dot{()} = \frac{\partial ()}{\partial t} + u \frac{\partial ()}{\partial t},
+\end{equation}
+and
+\begin{equation}\label{eq:vare}
+  \dot{\varepsilon}_x = \frac{\partial u}{\partial x}, \hspace{0.3cm} \frac{\dot{V}}{V} = \frac{\partial u}{\partial x}.
+\end{equation}
+
+Using Eq.(\ref{eq:vare}), Eq.(\ref{eq:sxx1}) can be rewritten as
+\begin{equation}\label{eq:sxx}
+  \frac{\partial s_{xx}}{\partial t} + u \frac{\partial s_{xx}}{\partial t} =\frac{4}{3}\mu \frac{\partial u}{\partial x}.
+\end{equation}
+
+The Von Mises' yileding condition is used here to describe the elastic limit. In one spatial dimension, the von Mises' yielding criterion is given by
+\begin{equation}
+  |s_{xx}| \le \frac{2}{3}Y_0,
+\end{equation}
+where $Y_0$ is the yield strength of the material in simple tension.
+
 
 \section{HLLCEP}\label{sec:HLLCEP}
 \subsection{The Riemann problem}
