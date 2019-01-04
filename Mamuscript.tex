@@ -47,7 +47,7 @@
 
 In this paper, a new HLLC-type approximate Riemann solver is developed, with the capibility of resolving both elactic and plastic waves, to simulate one-dimensional  multi-material elastic-plactic solid problems with the isotropic elastic-plastic model \cite{wilkins1963calculation} and von Mises' yielding condition in the framework of high-order cell-centered Lagrangian scheme. 
 
-Many elastic-plastic solid  problems of interest involve large deformations and are treated as flows. Up till now, elastic-plastic flows can be mainly simulated in three ways, Eulerian method \ref{trangenstein1991higher,miller2001high,barton2009exact}, staggered Lagrangian schemes \cite{wilkins1963calculation} and cell-centered Lagrangian schemes \cite{burton2013cell,kluth2010discretization,maire2013nominally,cheng2017third} which is considered in this paper. 
+Many elastic-plastic solid  problems of interest involve large deformations and are treated as flows. Up till now, elastic-plastic flows can be mainly simulated in three ways, Eulerian method \cite{trangenstein1991higher,miller2001high,barton2009exact}, staggered Lagrangian schemes \cite{wilkins1963calculation} and cell-centered Lagrangian schemes \cite{burton2013cell,kluth2010discretization,maire2013nominally,cheng2017third} which is considered in this paper. 
 Cell-centered Lagrangian  scheme  is derived  based on the Godunov method and has combined many advantages from both staggered Lagrangian schemes and Eulerian methods. Firstly, it's no need to use artificial viscosity  which must be used in the staggered Lagrangian schemes, besides, it's can also be used in both  hyper-elastic models and hypo-elastic models  \cite{burton2013cell,kluth2010discretization,maire2013nominally,cheng2017third}  as a Lagrangian scheme.
 
 In the  Godunov type method  approach,  a core process is to construct the conservative flux by solving  the solution of a  Remainn problem  at each cell face. As the Remiann problem contains many physical structures especially in elastic-plastic flows, such as elastic waves, plastic waves and contact waves or interfaces between different materials, the property of the approximate Remainn solver may do a magnitude influence in the simulation. Recently, there is a lot of works have been done in this area. For example, Gavrilyuk et al. \cite{gavrilyuk2008modelling} analyzed the structure of Riemann solution to construct a Riemann solver for the linear elastic system  of hyperbolic non-conservative models for transverse waves, wherein an extra evolution equation was added in order to make the elastic transformations reversible in the absence of shock waves. Despres \cite{despres2007geometrical} built a shock solution to a non-conservations reverisible system of hypo-elasticity models and found that a sonic point is necessary to construct compression solution that begins at a constrained comressed state.  Cheng eta al.  \cite{cheng2015high} analyzed the wave structures of one-dimensional elastic-plastic flows and developed an effective two-rarefaction Riemann solver with elastic waves (TRRSE) and build the second-order and third-order cell-centered Lagrangian schemes based on the TRRSE, but the TRRSE is a little  expensive as iteration method is used in it.  
@@ -64,26 +64,26 @@ In \cite{cheng2016harten}, for one-dimensional elastic-plastic flows, Cheng intr
 
 For the above consideration, in this paper, we aim to construct a new HLLC-type Riemann solver for 1D elastic-plastic flows, in the new solver, both the elastic waves and plastic waves are resolved and the assumption in \cite{cheng2016harten} that the pressure is continuous across the interface is deleted, correspondingly, the errors introduced by the assumption will also be eliminated.
 
-Combined with an improved third-order WENO scheme\ref{liu2018novel} and Runge-Kutta scheme, a high-order cell-centered Lagrangian scheme is given in this paper for one-dimensional elastic-plastic flows with multi-materials. 
+Combined with an improved third-order WENO scheme\cite{liu2018novel} and Runge-Kutta scheme, a high-order cell-centered Lagrangian scheme is given in this paper for one-dimensional elastic-plastic flows with multi-materials. 
 
 This paper is organized as follows. In section 2, we briefly introduce the goverining equations to be studied. In section 3, the HLLEP method is constructed.  Then, high-order cell-centered Lagrangian schemes for a non-conservative system of elastic plasticity is given in section 4, some numerical examples are presented to validate the method.  Conclusions are shown in section 5.
 \section{Governing equations}
 
-The equations for a continuous one-dimensional homogeneous solid in differential form given as
+The equations for a continuous one-dimensional solid in differential form given as
 
 \begin{equation*}
 \partial_t \mathbf{{U}} + \partial _x \bm{F}(\mathbf{{U}}) = 0, \   x \in \   \Omega \subset \mathbf{R}, \  t>0,
 \end{equation*}
 where
 \begin{equation}
-  \bm{U} = \left[ \begin{array}{l}
+  \mathbf{U} = \left[ \begin{array}{l}
 	  \rho \\
 	  \rho u \\
 	  \rho  E \\
 	\end{array}
   \right],
   \hspace{0.3cm}
-  \bm{F} = \left[ \begin{array}{l}
+  \mathbf{F} = \left[ \begin{array}{l}
 	  \rho u \\
 	  \rho u^2 -\sigma_x\\
 	  (\rho E -\sigma_x)u\\
@@ -98,7 +98,7 @@ $\rho$, $u$, $\sigma_x$ and $E$ are  the density, velocity in $x-$direction, Cau
 \end{equation}
 where $p$ and $s_{xx}$ denote hydrostatic pressure and deviatoric stress in the $x-$ direction, respectively.
 
-In this paper, the elastic energy is not included in the total energy. The exclution of the elastic energy is usual for practical engineering problems\ref{} and is different from that in Ref.\ref{}.
+In this paper, the elastic energy is not included in the total energy. The exclution of the elastic energy is usual for practical engineering problems \cite{maire2013nominally} and is different from that in Ref.\cite{gavrilyuk2008modelling}.
 
 The relation of the pressure with  the density and the specific internal energy is gotten from the equation of state (EOS). In this paper, we consider the Mie-Gr\"uneisen EOS,
 \begin{equation}\label{eq:mie}
@@ -129,7 +129,6 @@ The Von Mises' yileding condition is used here to describe the elastic limit. In
   |s_{xx}| \le \frac{2}{3}Y_0,
 \end{equation}
 where $Y_0$ is the yield strength of the material in simple tension.
-
 
 \section{HLLCEP}\label{sec:HLLCEP}
 \subsection{The Riemann problem}
@@ -211,7 +210,7 @@ r_4 = \frac{1}{\phi^2}\left[\begin{array}{l}
   \end{equation}
   where
   \begin{equation}
-	b_1 = \frac{\partial p}{\partial \rho} - \Gamma E, \hspace{0.3cm} h = E +\frac{p-s{xx}}{\rho},
+	b_1 = \frac{\partial p}{\partial \rho} - \Gamma E,  \quad h = E +\frac{p-s_{xx}}{\rho},
   \end{equation}
   and
   \begin{equation}
@@ -219,16 +218,16 @@ r_4 = \frac{1}{\phi^2}\left[\begin{array}{l}
   \end{equation}
 
 
-  \subsection{States between the  contact wave or the interface}
-  For  a  system without molercular diffusion, there is no materials convecting  cross the contact wave or interface, so the velocities between the discontinuity are always equal, $u_L^* = u_R^*$. This can also be verified by the eigenvectors (\ref{eq:eiv}).
+\subsection{States between the  contact wave or the interface}
+  For  a  system without molercular diffusion, there is no materials convecting  cross the contact wave or interface, so the velocities between the discontinuity are always equal, $u_L^* = u_R^*$. This can also be verified by the eigenvectors  in Eq.(\ref{eq:eiv}).
 
-Using the eigenvectors (\ref{eq:eiv}), for the $\lambda_{1}$-wave we
+  Using the eigenvectors in  Eq.(\ref{eq:eiv}), for the $\lambda_{1}$-wave we
 have
 \begin{equation}   \label{e23a}
 \frac{d \rho}{\frac{1}{b_{1}}} = \frac{d \rho u}{\frac{u
 }{b_{1}}}=\frac{d \rho E}{0} = \frac{d s_{xx}}{1}.
 \end{equation}
-From the above equations, we can deduce easily that
+From the above equations, we can easily deduce that
 \begin{equation}   \label{e23b}
 du = 0, \quad d(s_{xx}-p)=0,
 \end{equation}
@@ -252,7 +251,7 @@ have
 \frac{d \rho}{\frac{-\Gamma}{b_{1}}} = \frac{d \rho u}{\frac{-u
 \Gamma}{b_{1}}}=\frac{d \rho E}{1} = \frac{d s_{xx}}{0}.
 \end{equation}
-From the above equations, we can deduce easily that
+From the above equations, we can easily deduce  that
 \begin{equation}   \label{e24b}
 du = 0, \quad dp=0, \quad ds_{xx}=0,
 \end{equation}
@@ -268,7 +267,7 @@ where $()_{L}^{\ast}$ and $()_{R}^{\ast}$ denote $()$ in the region
 of $\mathbf{W}_{L}^{\ast}$ and $\mathbf{W}_{R}^{\ast}$,
 respectively.
 
-Thanks to (\ref{e24d}), one gets that
+From  Eq.(\ref{e24d}), we  get that
 \begin{equation}   \label{e27a}
 \sigma_{x,L} ^{\ast}=  \sigma_{x,R} ^{\ast}.
 \end{equation}
@@ -323,27 +322,12 @@ This relation always holds if there is no yielding in the integration path.
 \subsection{The constructing details of HLLCEP method}
 %Although HLLCE Riemann solver can simulate the elastic-plastic flow effectively and efficiently without iterations, but the plastic structure is not considered in and  there are some assumptions that are not so reasonable, especially in the interface between different materials. For example, the normal stresses $\sigma_x$ are  always equavalent across the interface, but the pressures are not always equal, and the consequent evaluation of $\widetilde{s}^*$ may   be of large error.
 
-In \cite{hllce}, for one-dimensional elastic-plastic flows, Cheng introduced a HLLCE Riemann solver, which is fast and efficient in resolving elastic waves and plastic waves for numerical examples in \cite{hllce}, but Cheng evaluated the deviatoric stresses from the following assumption: a pressure is continuous across the contact wave in the Rieman solver. This assumption is valid for pure fluids, but for elastic-plastic flows, this assumption maybe lead to some errors. There are three cases we need consider. 
-\begin{enumerate}
-  \item If both states in the star regions near the contact wave are elastic, this assumption does not results in errors;
-  \item If the both states reach the elastic limit, there are two cases we need take into account:
-  \begin{enumerate}
-    \item if the both materials across the interface are same, this assumption does not results in errors, too; 
-    \item if the both materials are different, this assumption will results in big errors because the yielding strengths of different materials are always different; 
-  \end{enumerate}
-  \item If one state in one side of the interface are yielded, but another does not,  this assumption also results in big errors. 
-\end{enumerate}
+Now we considered the constructing details of HLLCEP method. As there possible exist left-going or right-going  plastic waves, there may be three to five waves in the results of the Riemann problem, that depends on the  yielding state  on the left side and right side.
 
-In this paper, the assumption that the pressure is continuous across the interface in \cite{hllce} is deleted, corresponding, the big errors introduced by the assumption will also be deleted and Riemsnn solution in resolving elastic and plastic waves. 
+\subsubsection{Pre-evaluating the states without considering of plastic waves}\label{sec:case1}
+At first we do not know the yielding states, so assume that there is no plastic wave in and the material is totally yielding or totally not yielding, we consider  the structures of Fig.\ref{fig:case1}. If the result contains yielding process, we will turn the case into one in Fig.\ref{fig:case2}-\ref{fig:case4}.
 
-%In this paper, the plastic wave is considered in between the left-going(right-going) elastic wave and the contact wave. On one side of the plastic wave, the deviatoric stess $|s_{xx}|<\frac{2}{3}Y_u$ and material is in its elastic phase, and on another side, material yields.   Showed in Fig.\ref{fig:case1}-Fig.\ref{fig:case4},  
-
-Because there are possible plastic waves, there may be three  to five waves in the result of the Riemann problem, that  depends on the  yielding state  on the left side and right side.
-
-\subsubsection{Case 1: solving the Riemann problem without  plastic waves}\label{sec:case1}
-At first we do not know the yielding states, so assume that there is no plastic wave in  and the material is totally yielding or totally not yielding, we consider structures of Fig.\ref{fig:case1}. If the result contains yielding process, we will turn the case into one in Fig.\ref{fig:case2}-\ref{fig:case4}.
-%
-In this case, the HLLCE is given as follows,
+The HLLC is given as follows,
 \begin{equation}\label{eq:HLLCEP}
   \bm{U}^{\text{HLLCEP}}_{\text{Case1}}(x,t) = \left\{ \begin{aligned}
 		& \bm{U}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\le s_L, \\
@@ -371,28 +355,6 @@ In this case, the HLLCE is given as follows,
 	\right.
   \end{equation}
 
-\begin{figure}
-  \centering
-  \begin{tikzpicture}
-	% \draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
-	\draw [line width =1pt] (-4,0) -- (0,0);
-%	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
-	%\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
-%	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
-	%\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
-%	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
-%	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
-%	\node at (-1.3,0.5) {$\bm{Q}_L$};
-%	%\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
-%	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
-%	\node at (0.7,1.2) {$\bm{Q}_R^*$};
-%	%\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
-%	\node at (1.3,0.5) {$\bm{Q}_R$};
-	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
-\end{tikzpicture}
-\caption{The  structures of HLLCEP method, case 1: without plastic wave.}
-\label{fig:case1}
-\end{figure}
 According to the Rankine-Hugoniot conditions between left elastic wave,
 \begin{equation} \label{eq:RH1}
 	\bm{F}_L^* = \bm{F}_L+s_L (\bm{U}_L^*-\bm{U}_L),
@@ -413,19 +375,25 @@ the density is solved as
 \begin{equation}\label{eq:rhoLs}
   \hat{\rho}_L^* = \frac{\rho_L(u_L-s_L)}{\hat{s}^*-s_L}.
 \end{equation}
-Samilar, we can get the density in the right
+Samilar, we can get the density in the right as
 \begin{equation}\label{eq:rhoLs}
   \hat{\rho}_R^* = \frac{\rho_R(u_R-s_R)}{\hat{s}^*-s_R}.
 \end{equation}
 where the speeds of left and right elastic waves are evaluted as
 	\begin{equation}\label{eq:sLR}
-	  s_L = \text{min} (u_L-c_L, u_R-c_R), \hspace{0.3cm} s_R = \text{max}(u_L+c_L, u_R+c_R).
+	  s_L = \text{min} (u_L-c_L, u_R-c_R),  \quad s_R = \text{max}(u_L+c_L, u_R+c_R).
 	\end{equation}
 Based on the assumption above, as there is no plastic wave in, we can take the relation of Eq.(\ref{eq:rhosxx}), and the deviatoric stress is evaluated as
 \begin{equation}
-  \hat{s}_{xxL}^*=-\frac{4}{3}\mu\text{ln}(\frac{\hat{\rho}_L^*}{\rho_L})+s_{xxL},\hspace{0.2cm}  \hat{s}_{xxR}^*=-\frac{4}{3}\mu\text{ln}(\frac{\hat{\rho}_R^*}{\rho_R})+s_{xxR}.
+  \hat{s}_{xxL}^*=-\frac{4}{3}\mu\text{ln}(\frac{\hat{\rho}_L^*}{\rho_L})+s_{xxL}, \quad   \hat{s}_{xxR}^*=-\frac{4}{3}\mu\text{ln}(\frac{\hat{\rho}_R^*}{\rho_R})+s_{xxR}.
 \end{equation}
 
+Using the pre-evaluated values of $\hat{s}_{xxL}^*$ and $\hat{s}_{xxR}^*$, we can classify the true condtion into the following four cases.
+
+
+\subsubsection{Case 1: No plastic wave}\label{sec:case1}
+%
+In this case, 
 If $|s_{xxL}|<\frac{2}{3}Y_0$ and $|\hat{s}_{xxL}^*| < \frac{2}{3}Y_0$, all the states in the left are not yielding. Or  $|s_{xxL}| \ge \frac{2}{3}Y_0$ and $|\hat{s}_{xxL}^*| \ge  \frac{2}{3}Y_0$, all the states in the left are yielding. The assumption  holds in the left.
 Meanwhile, if $|s_{xxR}|<\frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| < \frac{2}{3}Y_0$, Or $|s_{xxR}| \ge \frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| \ge  \frac{2}{3}Y_0$, the assumption holds in the right. Then the structures  truely are  the case in Fig.\ref{fig:case1}.
 
@@ -437,9 +405,9 @@ Then
 where,
 \begin{equation}\label{eq:upsilon}
   \Upsilon(\omega) = \left\{ \begin{aligned}
-	  &\omega, \hspace{0.3cm} \text{if} \hspace{0.3cm} |\omega| \le \frac{2}{3}Y_0,\\
-	  &\frac{2}{3}Y_0,  \hspace{0.3cm} \text{if} \hspace{0.3cm} \omega > \frac{2}{3}Y_0,\\
-	 &-\frac{2}{3}Y_0,  \hspace{0.3cm} \text{if} \hspace{0.3cm} \omega < -\frac{2}{3}Y_0.\\
+	  &\omega, \  \text{if} \  |\omega| \le \frac{2}{3}Y_0,\\
+	  &\frac{2}{3}Y_0,  \ \text{if} \  \omega > \frac{2}{3}Y_0,\\
+	 &-\frac{2}{3}Y_0,  \  \text{if} \ \omega < -\frac{2}{3}Y_0.\\
  \end{aligned}\right.
  \end{equation}
 
@@ -449,11 +417,34 @@ where,
 \end{equation*}
  Then we can get the pressure by $p =s_{xx}-\sigma$.
 \begin{equation}
-  p_L^* = s_{xxL}^* - \sigma_L^*, \hspace{0.3cm}   p_R^* = s_{xxR}^* - \sigma_R^*.
+  p_L^* = s_{xxL}^* - \sigma_L^*,  \  p_R^* = s_{xxR}^* - \sigma_R^*.
 \end{equation}
 
- \subsubsection{Case 2:  with only the left plastic wave}\label{sec:case2}
- If $|s_{xxL}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxL}^*|$, there exists a plastic wave in the left as showed in Fig.\ref{fig:case2}. We need to solve the state  of $\widetilde{\bm{Q}}_L$ at first. The HLLCEP is given as follows in this case,
+\begin{figure}
+  \centering
+  \begin{tikzpicture}
+	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
+	\draw [line width =1pt] (-4,0) -- (0,0);
+	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
+	%\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
+	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
+	%\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
+	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
+	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
+	\node at (-1.3,0.5) {$\bm{Q}_L$};
+	%\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
+	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
+	\node at (0.7,1.2) {$\bm{Q}_R^*$};
+	%\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
+	\node at (1.3,0.5) {$\bm{Q}_R$};
+	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
+\end{tikzpicture}
+\caption{The  structures of HLLCEP method, case 1: without plastic wave.}
+\label{fig:case1}
+\end{figure}
+
+ \subsubsection{Case 2:  with only  the left plastic wave}\label{sec:case2}
+ If $|s_{xxL}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxL}^*|$, there exists a plastic wave in the left as showed in Fig.\ref{fig:case2}. We need to solve the state  of $\widetilde{\bm{Q}}_L$. The HLLCEP is given as follows in this case,
  \begin{equation}\label{eq:HLLCEP2}
    \bm{U}^{\text{HLLCEP}}_{\text{Case2}}(x,t) = \left\{ \begin{aligned}
 	   & \bm{U}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\le \widetilde{s}_L, \\
@@ -483,28 +474,6 @@ where,
 	\right.
   \end{equation}
 
-
- \begin{figure}
-   \centering
-\begin{tikzpicture}
-%	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
-%	\draw [line width =1pt] (-4,0) -- (0,0);
-%	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
-%	\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
-%	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
-	%\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
-%	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
-%	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
-%	\node at (-1.5,0.3) {$\bm{Q}_L$};
-%	\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
-%	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
-%	\node at (0.7,1.2) {$\bm{Q}_R^*$};
-%	\node at (1.3,0.5) {$\bm{Q}_R$};
-	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
-\end{tikzpicture}
-\caption{The  structures of HLLCEP method, case 2: with only  the left plastic wave.}
-\label{fig:case2}
-\end{figure}
  Using the Rankine-Hugoniot relation of  the left  plastic wave,
   \begin{align}
 	&\widetilde{\rho}_L(\widetilde{u}_L-\widetilde{s}_L) = \rho_L(u_L-\widetilde{s}_L), \label{eq:RHp1}\\
@@ -526,13 +495,13 @@ where yielding happened behind the plastic wave, so the deviatoric stress and de
   \end{aligned}\right.
  \end{equation}
 
- The unknowns are the wave speed $\widetilde{s}_L$,  the velocity  $\widetilde{u}_L$, the pressure $\widetilde{p}_L$ and the specific internal energy $\widetilde{E}_L$. In the following, we will give the derivations of
+ The unknowns are the wave speed $\widetilde{s}_L$,  the velocity  $\widetilde{u}_L$, the pressure $\widetilde{p}_L$ and the specific internal energy $\widetilde{E}_L$. In the following, we will give the derivations of them.
 
- From Eq.(\ref{eq:RHp1}) we can get the wave speed
+ From Eq.(\ref{eq:RHp1}) we can get the wave speed as
   \begin{equation}
 	\widetilde{s}_L = \frac{\widetilde{\rho}_L \widetilde{u}_L-\rho_Lu_L}{\widetilde{\rho}_L-\rho_L},
   \end{equation}
-and the relation
+and  have the relation of
 \begin{equation}\label{eq:u1_s}
   u_L-\widetilde{s}_L = \frac{(u_L-\widetilde{u}_L)\widetilde{\rho}_L}{\widetilde{\rho}_L-\rho_L}.
 \end{equation}
@@ -579,14 +548,14 @@ then the velocity is solved,
 \end{aligned} \right.
 \end{equation}
 
-After solve the state of $\widetilde{\bm{Q}}_L$,  using a samilar process with Section \ref{sec:case1}, the states of $\bm{Q}_L^*$ and $\bm{Q}_R^*$ can be solved out.
+After solving  the state of $\widetilde{\bm{Q}}_L$,  using a samilar process with Section \ref{sec:case1}, the states of $\bm{Q}_L^*$ and $\bm{Q}_R^*$ can be solved out as follows.
 
-Solving the contace wave speed,
+The contace wave speed is 
 \begin{equation}
   s^* = \frac{\widetilde{\sigma}_L-\sigma_R+\widetilde{\rho}_L \widetilde{u}_L(s_L-\widetilde{u}_L)-\rho_R u_R(s_R-u_R)}{\widetilde{\rho}_L(s_L-\widetilde{u}_L)-\rho_R(s_R-u_R)},
 \end{equation}
 
-Solving the densities,
+The densities are
 \begin{equation}
   \rho_L^* = \frac{\widetilde{\rho}_L(\widetilde{u}_L-s_L)}{s^*-s_L}, \hspace{0.3cm}  \rho_R^* = \frac{\rho_R(u_R-s_R)}{s^*-s_R},
 \end{equation}
@@ -594,7 +563,6 @@ where  the left and right  elastic wave speeds are evaluted as
 	\begin{equation}
 	  s_L = \text{min} (\widetilde{u}_L-\widetilde{c}_L, u_R-c_R), \hspace{0.3cm} s_R = \text{max}(\widetilde{u}_L+\widetilde{c}_L, u_R+c_R).
 	\end{equation}
-
 The deviatoric stresses are evaluated as
 \begin{equation}
   \overline{s}_{xxL}^*=-\frac{4}{3}\mu\text{ln}(\frac{\rho_L^*}{\rho_L})+s_{xxL},\hspace{0.2cm}  \overline{s}_{xxR}^*=-\frac{4}{3}\mu\text{ln}(\frac{\rho_R^*}{\rho_R})+s_{xxR},
@@ -612,7 +580,29 @@ and the pressures are
   p_L^* = s_{xxL}^* - \sigma_L^*, \hspace{0.3cm}   p_R^* = s_{xxR}^* - \sigma_R^*.
 \end{equation}
 
-\subsubsection {Case 3: with only the  right plastic wave}\label{sec:case3}
+ \begin{figure}
+   \centering
+\begin{tikzpicture}
+	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
+	\draw [line width =1pt] (-4,0) -- (0,0);
+	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
+	\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
+	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
+%\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
+	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
+	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
+	\node at (-1.5,0.3) {$\bm{Q}_L$};
+	\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
+	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
+	\node at (0.7,1.2) {$\bm{Q}_R^*$};
+	\node at (1.3,0.5) {$\bm{Q}_R$};
+	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
+\end{tikzpicture}
+\caption{The  structures of HLLCEP method, case 2: with only  the left plastic wave.}
+\label{fig:case2}
+\end{figure}
+
+\subsubsection {Case 3: with only the right plastic wave}\label{sec:case3}
 If  $|s_{xxR}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxR}^*|$, there exists a plastic wave in the right as showed in Fig.\ref{fig:case3}. We need to solve the state  of $\widetilde{\bm{Q}}_R$ at first. The HLLCEP is given in this case as,
 
  \begin{equation}\label{eq:HLLCEP3}
@@ -674,29 +664,6 @@ The Cauchy stress and velocity are
 \end{aligned} \right.
 \end{equation}
 
-\begin{figure}
-  \centering
- \begin{tikzpicture}
-%	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
-%	\draw [line width =1pt] (-4,0) -- (0,0);
-%	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
-%	%\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
-%	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
-%	\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
-%	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
-%	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left going} ;
-%	\node at (-1.3,0.5) {$\bm{Q}_L$};
-	%\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
-%	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
-%	\node at (0.7,1.2) {$\bm{Q}_R^*$};
-%	\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
-%	\node at (1.5,0.28) {$\bm{Q}_R$};
-	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
-\end{tikzpicture}
-\caption{The  structures of HLLCEP method, case 3: with only  the right  plastic wave.}
-\label{fig:case3}
-\end{figure}
-
 After solving the state of $\widetilde{\bm{Q}}_R$, we can solve the states of $\bm{Q}_L^*$ and  $\bm{Q}_R^*$.
 
 The contact wave speed is
@@ -727,9 +694,30 @@ and the pressures are
   p_L^* = s_{xxL}^* - \sigma_L^*, \hspace{0.3cm}   p_R^* = s_{xxR}^* - \sigma_R^*.
 \end{equation}
 
+\begin{figure}
+  \centering
+ \begin{tikzpicture}
+\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
+\draw [line width =1pt] (-4,0) -- (0,0);
+\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
+%\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
+\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
+\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
+\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
+\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left going} ;
+\node at (-1.3,0.5) {$\bm{Q}_L$};
+%\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
+\node at (-0.6,1.2) {$\bm{Q}_L^*$};
+\node at (0.7,1.2) {$\bm{Q}_R^*$};
+\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
+\node at (1.5,0.28) {$\bm{Q}_R$};
+%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
+\end{tikzpicture}
+\caption{The  structures of HLLCEP method, case 3: with only  the right  plastic wave.}
+\label{fig:case3}
+\end{figure}
 
-
-\subsubsection{Case4: with both the left and right plastic waves}
+\subsubsection{Case 4: with both the left and right plastic waves}
 
 If $|s_{xxL}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxL}^*|$ and  $|s_{xxR}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxR}^*|$. Both  the left side  and right side exist plastic waves, as showed in Fig.\ref{fig:case4}. The HLLCEP Riemann solver is given as
  \begin{equation}
@@ -764,29 +752,6 @@ If $|s_{xxL}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxL}^*|$ and  $|s_{xxR}| \le \fr
 	\right.
   \end{equation}
 
-\begin{figure}
-  \centering
-\begin{tikzpicture}
-%	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
-%	\draw [line width =1pt] (-4,0) -- (0,0);
-%	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
-%	\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
-%	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
-%	\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
-%	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
-%	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
-%	\node at (-1.5,0.3) {$\bm{Q}_L$};
-%	\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
-%	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
-%	\node at (0.7,1.2) {$\bm{Q}_R^*$};
-%	\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
-%	\node at (1.5,0.28) {$\bm{Q}_R$};
-	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
-\end{tikzpicture}
-\caption{The  structures of HLLCEP method, case 4: with both left and right plastic waves.}
-\label{fig:case4}
-\end{figure}
-
 The states of $\widetilde{\bm{Q}}_L$ and   $\widetilde{\bm{Q}}_R$ can be solved by the same process with Section \ref{sec:case2} and Section \ref{sec:case3}. Then the states of $\bm{Q}^*_L$ and $\bm{Q}^*_R$ are given as following.
 
 The speed of waves are evaluted as
@@ -800,7 +765,7 @@ Then we can get the density using Eq.(\ref{eq:rhoLs}),
 \begin{equation}
   \rho_L^* = \frac{\widetilde{\rho}_L(\widetilde{u}_L-s_L)}{s^*-s_L}, \hspace{0.3cm}  \rho_R^* = \frac{\widetilde{\rho}_R(\widetilde{u}_R-s_R)}{s^*-s_R},
 \end{equation}
-and the deviatoric stress using Eq.(\ref{eq:sxxrho}),
+and the deviatoric stresses are  given as
   \begin{align}
   \overline{s}_{xxL}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_L^*}{\rho_L}  \right)+s_{xxL},\\
   \overline{s}_{xxR}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_R^*}{\rho_R}  \right)+s_{xxR},\\
@@ -818,6 +783,29 @@ So we can get the pressure by $p =s_{xx}-\sigma$,
   p_L^* = s_{xxL}^* - \sigma_L^*, \hspace{0.3cm}   p_R^* = s_{xxR}^* - \sigma_R^*.
 \end{equation}
 
+
+\begin{figure}
+  \centering
+\begin{tikzpicture}
+	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
+	\draw [line width =1pt] (-4,0) -- (0,0);
+	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
+	\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
+	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
+	\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
+	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
+	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
+	\node at (-1.5,0.3) {$\bm{Q}_L$};
+	\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
+	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
+	\node at (0.7,1.2) {$\bm{Q}_R^*$};
+	\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
+	\node at (1.5,0.28) {$\bm{Q}_R$};
+	%\draw [-{Stealth[length=3mm]}] (0,0) -- (2,0);
+\end{tikzpicture}
+\caption{The  structures of HLLCEP method, case 4: with both left and right plastic waves.}
+\label{fig:case4}
+\end{figure}
 
 \subsection{Summary of HLLCEP}
 Here, we present all the procedures of HLLCEP in  a more simple way.
@@ -925,8 +913,8 @@ If right  plactic wave does not exist,
 
     \item Solve the deviatoric stresses,
  \begin{align*}
-  \hat{s}_{xxL}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_L^*}{\rho_L}  \right)+s_{xxL},\\
-  \hat{s}_{xxR}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_R^*}{\rho_R}  \right)+s_{xxR},\\
+   \hat{s}_{xxL}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_L^*}{\widetilde{\rho}_L}  \right)+\widetilde{s}_{xxL},\\
+   \hat{s}_{xxR}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_R^*}{\widetilde{\rho}_R}  \right)+\widetilde{s}_{xxR},\\
 \end{align*}
 then using  the von Mises' yielding condition,
 \begin{equation*}
@@ -940,123 +928,7 @@ then using  the von Mises' yielding condition,
 
      \item The pressure is given by $p =s_{xx}-\sigma$.
   \end{enumerate}
-  \item 4
 \end{enumerate}
-
-
-First,
-
-Step 1 evaluate  $\hat{s}^*$
-\begin{equation*}
-  \hat{s}^* = \frac{\sigma_L-\sigma_R+\rho_L u_L(s_L-u_L)-\rho_R u_R(s_R-u_R)}{\rho_L(s_L-u_L)-\rho_R(s_R-u_R)}.
-\end{equation*}
-
-Step 2  Evaluate  $\hat{\rho}_L^*$ and $\hat{\rho}_R^*$
-\begin{equation*}
-  \hat{\rho}_L^* = \frac{\rho_L(u_L-s_L)}{s^*-s_L}, \hspace{0.3cm}  \hat{\rho}_R^* = \frac{\rho_R(u_R-s_R)}{s^*-s_R}.
-\end{equation*}
-
-Step 3  Evaluate  the deviatoric stress
-\begin{equation*}
-  \hat{s}_{xxL}^*=-\frac{4}{3}\mu\text{ln}(\frac{\hat{\rho}_L^*}{\rho_L})+s_{xxL},\hspace{0.2cm}  \hat{s}_{xxR}^*=-\frac{4}{3}\mu\text{ln}(\frac{\hat{\rho}_R^*}{\rho_R})+s_{xxR}.
-\end{equation*}
-
-Step 4 Solve the state behind the left  plastic wave
-
-\vspace{0.3cm} \hspace{0.4cm}  If $|s_{xxL}| < \frac{2}{3}Y_0 \le |\hat{s}_{xxL}^*| $, left plastic wave exists, the deviatoric stress, density and pressure  are given as
-\begin{equation*}
-  \widetilde{s}_{xxL} =\left\{ \begin{aligned}
-	  -\frac{2}{3}Y_0, \hspace{0.3cm} \text{if} \hspace{0.3cm} \rho_L^* > \rho_L,\\
-	  \frac{2}{3}Y_0, \hspace{0.3cm} \text{if} \hspace{0.3cm} \rho_L^* < \rho_L,\\
-	\end{aligned}\right.
-	\hspace{0.2cm} \widetilde{\rho}_{L} = \left\{ \begin{aligned}
-	  & \rho_L \text{exp}\left(\frac{Y_0}{2\mu}+\frac{3 s_{xxL}}{4\mu}\right)  \hspace{0.5cm} \text{if} \hspace{0.3cm} \rho_L^* > \rho_L,\\
-& \rho_L \text{exp}\left(-\frac{Y_0}{2\mu}+\frac{3 s_{xxL}}{4\mu}\right)
-\hspace{0.3cm} \text{if} \hspace{0.3cm} \rho_L^* < \rho_L,\\
-  \end{aligned}\right.
- \end{equation*}
-\begin{equation*}
-  \widetilde{p}_L= \frac{2t(c_1f(\widetilde{\rho}_L)+e_L)-(\sigma_L+\widetilde{s}_{xxL})}{2tc_0-1}, \hspace{0.3cm}
-t=\frac{\rho_L \widetilde{\rho}_L}{\widetilde{\rho}_L-\rho_L},
-\end{equation*}
-and the Cauchy stress and velocity are
-\begin{equation*}
-\widetilde{\sigma}_L = -\widetilde{p}_L+\widetilde{s}_{xxL},
-\end{equation*}
-\begin{equation*}
-  \widetilde{u}_L= \left\{
-  \begin{aligned}
-	u_L-\sqrt{\frac{\sigma_L-\widetilde{\sigma}_L}{t}} \hspace{0.2cm} \text{if} \hspace{0.2cm} \rho_L^* >\rho_L,\\
-	u_L+\sqrt{\frac{\sigma_L-\widetilde{\sigma}_L}{t}} \hspace{0.2cm} \text{if} \hspace{0.2cm} \rho_L^* <\rho_L.\\
-\end{aligned} \right.
-\end{equation*}
-If left plactic wave does not exist,
-\begin{equation*}
-  \widetilde{\bm{Q}}_L = \bm{Q}_L.
-\end{equation*}
-
-Step 5 Solve the state behind the right plastic wave
-
-\vspace{0.3cm} \hspace{0.4cm}  If $|s_{xxR}| < \frac{2}{3}Y_0 \le |\hat{s}_{xxR}^*| $, right plastic wave exists, the deviatoric stress, density and pressure  are given as
-\begin{equation*}
-  \widetilde{s}_{xxR} =\left\{ \begin{aligned}
-	  -\frac{2}{3}Y_0, \hspace{0.3cm} \text{if} \hspace{0.3cm} \rho_R^* > \rho_R,\\
-	  \frac{2}{3}Y_0, \hspace{0.3cm} \text{if} \hspace{0.3cm} \rho_R^* < \rho_R,\\
-	\end{aligned}\right.
-	\hspace{0.2cm} \widetilde{\rho}_{R} = \left\{ \begin{aligned}
-	  & \rho_R \text{exp}\left(\frac{Y_0}{2\mu}+\frac{3 s_{xxR}}{4\mu}\right)  \hspace{0.5cm} \text{if} \hspace{0.3cm} \rho_R^* > \rho_R,\\
-& \rho_R \text{exp}\left(-\frac{Y_0}{2\mu}+\frac{3 s_{xxR}}{4\mu}\right)
-\hspace{0.3cm} \text{if} \hspace{0.3cm} \rho_R^* < \rho_R,\\
-  \end{aligned}\right.
- \end{equation*}
-\begin{equation*}
-  \widetilde{p}_R= \frac{2t(c_1f(\widetilde{\rho}_R)+e_R)-(\sigma_R+\widetilde{s}_{xxR})}{2tc_0-1}, \hspace{0.3cm}
-t=\frac{\rho_R \widetilde{\rho}_R}{\widetilde{\rho}_R-\rho_R},
-\end{equation*}
-and the Cauchy stress and velocity are
-\begin{equation*}
-\widetilde{\sigma}_R = -\widetilde{p}_R+\widetilde{s}_{xxR},
-\end{equation*}
-\begin{equation*}
-  \widetilde{u}_R= \left\{
-  \begin{aligned}
-	u_R+\sqrt{\frac{\sigma_R-\widetilde{\sigma}_R}{t}} \hspace{0.2cm} \text{if} \hspace{0.2cm} \rho_R^* >\rho_R,\\
-	u_R-\sqrt{\frac{\sigma_R-\widetilde{\sigma}_R}{t}} \hspace{0.2cm} \text{if} \hspace{0.2cm} \rho_R^* <\rho_R.\\
-\end{aligned} \right.
-\end{equation*}
-If right  plactic wave does not exist,
-\begin{equation*}
-  \widetilde{\bm{Q}}_R = \bm{Q}_R.
-\end{equation*}
-
-Step 6  Solve the wave speeds,
-\begin{equation*}
-  s_L = \text{min} (\widetilde{u}_L-\widetilde{c}_L, \widetilde{u}_R-\widetilde{c}_R), \hspace{0.3cm} s_R = \text{max}(\widetilde{u}_L+\widetilde{c}_L, \widetilde{u}_R+\widetilde{c}_R),
-	\end{equation*}
-	\begin{equation*}
-	  s^* = \frac{\widetilde{\sigma}_L-\widetilde{\sigma}_R+\widetilde{\rho}_L \widetilde{u}_L(s_L-\widetilde{u}_L)-\widetilde{\rho}_R \widetilde{u}_R(s_R-\widetilde{u}_R)}{\widetilde{\rho}_L(s_L-\widetilde{u}_L)-\widetilde{\rho}_R(s_R-\widetilde{u}_R)}.
-\end{equation*}
-
-Step 7  Solve the densities,
-\begin{equation*}
-  \rho_L^* = \frac{\widetilde{\rho}_L(\widetilde{u}_L-s_L)}{s^*-s_L}, \hspace{0.3cm}  \rho_R^* = \frac{\widetilde{\rho}_R(\widetilde{u}_R-s_R)}{s^*-s_R},
-\end{equation*}
-
-Step 8 Solve the deviatoric stresses,
- \begin{align*}
-  \hat{s}_{xxL}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_L^*}{\rho_L}  \right)+s_{xxL},\\
-  \hat{s}_{xxR}^* =  -\frac{4}{3}\mu \text{ln}\left( \frac{\rho_R^*}{\rho_R}  \right)+s_{xxR},\\
-\end{align*}
-then using  the von Mises' yielding condition,
-\begin{equation*}
-  s_{xxL}^* = \Upsilon(\hat{s}_{xxL}^*) , \hspace{0.3cm}  s_{xxR}^* = \Upsilon(\hat{s}_{xxR}^*).
-\end{equation*}
-
-Step 9  Solving the Cauchy stresses,
-\begin{equation*}
-  \sigma_L^*=\sigma_R^*=\widetilde{\sigma}_L -\widetilde{\rho_L} (s_L-\widetilde{u}_L)(s^*-\widetilde{u}_L).
-\end{equation*}
- Then we can get the pressure by $p =s_{xx}-\sigma$.
 
  \section{ A High-order cell-centered Lagrangian scheme for 1D  conservative hydrodynamic equations with Wilkins' model}
 Here, we consider the following governing equations with Wilkins' model,
@@ -1096,7 +968,7 @@ where
 $\bm{Q}_{L,i+\frac{1}{2}}$ and $\bm{Q}_{R,i+\frac{1}{2}}$ represent the left and right values of $\bm{Q}$ at the cell's boundary $x_{i+\frac{1}{2}}$, and  $p_{i+\frac{1}{2}}$, $(s_{xx})_{i+\frac{1}{2}}$ and $u_{i+\frac{1}{2}}$ denote the Godunov values at $x_{i+\frac{1}{2}}$, respectively.
 
 The Godunov values  $\bm{Q}_{i+\frac{1}{2}}$  can be solved  by the Riemiann problem  (\ref{eq:1d}) at $x_{i+\frac{1}{2}}$,
-\begin{equation}
+\begin{equation}\label{eq:qLR}
   \bm{Q}_{i+\frac{1}{2}} = \left\{ \begin{aligned}
 	\bm{Q}_L^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{dx}{dt} \le  s^*,\\
 	\bm{Q}_R^*, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{dx}{dt} > s^*,\\
@@ -1115,7 +987,7 @@ First, we transform the conservative variables to local characteristic variables
 \end{equation}
 where $\bm{L}$ is the left eigenvectors of $\bm{J}$, and $\bm{J}_i$ is the Jacobian matrix  (\ref{eq:Jcb}) in $I_i$.
 
-Here, we  use a third-order WENO scheme to reconstruct the characteristic variables at the  left and right interfaces ($\bm{W}_L$ and $\bm{W}_R$)  of every cell using  $\bm{W}$. Then projecting  back to the consrvative variables space,
+Here, we  use a third-order modified WENO scheme constructed in Ref.(\cite{liu2018novel}) to reconstruct the characteristic variables at the  left and right interfaces ($\bm{W}_L$ and $\bm{W}_R$)  of every cell using  $\bm{W}$.  In the new  Then projecting  back to the consrvative variables space,
 \begin{equation}
   \bm{Q}_L = \bm{R} \cdot \bm{W}_L, \hspace{0.3cm}   \bm{Q}_R = \bm{R} \cdot \bm{W}_R,
 \end{equation}
@@ -1152,8 +1024,37 @@ Then  the  discretization of the constitutive equation is given as
   \frac{d s_{xx}}{dt } =\frac{4\mu}{3} \frac{ u_{i+\frac{1}{2}}(t) - u_{i-\frac{1}{2}}(t)}{ x_{i+\frac{1}{2}}(t) - x_{i-\frac{1}{2}}(t)}.
 \end{equation}
 
-subsubsection{Time discretization}
-We use the third-order TVD-Runge-Kutta method  as the time marching method, the TVD-Runge-Kutta method used in the Lagrangian schemes with von Mises' yielding condition is given in Ref.( )<++> as follows.
+\subsubsection{Multi-materials interface}
+For multi-materials problem we will add a marker function $\text{Mrk}_i$ into every cell to mark the material, for two materials we can initial $\text{Mrk}$ as 
+\begin{equation}
+  \left\{
+  \begin{aligned}
+	\text{Mrk}(i) = 0 ,\quad \text{if cell} \ i \ \text{is  material A}, \\
+	\text{Mrk}(i) = 1 ,\quad \text{if cell} \ i \ \text{is  material B}, \\
+\end{aligned}
+\right.
+\end{equation}
+and we can get the interface is between cell $ii$ and $ii+1$ if $\text{Mrk}_{ii} = 0$ and   $\text{Mrk}_{ii+1} = 1$.
+
+As the parameters across the interface may be different, so when construct 
+\begin{equation}
+  \frac{d(\overline{\bm{U}}_{ii}\Delta x_i)}{dt} = -(\bm{F}_{ii+\frac{1}{2}} - \bm{F}_{ii-\frac{1}{2}}),
+\end{equation}
+in Eq.(\ref{eq:qLR}) we use
+\begin{equation}
+  \bm{Q}_{ii+\frac{1}{2}} = \bm{Q}_{L}^*.
+\end{equation}
+Meanwhile, when we construct
+\begin{equation}
+  \frac{d(\overline{\bm{U}}_{ii+1}\Delta x_i)}{dt} = -(\bm{F}_{(ii+1)+\frac{1}{2}} - \bm{F}_{(ii+1)-\frac{1}{2}}),
+\end{equation}
+we use 
+\begin{equation}
+  \bm{Q}_{(ii+1)-\frac{1}{2}} = \bm{Q}_{R}^*.
+\end{equation}
+
+\subsection{Time discretization}
+We use the third-order TVD-Runge-Kutta method  as the time marching method, the TVD-Runge-Kutta method used in the Lagrangian schemes with von Mises' yielding condition is given in Ref.(\cite{cheng2016harten}) as follows.
 
 Step 1,
 \begin{equation}
@@ -1195,13 +1096,13 @@ Where $\bm{L}$ and $\varTheta$ are the numerical spatial operators representing 
 In this section, the new HLLCEP method  is tested  in different problems to see the capibility of  capturing elastic-plastic waves, espicially in the problem  with different materials interface. 
 
 \subsection{Accuracy test}
-In the first test, a smooth solutions is used to test the accuracy of the scheme. The computational domian is $[0,1]$, and a periodic boundary condition is used. The EOS is given by the Mie-Gr\"uneisen model with the parameters $\rho_0 = 8930 \text{kg}/\text{m}^3$, $a_0 = 3940 \text{m}/\text{s}$, $Gamma_0 =2$, and $s=1.49$. The constitutive model has the parameters, $\mu = 4.5\times 10^10 \text{Pa}$ and $Y^0 = 9\times 10^10 \text{Pa}$.  The initial conditions are given as 
+In the first test, a smooth solution is used to test the accuracy of the scheme. The computational domian is $[0,1]$, and a periodic boundary condition is used. The EOS is given by the Mie-Gr\"uneisen model with the parameters $\rho_0 = 8930 \text{kg}/\text{m}^3$, $a_0 = 3940 \text{m}/\text{s}$, $\Gamma_0 =2$, and $s=1.49$. The constitutive model has the parameters, $\mu = 4.5\times 10^10 \text{Pa}$ and $Y^0 = 9\times 10^10 \text{Pa}$.  The initial condition  is  given as 
 \begin{equation}
-  \rho = \rho_0(1-b \text{sin}(2\pi x)), u = a, p = 1.1\rho u^2, s_{xx} = s_0 \text{sin}(2\pi x),
+  \rho = \rho_0(1-b \text{sin}(2\pi x)), \quad u = a, \quad p = 1.1\rho u^2, \quad  s_{xx} = s_0 \sin(2\pi x),
 \end{equation}
 where $a = 10,000\text{m}/\text{s}$, $ b = 0.1$  and  $s_0 = 6\times 10^5 \text{Pa}$.
 
-The final results are given at time $t = 1.0 \time 10^{-4}$. The reference  result is computed with a refined mesh of $N = 2000$, the  $L_1 $- and $ L_\inf$-norm  errors  are showed in Table \ref{tab:1}. We can see that,  with a third-order WENO scheme, the high-order cell-centered Lagrangian scheme can  achieve the designed  accuracy.     
+The final results are given at time $t = 1 \times 10^{-4}$. The reference  result is computed with a refined mesh of $N = 2000$, the  $L_1 $- and $ L_\infty$-norm  errors  are showed in Table \ref{tab:1}. We can see that,  with a  modified third-order WENO scheme, the high-order cell-centered Lagrangian scheme can  achieve the designed  accuracy.     
 
 \begin{table}[htbp]
   \small
@@ -1222,25 +1123,25 @@ The final results are given at time $t = 1.0 \time 10^{-4}$. The reference  resu
 				  &400          &  $2.39\times 10^{-6}$     &2.63        &  $1.42\times 10^{-4}$         & 2.36 \\
 	\bottomrule
 	\end{tabular}
-\label{table1}
+\label{tab:1}
 \end{table}
 
 \subsection{Piston problem} 
-In the second test, we consider the  piston problem\ref{} with a piece of copper with the initial conditions, 
+In the second test, we consider the  piston problem \cite{maire2007cell} with a piece of copper with the initial condition of
 \begin{equation}
   \rho = 8930 \text{kg}/\text{m}^3, \hspace{0.3cm}  p = 10^5 \text{Pa}, \hspace{0.3cm}  u = 0 \text{m}/\text{s},\hspace{0.3cm}  s_{xx} = 0 \text{Pa}.
 \end{equation}
-The EOS for copper is given by  the Mie-Gr\"uneisen model with the parameters,
+The EOS for copper is given by  the Mie-Gr\"uneisen model with the parameters
 \begin{equation}
-  \rho_0 = 8930 \text{kg}/\text{m}^3, \hspace{0.3cm} a_0 = 3940\text{m}/\text{s}, \hspace{0.3cm}, \Gamma_0 = 2,\hspace{0.3cm} s = 1.49.
+  \rho_0 = 8930 \text{kg}/\text{m}^3, \quad a_0 = 3940\text{m}/\text{s}, \quad , \Gamma_0 = 2, \quad  s = 1.49.
 \end{equation}
 The constitutive model is characterized by the following parameters,
 \begin{equation}
-  \mu = 4.5\times 10^{10}\text{Pa}, \hspace{0.3cm} Y^0 = 9\times 10^7 \text{Pa}.
+  \mu = 4.5\times 10^{10}\text{Pa}, \hspace{0.3cm} Y_0 = 9\times 10^7 \text{Pa}.
 \end{equation}
 The left boundary condtion is a velocity boundary condition with $u_{\text{piston}} = 20 \text{m}/\text{s}$, and the right boundary is  a  wall boundary condition.
 
-In Fig.\ref{fig:piston1}, we test the convergence of the scheme with different meshes of 100, 200 and 400 cells. The final time is $t = 150 \mu s $.  We can  see that the current scheme can capture the leading elastic shock wave and the floowed plastic wave well without oscillation. 
+In Fig.\ref{fig:piston1}, we test the convergence of the scheme with different meshes of 100, 200 and 400 cells. The final time is $t = 150 \mu s $.  We can  see that the current scheme can capture the leading elastic shock wave and the followed plastic wave well without oscillation. 
 \begin{figure}
   \begin{tikzpicture}
 	\matrix[column sep=0mm, row sep = 0mm]
@@ -1260,31 +1161,53 @@ In Fig.\ref{fig:piston1}, we test the convergence of the scheme with different m
 	  \node at (0.3,-3)[ rotate = 90]{$s_{xx}$ ($\text{Pa}$)};
 	  \end{tikzpicture}
 	  \caption{ The result of Piston problem}
+	  \label{fig:piston1}
 	\end{figure}
 
 \subsection{Wilkins' problem}
-This problem, first introduced by Wilkins, is used to test the  ability of capturing rarefaction waves of scheme. In this problem, a moving alumimium plate strking on another alumimium plate. The EOS for aluminium is given by the Mie-Gr\"uneisen model with the parameters $\rho_0 = 2785 \text{kg}/\text{m}^3$, $ a_0 = 5328 \text{m} /\text{s}$, $\Gamma_0 =2$ and $s = 1.338$. The constitutive model is characterized by the parameters $\mu = 2.76\times 10^{10} \text{Pa}$ and $Y^0 = 3\times 10^8 \text{Pa}$. The initial condtions are given as
+This problem, first introduced by Wilkins, is used to test the  ability of capturing rarefaction waves of scheme. In this problem, a moving alumimium plate striking on another alumimium plate. The EOS for aluminium is given by the Mie-Gr\"uneisen model with the parameters $\rho_0 = 2785 \text{kg}/\text{m}^3$, $ a_0 = 5328 \text{m} /\text{s}$, $\Gamma_0 =2$ and $s = 1.338$. The constitutive model is characterized by the parameters $\mu = 2.76\times 10^{10} \text{Pa}$ and $Y_0 = 3\times 10^8 \text{Pa}$. The initial condtions are given as
 \begin{equation}
   \left\{ \begin{aligned}
-	  \rho = 2785 \text{kg}/\text{m}^3, \hspace{0.2cm} u = 800\text{m}/\text{s}, \hspace{0.2cm} p = 10^{-6}\text{Pa}, \hspace{0.2cm} \text{if} \hspace{0.2cm} 0\text{m} \le x \le 5\times 10^{-3} \text{m},\\
-	  \rho = 2785 \text{kg}/\text{m}^3, \hspace{0.2cm} u = 0\text{m}/\text{s}, \hspace{0.2cm} p = 10^{-6}\text{Pa}, \hspace{0.2cm} \text{if} \hspace{0.2cm} 5 \times 10^{-3}\text{m} \le x \le 50\times 10^{-3} \text{m}.\\
+	&  \rho = 2785 \text{kg}/\text{m}^3, \quad  u = 800\text{m}/\text{s}, \quad  p = 10^{-6}\text{Pa}, \quad  \text{if} \quad  0\text{m} \le x \le 5\times 10^{-3} \text{m},\\
+	&  \rho = 2785 \text{kg}/\text{m}^3, \quad  u = 0\text{m}/\text{s}, \quad  p = 10^{-6}\text{Pa}, \quad  \text{if}  \quad  5 \times 10^{-3}\text{m} \le x \le 50\times 10^{-3} \text{m}.\\
 	\end{aligned}
   \right.
 \end{equation}
-The left boundary is set as free boundary and on  the right boundary  we use a wall boundary condtion. The final time is $t =5\times 10^{-6} \text{s}$. In Fig.\ref{fig:Wilkins1}, we give the results  simulated with 200, 400 and 800 cells, the reference result is given by a refined mesh with 4000 cells. Showed in the figures and these locally enlarged plots, the elastic  and plastic right-going shocks and the reflected elastic and plastic rarefaction waves are well resloved without oscillation.
+The left boundary is set as free boundary and on  the right we use a wall boundary condtion. The final time is $t =5\times 10^{-6} \text{s}$. In Fig.\ref{fig:Wilkins1}, we give the results  simulated with 200, 400 and 800 cells, the reference result is given by a refined mesh with 4000 cells. Showed in the figures and these locally enlarged plots, the elastic and plastic right-going shocks and the reflected elastic and plastic rarefaction waves are well resloved without oscillation.
 
+\begin{figure}
+  \begin{tikzpicture}
+	\matrix[column sep=0mm, row sep = 0mm]
+	{
+	  \node[rectangle](1){
+		\includegraphics[width = 7cm]{WilkinsRho.eps}};&
+	  \node[rectangle](2){
+		\includegraphics[width = 7cm]{WilkinsU.eps}};\\
+	  \node[rectangle](3){
+		\includegraphics[width = 7cm]{WilkinsP.eps}};&
+	  \node[rectangle](4){
+		\includegraphics[width = 7cm]{WilkinsSxx.eps}};\\
+	  };
+	  \node  at (-7,3) [rotate = 90] {$\rho$ ($\text{kg}/\text{m}^3$)};
+	  \node at (0.3,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
+	  \node  at (-7,-3)[ rotate = 90]{$p$ ($\text{Pa}$)};
+	  \node at (0.3,-3)[ rotate = 90]{$s_{xx}$ ($\text{Pa}$)};
+	  \end{tikzpicture}
+	  \caption{ The result of Wilkins problem}
+	  \label{fig:Wilkins1}
+	\end{figure}
 
-\subsection{Multi-material problem 1}
-We first consider a multi-material problem without the plasticity effect. A similar case is used in Ref.(\ref{ghaisas2016high}). In this test, a moving  copper stricks on an aluminium plate. The parameters for the EOSs and constitutive model for aluminum and copper  are  
+	\subsection{Multi-material problem 1} \label{pro:multi1}
+ Then we consider a multi-material problem without the plasticity effect. A similar case is used in Ref.(\cite{ghaisas2016high}). In this test, a moving  copper stricks on an aluminium plate. The parameters for the EOSs and constitutive model for aluminum and copper  are  
 $ (\rho_0, a_0, \Gamma_0, s, \mu)_{\text{Al}} =(8930 \text{kg}/\text{m}^3, 3940 \text{m}/\text{s},2, 1.49, 2.76 ,2.76\times 10^{10} \text{Pa} )$ and   $(\rho_0, a_0, \Gamma_0, s, \mu)_{\text{Cu}} =(2785 \text{kg}/\text{m}^3, 5328 \text{m}/\text{s},2, 1.338,4.5\times 10^{10}\text{Pa})$, respectively. In order to remove the influence of the plasticity effect, we use a very large unphysics yield strength $Y_0 = 3\times 10^{12} \text{Pa}$.  The initial conditions of this problem are  
-\begin{equation}\label{eq:init_multi}
+\begin{equation}\label{eq:initmulti}
   \left\{ \begin{aligned}
 	& \rho = 2785 \text{kg}/\text{m}^3, \hspace{0.2cm} u = u_0, \hspace{0.2cm} p = 10^{-12}\text{Pa}, s_{xx} = 0, \hspace{0.2cm} \text{if} \hspace{0.2cm} 0\text{m} \le x \le 2.5\times 10^{-2} \text{m},\\
 	&  \rho = 8930 \text{kg}/\text{m}^3, \hspace{0.2cm} u = 0\text{m}/\text{s}, \hspace{0.2cm} p = 10^{-12}\text{Pa}, s_{xx} = 0, \hspace{0.2cm} \text{if} \hspace{0.2cm} 2.5 \times 10^{-2}\text{m} \le x \le 50\times 10^{-2} \text{m}.\\
 	\end{aligned}
   \right.
 \end{equation}
-In this case we take $U_0 = 100 \text{m}/\text{s}$.Figure  shows  the numerical results computed by HLLCE and HLLCEP at the final time $ t= 2 \times 10^{-6}s$, the reference is given by a refined mesh  with 4000 cells.  We can see there is little difference between the two schemes  in  the multi-material case without plastic wave.     
+In this case we take $u_0 = 100 \text{m}/\text{s}$. Figure \ref{fig:multi1}  shows  the numerical results computed by HLLCE and HLLCEP at the final time $ t= 2 \times 10^{-6}s$, the reference is given by a refined mesh  with 4000 cells.  We can see there is little difference between the two schemes  in  the multi-material case without plastic wave.     
 \begin{figure}
   \begin{tikzpicture}
 	\matrix[column sep=0mm, row sep = 0mm]
@@ -1304,13 +1227,12 @@ In this case we take $U_0 = 100 \text{m}/\text{s}$.Figure  shows  the numerical 
 	  \node at (0.6,-3)[ rotate = 90]{$\sigma_{xx}$ ($\text{Pa}$)};
 	  \end{tikzpicture}
 	  \caption{ The result of two-materials  problem 1}
+	  \label{fig:multi1}
 	\end{figure}
 
 \subsection{Two materials problem 2}
-Next, we consider a similar problem but with plastic waves. All the parameters are same to above problem but the yield strengths are  $Y_{0\text{Cu}} = 9\times 10^7$ and $Y_{0\text{Al}} = 3\times 10^8$, respectively. The inital conditions are same to Eq.(\ref{eq:init_multi}), we consider two cases with $u_0 = 60 \text{m}/\text{s}$ and 
-
-
-In Fig.\ref{fig:twomatter1} we give the result at final time $ t= 2 \times 10^{-6} \text{s}$ with 200 cell, the solution computed by  the HLLCE scheme is taken as a comparasion. The reference solution is given by a refine mesh with 4000 cells. We can see that using HLLCE, the Cauchy stress is not constitutive across the interface, this does not confirm with the relation of Eq.(\ref{eq:sigmaLR}), while with the new HLLCEP scheme, we can get a correct and stable result. 
+Next, we consider a similar problem but with plasticity effect. The yield strengths are $Y_0^{\text{Cu}} = 9\times 10^7$ and $Y_0^{\text{Al}} = 3\times 10^8$, respectively. All other  parameters are same to those in problem \ref{pro:multi1}. The inital condition is also same as  Eq.(\ref{eq:initmulti}), we consider this case with a velocity of $u_0 = 60 \text{m}/\text{s}$. 
+Fig.\ref{fig:multi2} gives the result at final time $ t= 2 \times 10^{-6} \text{s}$ with 200 cell, the solution computed by the HLLCE scheme is taken as a comparasion. The reference solution is given by a refine mesh with 4000 cells. We can see that using HLLCE, the Cauchy stress is not constitutive across the interface, this does not confirm with the relation of Eq.(\ref{e28}), while with the new HLLCEP scheme, we can get a correct and stable result. 
 \begin{figure}
   \begin{tikzpicture}
 	\matrix[column sep=0mm, row sep = 0mm]
@@ -1329,10 +1251,11 @@ In Fig.\ref{fig:twomatter1} we give the result at final time $ t= 2 \times 10^{-
 	  \node  at (-7,-3)[ rotate = 90]{$p$ ($\text{Pa}$)};
 	  \node at (0.6,-3)[ rotate = 90]{$\sigma_{xx}$ ($\text{Pa}$)};
 	  \end{tikzpicture}
-	  \caption{ The result of two-materials  problem 1}
+	  \caption{ The result of two-materials  problem 2}
+	  \label{fig:multi2}
 	\end{figure}
 
-\section{Conclutions}
+\section*{Conclutions}
 
 
  
@@ -1347,7 +1270,7 @@ In Fig.\ref{fig:twomatter1} we give the result at final time $ t= 2 \times 10^{-
 %
 \section*{Acknowledgement} 
 
-\section*{References}
+%\section*{References}
 
 \bibliography{mybibfile}
 
