@@ -37,7 +37,7 @@
 
 \begin{abstract}
 
-  A new  HLLC-type  approximate Riemann solver is constructed with both the structures of elastic and plastic waves for 1D elastic-plastic flows with the hypo-elastic constitutive model and the von Mises yield criterion. The process of the new HLLCEP is in two steps. In the first step, a pre-evaluation is taken with only a  simple three waves structure to analysis the local yielding states in the left going  and right going regions in the $x$ -$t$ plane. Depending on the local yielding states, there are four probable cases with the structures of zero to two plastic waves and three elastic waves, repectively. In the second step,  in every cell's face, one case will be  choosed and all the unknowns in every regions will be evaluated by the control equations and Rankine-Hugoniot relations.  Combining with the third-order WENO scheme and third-order Runge-Kutta scheme, a high-order cell-centered Lagrangian scheme for 1D elastic-plastic flows is used in this paper. A number of numerical expriments are carried out.  And showed by the numerical results, due to the rationable  consideration  of the plastic waves, the most attractive advantage of the new HLLCEP solver is the accurate resolution of the interface between different materials.  
+  A new  HLLC-type  approximate Riemann solver is constructed with both the structures of elastic and plastic waves for 1D multi-material elastic-plastic flows with the hypo-elastic constitutive model and the von Mises yield criterion.  The new method takes a detail consideration of the plastic waves to get a correct relation  of the star regions  between the contact wave or  multi-material interface. Combining with third-order WENO scheme and third-order Runge-Kutta scheme, a high-order cell-centered Lagrangian scheme for 1D elastic-plastic flows is used in this paper. A number of numerical expriments are carried out.  Showed by the numerical results, due to the rationable  consideration  of the plastic waves, the most attractive advantage of the new HLLCEP solver is the accurate resolution of the interface between different materials in the elastic-plastic flows.  
 \end{abstract}
 %\begin{keyword}
 % Stiff reacting flow\sep  Dual information preserving method\sep Numerical perturbation method\sep Shock-capturing scheme 
@@ -1256,6 +1256,7 @@ Fig.\ref{fig:multi2} gives the result at final time $ t= 2 \times 10^{-6} \text{
 	\end{figure}
 
 \section*{Conclutions}
+In this paper, a new HLLC-type approximate Reimann solver is constructed to simulate 1D multi-material elastic-plastic flows with the hypo-elastic constitutive model and the von Mises yield criterion. For the elastic-plastic problems with multi-materials, the relations between the interface is difficult to satisfied.  With a detail consideration of the plastic waves, there is no unreasonable assumption,  such as  the continuous pressure assumption between the interface, is used in the new HLLCEP method. And Thus, the new method can resolve the waves in multi-material elastic-plasitc problems with accuracy and stability.
 
 
  
