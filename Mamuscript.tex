@@ -37,11 +37,12 @@
 
 \begin{abstract}
 
-  A new  HLLC-type  approximate Riemann solver is constructed with both the structures of elastic and plastic waves for 1D multi-material elastic-plastic flows with the hypo-elastic constitutive model and the von Mises yield criterion.  The new method takes a detail consideration of the plastic waves to get a correct relation  of the star regions  between the contact wave or  multi-material interface. Combining with third-order WENO scheme and third-order Runge-Kutta scheme, a high-order cell-centered Lagrangian scheme for 1D elastic-plastic flows is used in this paper. A number of numerical expriments are carried out.  Showed by the numerical results, due to the rationable  consideration  of the plastic waves, the most attractive advantage of the new HLLCEP solver is the accurate resolution of the interface between different materials in the elastic-plastic flows.  
+  A new  HLLC-type  approximate Riemann solver is constructed with both the structures of elastic and plastic waves for 1D multi-material elastic-plastic flows with the hypo-elastic constitutive model and the von Mises yield criterion.  The new method takes a detail consideration of the plastic waves to get a correct relation  in  the star regions  between the contact wave or  multi-material interface. Combining with third-order WENO scheme and third-order Runge-Kutta scheme, a high-order cell-centered Lagrangian scheme for 1D elastic-plastic flows is used in this paper. A number of numerical expriments are carried out.  Showed by the numerical results, due to the rationable  consideration  of the plastic waves, the most attractive advantage of the new HLLCEP solver is the accurate resolution of the interface between different materials in the elastic-plastic flows.  
 \end{abstract}
-%\begin{keyword}
-% Stiff reacting flow\sep  Dual information preserving method\sep Numerical perturbation method\sep Shock-capturing scheme 
-%\end{keyword}
+
+\begin{keyword}
+  HLLC Riemann solver with elastic and plastic waves, high-order cell-centered Lagrangian scheme,  WENO scheme,  hypo-elastic constitutive model, elastic-plastic flows 
+\end{keyword}
 
 \section{Introduction}
 
@@ -375,7 +376,7 @@ the density is solved as
 \begin{equation}\label{eq:rhoLs}
   \hat{\rho}_L^* = \frac{\rho_L(u_L-s_L)}{\hat{s}^*-s_L}.
 \end{equation}
-Samilar, we can get the density in the right as
+Samilar, we can get the density on the right as
 \begin{equation}\label{eq:rhoLs}
   \hat{\rho}_R^* = \frac{\rho_R(u_R-s_R)}{\hat{s}^*-s_R}.
 \end{equation}
@@ -394,8 +395,8 @@ Using the pre-evaluated values of $\hat{s}_{xxL}^*$ and $\hat{s}_{xxR}^*$, we ca
 \subsubsection{Case 1: No plastic wave}\label{sec:case1}
 %
 In this case, 
-If $|s_{xxL}|<\frac{2}{3}Y_0$ and $|\hat{s}_{xxL}^*| < \frac{2}{3}Y_0$, all the states in the left are not yielding. Or  $|s_{xxL}| \ge \frac{2}{3}Y_0$ and $|\hat{s}_{xxL}^*| \ge  \frac{2}{3}Y_0$, all the states in the left are yielding. The assumption  holds in the left.
-Meanwhile, if $|s_{xxR}|<\frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| < \frac{2}{3}Y_0$, Or $|s_{xxR}| \ge \frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| \ge  \frac{2}{3}Y_0$, the assumption holds in the right. Then the structures  truely are  the case in Fig.\ref{fig:case1}.
+If $|s_{xxL}|<\frac{2}{3}Y_0$ and $|\hat{s}_{xxL}^*| < \frac{2}{3}Y_0$, all the states on the left are not yielding. Or  $|s_{xxL}| \ge \frac{2}{3}Y_0$ and $|\hat{s}_{xxL}^*| \ge  \frac{2}{3}Y_0$, all the states on the left are yielding. The assumption  holds on the left.
+Meanwhile, if $|s_{xxR}|<\frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| < \frac{2}{3}Y_0$, Or $|s_{xxR}| \ge \frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| \ge  \frac{2}{3}Y_0$, the assumption holds on the right. Then the structures  truely are  the case in Fig.\ref{fig:case1}.
 
 Then
 \begin{align}
@@ -444,7 +445,7 @@ where,
 \end{figure}
 
  \subsubsection{Case 2:  with only  the left plastic wave}\label{sec:case2}
- If $|s_{xxL}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxL}^*|$, there exists a plastic wave in the left as showed in Fig.\ref{fig:case2}. We need to solve the state  of $\widetilde{\bm{Q}}_L$. The HLLCEP is given as follows in this case,
+ If $|s_{xxL}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxL}^*|$, there exists a plastic wave on the left as showed in Fig.\ref{fig:case2}. We need to solve the state  of $\widetilde{\bm{Q}}_L$. The HLLCEP is given as follows in this case,
  \begin{equation}\label{eq:HLLCEP2}
    \bm{U}^{\text{HLLCEP}}_{\text{Case2}}(x,t) = \left\{ \begin{aligned}
 	   & \bm{U}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\le \widetilde{s}_L, \\
@@ -603,7 +604,7 @@ and the pressures are
 \end{figure}
 
 \subsubsection {Case 3: with only the right plastic wave}\label{sec:case3}
-If  $|s_{xxR}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxR}^*|$, there exists a plastic wave in the right as showed in Fig.\ref{fig:case3}. We need to solve the state  of $\widetilde{\bm{Q}}_R$ at first. The HLLCEP is given in this case as,
+If  $|s_{xxR}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxR}^*|$, there exists a plastic wave on the right as showed in Fig.\ref{fig:case3}. We need to solve the state  of $\widetilde{\bm{Q}}_R$ at first. The HLLCEP is given in this case as,
 
  \begin{equation}\label{eq:HLLCEP3}
    \bm{U}^{\text{HLLCEP}}_{\text{Case3}}(x,t) = \left\{ \begin{aligned}
@@ -982,7 +983,7 @@ Before this, we must give the left  and right initial value ($\bm{Q}_{L,i+\frac{
 The construction is carried out in the characteristic variables  space in this paper, which is   more stable  and accurate  than constructing  $\bm{Q}_L$ and $\bm{Q}_R$ in the primative variables space or the conservative viables space.
 
 First, we transform the conservative variables to local characteristic variables,
-\begin{equation}
+\begin{equation}\label{eq:chaVar}
   \bm{W} = \bm{L} \cdot \overline{\bm{Q}},
 \end{equation}
 where $\bm{L}$ is the left eigenvectors of $\bm{J}$, and $\bm{J}_i$ is the Jacobian matrix  (\ref{eq:Jcb}) in $I_i$.
@@ -1024,8 +1025,9 @@ Then  the  discretization of the constitutive equation is given as
   \frac{d s_{xx}}{dt } =\frac{4\mu}{3} \frac{ u_{i+\frac{1}{2}}(t) - u_{i-\frac{1}{2}}(t)}{ x_{i+\frac{1}{2}}(t) - x_{i-\frac{1}{2}}(t)}.
 \end{equation}
 
-\subsubsection{Multi-materials interface}
-For multi-materials problem we will add a marker function $\text{Mrk}_i$ into every cell to mark the material, for two materials we can initial $\text{Mrk}$ as 
+\subsubsection{Reconstruction near the Multi-material interface}
+
+Using a high-order spatial  scheme  such as the third-order WENO scheme,  the reconstruction across the interface may cause oscillation. So we need do some special treat near the interface.  First, we track the interface  by  adding  a marker function $\text{Mrk}_i$  to mark the material  in every cells. For two materials problem, we can initial $\text{Mrk}$ as 
 \begin{equation}
   \left\{
   \begin{aligned}
@@ -1034,24 +1036,70 @@ For multi-materials problem we will add a marker function $\text{Mrk}_i$ into ev
 \end{aligned}
 \right.
 \end{equation}
-and we can get the interface is between cell $ii$ and $ii+1$ if $\text{Mrk}_{ii} = 0$ and   $\text{Mrk}_{ii+1} = 1$.
+and we can get the interface is between cell $ii$ and $ii+1$,  if $\text{Mrk}_{ii} = 0$ and   $\text{Mrk}_{ii+1} = 1$.
 
-As the parameters across the interface may be different, so when construct 
+Using the reconstruction in the  left side of the interface as an example. Constructing $\bm{W}_R(ii-\frac{1}{2}) $ and $\bm{W}_L(ii+\frac{1}{2})$ are  both with the  stencil of  $S^3=(I_{ii-1},I_{ii}, I_{ii+1})$, where cell $I_{ii+1}$ is on the other side of the interface with a different EOS.
+Showed in Fig.\ref{fig:ghost}, we treat the interface as a special boundary and a ghost cell $I'_{ii+1}$ is added on the right side to replace the use of $I_{ii+1}$. 
+
+The cell average values of the ghost cell $I'_{ii+1}$ is given as follows, the Cauchy stress and the velocity  are  continuous across the interface according the relations in Eq.(\ref{e28}), so we use the real values on cell $I_{ii+1}$ 
 \begin{equation}
-  \frac{d(\overline{\bm{U}}_{ii}\Delta x_i)}{dt} = -(\bm{F}_{ii+\frac{1}{2}} - \bm{F}_{ii-\frac{1}{2}}),
+  \overline{\sigma}'_{ii+1} = \overline{\sigma}_{ii+1}, \quad \overline{u}'_{ii+1} = \overline{u}_{ii+1}.
 \end{equation}
-in Eq.(\ref{eq:qLR}) we use
+However, the values of pressure and density are not continuous, so we use a reflect condition on the interface as
 \begin{equation}
-  \bm{Q}_{ii+\frac{1}{2}} = \bm{Q}_{L}^*.
+\overline{p}'_{ii+1} = \overline{p}_{ii}, \quad \overline{\rho}'_{ii+1} = \overline{\rho}_{ii}.
 \end{equation}
-Meanwhile, when we construct
-\begin{equation}
-  \frac{d(\overline{\bm{U}}_{ii+1}\Delta x_i)}{dt} = -(\bm{F}_{(ii+1)+\frac{1}{2}} - \bm{F}_{(ii+1)-\frac{1}{2}}),
-\end{equation}
-we use 
-\begin{equation}
-  \bm{Q}_{(ii+1)-\frac{1}{2}} = \bm{Q}_{R}^*.
-\end{equation}
+
+After we get all the primative variables on  the ghost cell $I'_{ii+1}$,   using  the EOS of material A on the left, we can get all the conservative variables  $\bm{Q}'_{ii+1}$ and the characteristic variables $\bm{W}'_{ii+1}$ with the same process in Eq.(\ref{eq:chaVar}). With the variables of $\bm{W}_{ii-1}$, $\bm{W}_{ii}$ and  $\bm{W}'_{ii+1}$, we can reconstruct $\bm{W}_R(ii-\frac{1}{2})$ and $\bm{W}_L(ii+\frac{1}{2})$, respectively.
+
+On the right side with the EOS of material B, setting a ghost cell of $I'_{ii}$ in the stencil $S^3 = (I'_{ii}, I_{ii+1}, I_{ii+2})$ and using a samilar process, we can get new reconstructions of $\bm{W}_R(ii+\frac{1}{2})$ and  $\bm{W}_L(ii+\frac{3}{2})$, respectively.
+
+\begin{figure}
+  \centering
+\begin{tikzpicture}
+    \coordinate (A2)  at (1,0){ };
+    \node (A3) [circle,draw, inner sep=0.2mm,fill=black!30] at (3,0){ };
+    \node (A4) [line width=1pt,circle,draw, fill=black!30,inner sep=0.2mm] at (6,0){ };
+    \node  [line width=1pt,circle,draw, fill=black!30,inner sep=0.2mm] at (9,2){ };
+    \node (A5) [circle,draw=blue!60, inner sep=0.2mm] at (9,0){ };
+    %\node (A51)[circle,draw, inner sep=0.2mm,fill=black!30] at (5,1.5){ };
+    \coordinate  (A6)  at (11,0){ };
+    %\node (A71) [circle,draw, inner sep=1.2mm,fill=black!30] at (7,1.5){ };
+
+
+%\draw  [line width=2pt,color=black!30](4.4,-0.5)--(4.4,2.5);
+%\draw  [line width=1pt,color=black!60] (0.45,0)-- (A1)node [below=0.2cm] {\scriptsize $i-3$};
+	\draw  [line width=1pt](A2) --(A3)  node [below=0.2cm] {\scriptsize $I_{ii-1}$};  
+	\draw  [line width=1pt,dashed](1.5, -0.25) --(1.5, 0.25)  node [above=0.2cm] {\scriptsize $ii-\frac{3}{2}$};  
+\draw  [line width=1pt,dashed](4.5, -0.25) --(4.5, 0.25)  node [above=0.2cm] {\scriptsize $ii-\frac{1}{2}$};  
+\draw  [line width=2pt](7.5, -0.5) --(7.5, 0.5)  node [above=0.2cm] { Interface};  
+\draw  [line width=1pt,dashed](10.5, -0.25) --(10.5, 0.25)  node [above=0.2cm] {\scriptsize $ii+\frac{3}{2}$};  
+\draw  [line width=1pt](A3)--(A4)   node [below=0.2cm] {\scriptsize $I_{ii}$};
+
+\draw  [line width=1pt](A4)--(7.5,0);
+\draw  [line width=1pt, dashed](7.5,0)--(A5) node [below=0.2cm] {\scriptsize $I'_{ii+1}$};
+\draw  [line width=1pt, dashed](A5)--(A6);
+
+\draw  [line width=1pt](7.5,2)--(9,2) node [above=0.2cm] {\scriptsize $I_{ii+1}$};
+\draw  [line width=1pt](9,2)--(10.5,2);
+
+\draw [line width=1pt,dashed](10.5,2.25)--(10.5,1.75);
+\draw [line width=1pt,dashed](7.5,2.25)--(7.5,1.75);
+%\draw  [->,line width=1pt,color=black!50](A51)--  (A5) {};
+
+\draw [-{Stealth[length=2.5mm]},line width=1pt, color=black!50] (6,-0.1).. controls (7.0,-1.0).. (9,-0.1);
+\draw [-{Stealth[length=2.5mm]},line width=1pt, color=black!50] (9,1.9)-- (9,0.1);
+%\draw [->,line width=1pt, color=black!50] (4.4,0).. controls (4.7,0.7).. (5,0.15);
+%\draw [->,line width=1pt, color=black!50] (4.4,0).. controls (5.2,0.7).. (6,0.15);
+%\draw [->,line width=1pt, color=black!50] (4.4,0).. controls (5.7,0.7).. (7,0.15);
+%\node at (1.5,0.5) { \scriptsize 左侧求解};
+\node at (8.0,0.5) {  \scriptsize $ii+\frac{1}{2}$};
+\node[text width=1em] at (7.5,-1.0) {\scriptsize $\overline{p},\overline{\rho}$}; 
+\node[text width=1em] at (9.3,1.0) {\scriptsize $\overline{\sigma},\overline{u}$}; 
+\end{tikzpicture}
+\caption{Ghost cell near the interface.}
+\label{fig:ghost}
+\end{figure}
 
 \subsection{Time discretization}
 We use the third-order TVD-Runge-Kutta method  as the time marching method, the TVD-Runge-Kutta method used in the Lagrangian schemes with von Mises' yielding condition is given in Ref.(\cite{cheng2016harten}) as follows.
@@ -1256,10 +1304,9 @@ Fig.\ref{fig:multi2} gives the result at final time $ t= 2 \times 10^{-6} \text{
 	\end{figure}
 
 \section*{Conclutions}
-In this paper, a new HLLC-type approximate Reimann solver is constructed to simulate 1D multi-material elastic-plastic flows with the hypo-elastic constitutive model and the von Mises yield criterion. For the elastic-plastic problems with multi-materials, the relations between the interface is difficult to satisfied.  With a detail consideration of the plastic waves, there is no unreasonable assumption,  such as  the continuous pressure assumption between the interface, is used in the new HLLCEP method. And Thus, the new method can resolve the waves in multi-material elastic-plasitc problems with accuracy and stability.
+In this paper, a new HLLC-type approximate Reimann solver is constructed to simulate 1D multi-material elastic-plastic flows with the hypo-elastic constitutive model and the von Mises yield criterion. For the elastic-plastic problems with multi-materials, the relations between the interface is difficult to satisfied.  Within  a detail consideration of the plastic waves, there is no unreasonable assumption,  such as  the continuous pressure assumption between the interface, is used in the new HLLCEP method. And thus, the new method can resolve all the  wave structures in multi-material elastic-plasitc problems with accuracy and stability.
 
 
- 
 
 
 
