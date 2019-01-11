@@ -29,7 +29,7 @@
 \begin{document}
 
 \title{A multi-material HLLC Riemann solver with both elastic and plastic waves for 1D  elastic-plastic flows}
-\author{Li Liu$^1$,Junbo Cheng $^{1,*}$, Jiequan Li}
+\author{Li Liu$^1$,Junbo Cheng $^{1,*}$, Jiequan Li $^{1}$}
 %\cortext[mycorrespondingauthor]{
 %Correspondence to: Junbo Cheng, Institute of Applied Physics and Computational Mathematics, Beijing 100094, China. E-mail: Cheng\_junbo@iapcm.ac.cn}
 
@@ -38,7 +38,7 @@
 %\address{$^1$  Institute of Applied Physics and Computational Mathematics, Beijing 100094, China }
 
 \begin{abstract}
-  A multi-material HLLC-type  approximate Riemann solver with both the elastic and plastic waves (MHLLCEP) is constructed for 1D elastic-plastic flows with a hypo-elastic constitutive model and the von Mises yielding condition. Comparing with the HLLCE Riemann solver introduced in Cheng, during constructing MHLLCEP, we do not use any assumption and so describe and evaluate the plastic waves more accurate than do in HLLCE. Moreover, if the non-linear waves in the Riemann problem are only shock waves, even with the plastic waves, MHLLCEP is accurate. Based on MHLLCEP, combining with the third-order WENO reconstruction method and the third-order Runge-Kutta method in time, a high-order cell-centered Lagrangian scheme for 1D elastic-plastic flows is built in this paper. A number of numerical experiments are carried out and numerical results showed the presented third-order scheme is convergent, stable, and essentially non-oscillatory. Moreover, for multi-material elastic-plastic flows, the scheme with MHLLCEP is more accurate and more reasonable in resolving the multi-material interface than the scheme with HLLCE.
+  A multi-material HLLC-type  approximate Riemann solver with both the elastic and plastic waves (MHLLCEP) is constructed for 1D elastic-plastic flows with a hypo-elastic constitutive model and the von Mises yielding condition. Comparing with the HLLCE Riemann solver introduced in Cheng, during constructing MHLLCEP, we do not use any assumption and so describe and evaluate the plastic waves more accurate than that in HLLCE. Moreover, if the non-linear waves in the Riemann problem are only shock waves, even with the plastic waves, MHLLCEP is theoretically accurate. \color{red} For multi-material system, in this paper,  a ghost cell method is also used to achieve a high-order spatial reconstruction across the interface without oscillation. \color{} Based on MHLLCEP, combining with the third-order WENO reconstruction method and the third-order Runge-Kutta method in time, a high-order cell-centered Lagrangian scheme for 1D multi-material  elastic-plastic flows is built in this paper. A number of numerical experiments are carried out and numerical results showed the presented third-order scheme is convergent, stable, and essentially non-oscillatory. Moreover, for multi-material elastic-plastic flows, the scheme with MHLLCEP is more accurate and more reasonable in resolving the multi-material interface than the scheme with HLLCE.
 \end{abstract}
 
 %\begin{keyword}
@@ -52,23 +52,23 @@ In this paper, a multi-material elastic-plastic HLLC-type approximate Riemann so
 Generally, elastic-plastic flows can be mainly simulated in three ways, Eulerian method \cite{trangenstein1991higher,miller2001high,barton2009exact}, staggered Lagrangian schemes \cite{wilkins1963calculation} and cell-centered Lagrangian schemes \cite{burton2013cell,kluth2010discretization,maire2013nominally,cheng2017third} which is considered in this paper.
 Cell-centered Lagrangian  scheme  is derived  based on the Godunov methods and has combined many advantages from both staggered Lagrangian schemes and Eulerian methods. Firstly, it's no necessary to use artificial viscosity  which always is used in the staggered Lagrangian schemes; Secondly, it is easy to guarantee the total energy conservation; Besides, it can also be used to simulate the problems with both  hyper-elastic and hypo-elastic models  \cite{burton2013cell,kluth2010discretization,maire2013nominally,cheng2017third}  as a Lagrangian scheme.
 
-In the  Godunov-type method,  a core process is to construct the conservative flux by solving a Riemann problem  at each cell face. As the Riemann problem contains many physical structures, especially in elastic-plastic flows, such as elastic waves, plastic waves and contact waves or interfaces between different materials, the property of the approximate Riemann solver may do a magnitude influence in the simulation. Recently, there is a lot of works have been done in this area. For example, Gavrilyuk et al. \cite{gavrilyuk2008modelling} analyzed the structure of Riemann solution to construct a Riemann solver for the linear elastic system  of hyperbolic non-conservative models for transverse waves, wherein an extra evolution equation was added in order to make the elastic transformations reversible in the absence of shock waves. Despres \cite{despres2007geometrical} built a shock solution to a non-conservations reversible system of hypo-elasticity models and found that a sonic point is necessary to construct compression solution that begins at a constrained compressed state.  Cheng eta al.  \cite{cheng2015high} analyzed the wave structures of one-dimensional elastic-plastic flows and developed an effective two-rarefaction approximate Riemann solver with elastic waves (TRRSE) and build the second-order and third-order cell-centered Lagrangian schemes based on the TRRSE, but the TRRSE is a little  expensive as iteration method is used in it.
-In \cite{cheng2016harten}, for one-dimensional elastic-plastic flows, Cheng introduced a HLLCE Riemann solver, which is fast and efficient in resolving elastic waves and plastic waves for numerical examples in \cite{cheng2016harten}, but Cheng evaluated the deviatoric stresses from the following \emph{assumption: a pressure is continuous across the contact wave} in the Riemann solver. This assumption is valid for pure fluids, but for elastic-plastic flows, this assumption maybe lead to some errors. There are three cases we need  to consider.
+In the  Godunov-type method,  a core process is to construct the conservative flux by solving a Riemann problem  at each cell face. As the Riemann problem contains many physical structures, especially in elastic-plastic flows, such as elastic waves, plastic waves and contact waves or interfaces between different materials, the property of the approximate Riemann solver may do a magnitude influence in the simulation. Recently, there is a lot of works have been done in this area. For example, Gavrilyuk et al. \cite{gavrilyuk2008modelling} analyzed the structure of Riemann solution to construct a Riemann solver for the linear elastic system  of hyperbolic non-conservative models for transverse waves, wherein an extra evolution equation was added in order to make the elastic transformations reversible in the absence of shock wave. Despres \cite{despres2007geometrical} built a shock solution to a non-conservations reversible system of hypo-elasticity models and found that a sonic point is necessary to construct compression solution that begins at a constrained compressed state.  Cheng eta al.  \cite{cheng2015high} analyzed the wave structures of one-dimensional elastic-plastic flows and developed an effective two-rarefaction approximate Riemann solver with elastic waves (TRRSE) and build the second-order and third-order cell-centered Lagrangian schemes based on the TRRSE, but the TRRSE is a little  expensive as iteration method is used in it.
+In \cite{cheng2016harten}, for one-dimensional elastic-plastic flows, Cheng introduced a HLLCE Riemann solver, which is fast and efficient in resolving elastic waves and plastic waves for numerical examples in \cite{cheng2016harten}, but Cheng evaluated the deviatoric stresses from the following \emph{assumption: a pressure is continuous across the contact wave} in the Riemann solver. This assumption is valid for pure fluids, but for elastic-plastic flows, this assumption may lead to some errors. There are three cases we need  to consider.
 \begin{enumerate}
   \item If both states in the star regions between the contact wave are elastic, this assumption does not results in errors;
   \item If the both states reach the elastic limit, there are two cases we need take into account:
   \begin{enumerate}
-    \item if the both materials across the interface are same, this assumption does not results in errors, too;
-    \item if the both materials are different, this assumption will result in big errors because the yielding strengths of different materials are always different;
+    \item if both the  materials across the interface are same, this assumption does not results in errors, too;
+    \item if  both the  materials are different, this assumption will result in big errors because the yielding strengths of different materials are different;
   \end{enumerate}
   \item If one state in one side of the interface are yielded, but another does not,  this assumption also results in big errors.
 \end{enumerate}
 
 For the above consideration, in this paper, we aim to construct a new HLLC-type Riemann solver which is suitable for 1D multi-material elastic-plastic flows. In the new solver, both the elastic waves and plastic waves are resolved and the assumption in \cite{cheng2016harten} that the pressure is continuous across the interface is deleted; Correspondingly, the errors introduced by the assumption will also be eliminated.
 
-Combined with an improved third-order WENO scheme\cite{liu2018novel} and Runge-Kutta scheme, a high-order cell-centered Lagrangian scheme is given in this paper for one-dimensional multi-material elastic-plastic flows.
+\color{red} With a high-order reconstruction method,  one stencil may across the interface and in a multi-material state, which will cause oscillation near the interface. In this paper, we use a ghost cell method in multi-material system to obtain a stable high-order reconstruction. \color{}  Combined with an improved third-order WENO scheme\cite{liu2018novel} and Runge-Kutta scheme, a high-order cell-centered Lagrangian scheme is given in this paper for one-dimensional multi-material elastic-plastic flows.
 
-This paper is organized as follows. In section 2, we briefly introduce the governing equations to be studied. In section 3, the MHLLEP method is constructed.  Then, high-order elastic-plastic cell-centered Lagrangian schemes is given in section 4. Some numerical examples are presented to validate the method.  Conclusions are shown in section 5.
+This paper is organized as follows. In section 2, we briefly introduce the governing equations to be studied. In section 3, the MHLLEP method is constructed.  Then, high-order elastic-plastic cell-centered Lagrangian scheme is given in section 4. Some numerical examples are presented to validate the method.  Conclusions are shown in section 5.
 \section{Governing equations}
 
 The equations for a continuous one-dimensional solid in differential form are given as
@@ -222,7 +222,7 @@ r_4 = \frac{1}{\phi^2}\left[\begin{array}{l}
 
 
 \subsection{Formulations between the  contact wave or the interface}
-  For  a  system without molercular diffusion, there is no materials convecting  cross the contact wave or interface, so the velocities between the discontinuity are always equal, $u_L^* = u_R^*$. This can also be verified by the eigenvectors  in Eq.(\ref{eq:eiv}).
+  For  a  system without molecular diffusion, there is no materials convecting  cross the contact wave or interface, so the velocities between the discontinuity are always equal, $u_L^* = u_R^*$. This can also be verified by the eigenvectors  in Eq.(\ref{eq:eiv}).
 
   Using the eigenvectors in  Eq.(\ref{eq:eiv}), for the $\lambda_{1}$-wave we
 have
@@ -302,7 +302,7 @@ Generally, for convenience, we define
 
 \subsection{A relation between $\rho$ and $s_{xx}$ in 1D elastic-plastic  equation system}
 
-Thanks to (\ref{eq:mt}), from the 1D elastic-plastic  equations in Eq.(\ref{eq:1d}), the equations of the density and the deviatoric stress can be written as
+According  to (\ref{eq:mt}), from the 1D elastic-plastic  equations in Eq.(\ref{eq:1d}), the equations of the density and the deviatoric stress can be written as
   \begin{equation}\label{eq:d1}
 	\frac{\partial u}{\partial x} = -\frac{1}{\rho}\frac{d\rho}{dt},
   \end{equation}
@@ -329,7 +329,7 @@ This relation always holds if there is no yielding in the integration path.
 Now we considered the constructing details of MHLLCEP. As left-going or right-going  plastic waves exist possibly, there may be three to five waves in the Riemann structure, which depends on the yielding state  on the left side and right side of the interface.
 
 \subsubsection{Pre-evaluating the states without considering of plastic waves}\label{sec:case1}
-At first we do not know whether the states in the star region around the contact wave reach the elastic limit, so firstly \emph{assume that there is no plastic wave in and the material is totally yielding or totally not yielding} (\textbf{Assumption} 1). Based on \textbf{Assumption} 1, by using the HLLC method, we can get the states in the star region of the Riemann structure showed in  Fig.\ref{fig:case1}. If the obtained state contains yielding process, we will consider the cases showed in Fig.\ref{fig:case2}-\ref{fig:case4}.
+At first we do not know whether the states in the star region around the contact wave reach the elastic limit or not, so firstly \emph{assume that there is no plastic wave in and the material is totally yielding or totally not yielding} (\textbf{Assumption} 1). Based on \textbf{Assumption} 1, using the HLLC method, we can get the states in the star regions of the Riemann structure showed in  Fig.\ref{fig:case1}. If the obtained state contains yielding process, we will consider the cases showed in Fig.\ref{fig:case2}-\ref{fig:case4}.
 
 The Riemann structure of MHLLCEP in Fig.\ref{fig:case1} is given as follows,
 \begin{equation}\label{eq:HLLCEP}
@@ -385,7 +385,7 @@ Similarly, the density behind the right elastic wave is
   \hat{\rho}_R^* = \frac{\rho_R(u_R-s_R)}{\hat{s}^*-s_R}.
 \end{equation}
 
-Thanks to Eq.(\ref{eq:rhosxx}),  the deviatoric stress is evaluated as
+According  to Eq.(\ref{eq:rhosxx}),  the deviatoric stress is evaluated as
 \begin{equation}  \label{sxx1}
   \hat{s}_{xxL}^*=-\frac{4}{3}\mu\text{ln}(\frac{\hat{\rho}_L^*}{\rho_L})+s_{xxL}, \quad   \hat{s}_{xxR}^*=-\frac{4}{3}\mu\text{ln}(\frac{\hat{\rho}_R^*}{\rho_R})+s_{xxR}.
 \end{equation}
@@ -443,12 +443,12 @@ where,
 	\node at (0.7,1.2) {$\bm{Q}_R^*$};
 	\node at (1.3,0.5) {$\bm{Q}_R$};
 \end{tikzpicture}
-\caption{The  structures of HLLCEP method, case 1: without plastic wave.}
+\caption{The  structures of MHLLCEP method, case 1: without plastic wave.}
 \label{fig:case1}
 \end{figure}
 
  \subsubsection{Case 2:  with only  the left plastic wave}\label{sec:case2}
- If in the left, $|s_{xxL}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxL}^*|$; but in the right, ($|s_{xxR}|<\frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| < \frac{2}{3}Y_0$) or ($|s_{xxR}|\geq \frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| \geq \frac{2}{3}Y_0$), there will be only one plastic wave which is in the left. Correspondingly, the Riemann structure of this case is showed in Fig.\ref{fig:case2}. We need to solve the yielding state of $\widetilde{\bm{Q}}_L$. The MHLLCEP is given as follows in this case,
+ In the left, if  $|s_{xxL}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxL}^*|$; but in the right, ($|s_{xxR}|<\frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| < \frac{2}{3}Y_0$) or ($|s_{xxR}|\geq \frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| \geq \frac{2}{3}Y_0$), there will be only one plastic wave which is in the left. Correspondingly, the Riemann structure of this case is showed in Fig.\ref{fig:case2}. We need to solve the yielding state of $\widetilde{\bm{Q}}_L$. The MHLLCEP is given as follows in this case,
  \begin{equation}\label{eq:HLLCEP2}
    \bm{U}^{\text{MHLLCEP}}_{\text{Case2}}(x,t) = \left\{ \begin{aligned}
 	   & \bm{U}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\le \widetilde{s}_L, \\
@@ -556,7 +556,7 @@ then the velocity is solved,
 
 After solving  the state of $\widetilde{\bm{Q}}_L$,  using the similar process described in Section \ref{sec:case1}, the states of $\bm{Q}_L^*$ and $\bm{Q}_R^*$ can be worked out as follows.
 
-The contace wave speed is
+The contact wave speed is
 \begin{equation}
   s^* = \frac{\widetilde{\sigma}_L-\sigma_R+\widetilde{\rho}_L \widetilde{u}_L(s_L-\widetilde{u}_L)-\rho_R u_R(s_R-u_R)}{\widetilde{\rho}_L(s_L-\widetilde{u}_L)-\rho_R(s_R-u_R)},
 \end{equation}
@@ -567,7 +567,7 @@ The densities are
 \end{equation}
 where  the left and right  elastic wave speeds are evaluted as
 	\begin{equation}
-	  s_L = \text{min} (\widetilde{u}_L-\widetilde{c}_L, u_R-c_R), \hspace{0.3cm} s_R = \text{max}(\widetilde{u}_L+\widetilde{c}_L, u_R+c_R).
+	  s_L = \text{min} (\widetilde{u}_L-\widetilde{c}_L, u_R-c_R, 0), \hspace{0.3cm} s_R = \text{max}(\widetilde{u}_L+\widetilde{c}_L, u_R+c_R, 0).
 	\end{equation}
 The deviatoric stresses are evaluated as
 \begin{equation}
@@ -602,12 +602,12 @@ and the pressures are
 	\node at (0.7,1.2) {$\bm{Q}_R^*$};
 	\node at (1.3,0.5) {$\bm{Q}_R$};
 \end{tikzpicture}
-\caption{The  structures of HLLCEP method, case 2: with only  the left plastic wave.}
+\caption{The  structures of MHLLCEP method, case 2: with only  the left plastic wave.}
 \label{fig:case2}
 \end{figure}
 
 \subsubsection {Case 3: with only the right plastic wave}\label{sec:case3}
- If in the left, ($|s_{xxL}|<\frac{2}{3}Y_0$ and $|\hat{s}_{xxL}^*| < \frac{2}{3}Y_0$) or ($|s_{xxR}|\geq \frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| \geq \frac{2}{3}Y_0$); but in the right, $|s_{xxR}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxR}^*|$, there will be only one plastic wave which is in the right. Correspondingly, the Riemann structure of this case is showed in Fig.\ref{fig:case3}. We need to solve the yielding state of $\widetilde{\bm{Q}}_R$. The MHLLCEP is given as follows in this case,
+ In the left, if  ($|s_{xxL}|<\frac{2}{3}Y_0$ and $|\hat{s}_{xxL}^*| < \frac{2}{3}Y_0$) or ($|s_{xxR}|\geq \frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| \geq \frac{2}{3}Y_0$); but in the right, $|s_{xxR}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxR}^*|$, there will be only one plastic wave which is in the right. Correspondingly, the Riemann structure of this case is showed in Fig.\ref{fig:case3}. We need to solve the yielding state of $\widetilde{\bm{Q}}_R$. The MHLLCEP is given as follows in this case,
 
 %If   there is the plastic wave in the right as showed in Fig.\ref{fig:case3}. We need to solve the state  of $\widetilde{\bm{Q}}_R$ at first. Using the same methods introduced in Section \ref{sec:case2}, the MHLLCEP is given in this case as,
 
@@ -805,7 +805,7 @@ So we can get the pressure by $p =s_{xx}-\sigma$,
 	\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
 	\node at (1.5,0.28) {$\bm{Q}_R$};
 \end{tikzpicture}
-\caption{The  structures of HLLCEP method, case 4: with both left and right plastic waves.}
+\caption{The  structures of MHLLCEP method, case 4: with both left and right plastic waves.}
 \label{fig:case4}
 \end{figure}
 
@@ -828,9 +828,9 @@ Here, we present all the procedures of MHLLCEP in a more simple way.
       \end{equation*}
     \item Evaluate the pressure
   \end{enumerate}
-  \item Decide whether the state reach the elastic limit
+  \item Decide whether the state reached the elastic limit or not
         \begin{enumerate}
-          \item If $|s_{xxL}| < \frac{2}{3}Y_0 \le |\hat{s}_{xxL}^*| $, the left plastic wave exists, we need evaluate the left yielding state.
+          \item If $|s_{xxL}| < \frac{2}{3}Y_0 \le |\hat{s}_{xxL}^*| $, the left plastic wave exists, we need to  evaluate the left yielding state.
 
           The deviatoric stress, density and pressure behind the left plastic  wave are given as
 \begin{equation*}
@@ -863,7 +863,7 @@ If the left plastic wave does not exist,
 \begin{equation*}
   \widetilde{\bm{Q}}_L = \bm{Q}_L.
 \end{equation*}
-          \item If $|s_{xxR}| < \frac{2}{3}Y_0 \le |\hat{s}_{xxR}^*| $, right plastic wave exists, we need evaluate the right yielding state.
+          \item If $|s_{xxR}| < \frac{2}{3}Y_0 \le |\hat{s}_{xxR}^*| $, right plastic wave exists, we need to  evaluate the right yielding state.
 
                            The deviatoric stress, density and pressure  behind the right plastic  wave are given as
 \begin{equation*}
@@ -1038,7 +1038,7 @@ Then  the  discretization of the constitutive equation is given as
 
 \subsubsection{Reconstruction near the Multi-material interface}
 
-Using a high-order spatial  scheme  such as the third-order WENO scheme,  the reconstruction across the interface may cause oscillation. So we need do some special treat near the interface.  First, we track the interface  by  adding  a marker function $\text{Mrk}_i$  to mark the material  in every cells. For two materials problem, we can initial $\text{Mrk}$ as 
+Using a high-order spatial scheme  such as the third-order WENO scheme,  reconstructing  cross the interface may cause oscillations. So we need to do some special treatment near the interface.  First, we track the interface  by adding  a marker function $\text{Mrk}_i$  to mark the material in every cell. For two materials problem, we can initial $\text{Mrk}$ as 
 \begin{equation}
   \left\{
   \begin{aligned}
@@ -1052,18 +1052,18 @@ and we can get the interface is between cell $ii$ and $ii+1$,  if $\text{Mrk}_{i
 Using the reconstruction in the  left side of the interface as an example. Constructing $\bm{W}_R(ii-\frac{1}{2}) $ and $\bm{W}_L(ii+\frac{1}{2})$ are  both with the  stencil of  $S^3=(I_{ii-1},I_{ii}, I_{ii+1})$, where cell $I_{ii+1}$ is on the other side of the interface with a different EOS.
 Showed in Fig.\ref{fig:ghost}, we treat the interface as a special boundary and a ghost cell $I'_{ii+1}$ is added on the right side to replace the use of $I_{ii+1}$. 
 
-The cell average values of the ghost cell $I'_{ii+1}$ is given as follows, the Cauchy stress and the velocity  are  continuous across the interface according the relations in Eq.(\ref{e28}), so we use the real values on cell $I_{ii+1}$ 
+The cell average values of the ghost cell $I'_{ii+1}$ is given as follows, the Cauchy stress and the velocity  are  continuous across the interface according  to the relations in Eq.(\ref{e28}), so we use the real values on cell $I_{ii+1}$ 
 \begin{equation}
   \overline{\sigma}'_{ii+1} = \overline{\sigma}_{ii+1}, \quad \overline{u}'_{ii+1} = \overline{u}_{ii+1}.
 \end{equation}
-However, the values of pressure and density are not continuous, so we use a reflect condition on the interface as
+However, the values of pressure and density are not continuous, so we use a reflected condition on the interface as
 \begin{equation}
 \overline{p}'_{ii+1} = \overline{p}_{ii}, \quad \overline{\rho}'_{ii+1} = \overline{\rho}_{ii}.
 \end{equation}
 
-After we get all the primative variables on  the ghost cell $I'_{ii+1}$,   using  the EOS of material A on the left, we can get all the conservative variables  $\bm{Q}'_{ii+1}$ and the characteristic variables $\bm{W}'_{ii+1}$ with the same process in Eq.(\ref{eq:chaVar}). With the variables of $\bm{W}_{ii-1}$, $\bm{W}_{ii}$ and  $\bm{W}'_{ii+1}$, we can reconstruct $\bm{W}_R(ii-\frac{1}{2})$ and $\bm{W}_L(ii+\frac{1}{2})$, respectively.
+After we get all the primitive variables on  the ghost cell $I'_{ii+1}$,   using  the EOS of material A on the left, we can get all the conservative variables  $\bm{Q}'_{ii+1}$ and the characteristic variables $\bm{W}'_{ii+1}$ with the same process in Eq.(\ref{eq:chaVar}). With the variables of $\bm{W}_{ii-1}$, $\bm{W}_{ii}$ and  $\bm{W}'_{ii+1}$, we can reconstruct $\bm{W}_R(ii-\frac{1}{2})$ and $\bm{W}_L(ii+\frac{1}{2})$, respectively.
 
-On the right side with the EOS of material B, setting a ghost cell of $I'_{ii}$ in the stencil $S^3 = (I'_{ii}, I_{ii+1}, I_{ii+2})$ and using a samilar process, we can get new reconstructions of $\bm{W}_R(ii+\frac{1}{2})$ and  $\bm{W}_L(ii+\frac{3}{2})$, respectively.
+On the right side with the EOS of material B, setting a ghost cell of $I'_{ii}$ in the stencil $S^3 = (I'_{ii}, I_{ii+1}, I_{ii+2})$ and using a similar process, we can get new reconstructions of $\bm{W}_R(ii+\frac{1}{2})$ and  $\bm{W}_L(ii+\frac{3}{2})$, respectively.
 
 \begin{figure}
   \centering
@@ -1155,7 +1155,7 @@ Where $\bm{L}$ and $\varTheta$ are the numerical spatial operators representing 
 In this section, our MHLLCEP Riemann solver is tested  in different problems to see the capability of  capturing elastic and plastic waves, especially in the problems  with different materials interface.
 
 \subsection{Accuracy test}
-In the first test, a smooth solution is used to test the accuracy of the scheme. The computational domian is $[0,1]$, and a periodic boundary condition is used. The EOS is given by the Mie-Gr\"uneisen model with the parameters $\rho_0 = 8930 \text{kg}/\text{m}^3$, $a_0 = 3940 \text{m}/\text{s}$, $\Gamma_0 =2$, and $s=1.49$. The constitutive model has the following parameters, $\mu = 4.5\times 10^10 \text{Pa}$ and $Y^0 = 9\times 10^10 \text{Pa}$.  The initial condition  is  given as
+In the first test, a smooth solution is used to test the accuracy of the scheme. The computational domian is $[0,1]$, and a periodic boundary condition is used. The EOS is given by the Mie-Gr\"uneisen model with the parameters $\rho_0 = 8930 \text{kg}/\text{m}^3$, $a_0 = 3940 \text{m}/\text{s}$, $\Gamma_0 =2$, and $s=1.49$. The constitutive model has the following parameters, $\mu = 4.5\times 10^{10} \text{Pa}$ and $Y^0 = 9\times 10^{10} \text{Pa}$.  The initial condition  is  given as
 \begin{equation}
   \rho = \rho_0(1-b \text{sin}(2\pi x)), \quad u = a, \quad p = 1.1\rho u^2, \quad  s_{xx} = s_0 \sin(2\pi x),
 \end{equation}
@@ -1179,7 +1179,7 @@ The final results are given at time $t = 1 \times 10^{-4}$. The reference  resul
 	$s_{xx}$     &50           &  $8.21\times 10^{-4}$     &---         &  $3.55\times 10^{-3}$         & ---  \\
 				  &100          &  $1.04\times 10^{-4}$     &2.98        &  $3.68\times 10^{-4}$         & 3.27 \\
 				  &200          &  $1.48\times 10^{-5}$     &2.81        &  $7.27\times 10^{-5}$         & 2.33 \\
-				  &400          &  $2.39\times 10^{-6}$     &2.63        &  $1.42\times 10^{-4}$         & 2.36 \\
+				  &400          &  $2.39\times 10^{-6}$     &2.63        &  $1.42\times 10^{-5}$         & 2.36 \\
 	\bottomrule
 	\end{tabular}
 \label{tab:1}
@@ -1224,7 +1224,7 @@ In Fig.\ref{fig:piston1}, we test the convergence of the scheme with different m
 	\end{figure}
 
 \subsection{Wilkins' problem}
-This problem, first introduced by Wilkins, is used to test the  ability of capturing rarefaction waves of a scheme. In this problem, a moving alumimium plate striking on another alumimium plate. The EOS for aluminium is given by the Mie-Gr\"uneisen model with the parameters $\rho_0 = 2785 \text{kg}/\text{m}^3$, $ a_0 = 5328 \text{m} /\text{s}$, $\Gamma_0 =2$ and $s = 1.338$. The constitutive model is characterized by the parameters $\mu = 2.76\times 10^{10} \text{Pa}$ and $Y_0 = 3\times 10^8 \text{Pa}$. The initial condtions are given as
+This problem, first introduced by Wilkins, is used to test the  ability of capturing rarefaction waves of a scheme. In this problem, a moving aluminium plate striking on another aluminium plate. The EOS for aluminium is given by the Mie-Gr\"uneisen model with the parameters $\rho_0 = 2785 \text{kg}/\text{m}^3$, $ a_0 = 5328 \text{m} /\text{s}$, $\Gamma_0 =2$ and $s = 1.338$. The constitutive model is characterized by the parameters $\mu = 2.76\times 10^{10} \text{Pa}$ and $Y_0 = 3\times 10^8 \text{Pa}$. The initial conditions are given as
 \begin{equation}
   \left\{ \begin{aligned}
 	&  \rho = 2785 \text{kg}/\text{m}^3, \quad  u = 800\text{m}/\text{s}, \quad  p = 10^{-6}\text{Pa}, \quad  \text{if} \quad  0\text{m} \le x \le 5\times 10^{-3} \text{m},\\
@@ -1232,7 +1232,7 @@ This problem, first introduced by Wilkins, is used to test the  ability of captu
 	\end{aligned}
   \right.
 \end{equation}
-The left boundary is set as free boundary and on  the right we use a wall boundary condtion. The final time is $t =5\times 10^{-6} \text{s}$. In Fig.\ref{fig:Wilkins1}, we give the results  simulated with 200, 400 and 800 cells, the reference result is given by the refined mesh with 4000 cells. Showed in the figures and these locally enlarged plots, the elastic and plastic right-going shocks and the reflected elastic and plastic rarefaction waves are well resolved without numerical oscillation.
+The left boundary is set as free boundary and on  the right we use a wall boundary condition. The final time is $t =5\times 10^{-6} \text{s}$. In Fig.\ref{fig:Wilkins1}, we give the results  simulated with 200, 400 and 800 cells, the reference result is given by the refined mesh with 4000 cells. Showed in the figures and their locally enlarged plots, the elastic and plastic right-going shocks and the reflected elastic and plastic rarefaction waves are well resolved without numerical oscillation.
 
 \begin{figure}
   \begin{tikzpicture}
@@ -1257,7 +1257,7 @@ The left boundary is set as free boundary and on  the right we use a wall bounda
 	\end{figure}
 
 	\subsection{Multi-material problem 1} \label{pro:multi1}
-  Here we consider the multi-material problem without the plasticity effect. A similar case is used in Ref.(\cite{ghaisas2016high}). In this test, a moving  copper stricks on an aluminium plate. The parameters for the EOS and constitutive model for aluminum and copper  are
+  Here we consider the multi-material problem without the plasticity effect. A similar case is used in Ref.(\cite{ghaisas2016high}). In this test, a moving  copper strikes on an aluminium plate. The parameters for the EOS and constitutive model for aluminum and copper  are
 $ (\rho_0, a_0, \Gamma_0, s, \mu)_{\text{Al}} =(8930 \text{kg}/\text{m}^3, 3940 \text{m}/\text{s},2, 1.49, 2.76 ,2.76\times 10^{10} \text{Pa} )$ and   $(\rho_0, a_0, \Gamma_0, s, \mu)_{\text{copper}} =(2785 \text{kg}/\text{m}^3, 5328 \text{m}/\text{s},2, 1.338,4.5\times 10^{10}\text{Pa})$, respectively. In order to remove the influence of the plasticity effect, we use a very large un-physical yielding strength $Y_0 = 3\times 10^{12} \text{Pa}$.  The initial conditions of this problem are
 \begin{equation}\label{eq:initmulti}
   \left\{ \begin{aligned}
@@ -1272,31 +1272,6 @@ In this case we take $u_0 = 100 \text{m}/\text{s}$. Figure \ref{fig:multi1}  sho
 	\matrix[column sep=0mm, row sep = 0mm]
 	{
 	  \node[rectangle](1){
-		\includegraphics[width = 7cm]{Mult-MaterialsRho.eps}};&
-	  \node[rectangle](2){
-		\includegraphics[width = 7cm]{Mult-MaterialsU.eps}};\\
-	  \node[rectangle](3){
-		\includegraphics[width = 7cm]{Mult-MaterialsSxx.eps}};&
-	  \node[rectangle](4){
-		\includegraphics[width = 7cm]{Mult-MaterialsSigma.eps}};\\
-	  };
-	  \node  at (-7,3) [rotate = 90] {$\rho$ ($\text{kg}/\text{m}^3$)};
-	  \node at (0.6,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
-	  \node  at (-7,-3)[ rotate = 90]{$p$ ($\text{Pa}$)};
-	  \node at (0.6,-3)[ rotate = 90]{$\sigma_{xx}$ ($\text{Pa}$)};
-	  \end{tikzpicture}
-	  \caption{ The result of two-materials  problem 1}
-	  \label{fig:multi1}
-	\end{figure}
-
-\subsection{Two materials problem 2}
-Next, we consider a similar problem but with plasticity effect. The yield strengths are $Y_0^{\text{Copper}} = 9\times 10^7$ and $Y_0^{\text{Al}} = 3\times 10^8$, respectively. All other  parameters are same to those in problem \ref{pro:multi1}. The initial condition is also same as  Eq.(\ref{eq:initmulti}), we consider this case with a velocity of $u_0 = 60 \text{m}/\text{s}$.
-Fig.\ref{fig:multi2} gives the results at final time $ t= 2 \times 10^{-6} \text{s}$ with 200 cell, the solution computed by the scheme with HLLCE is taken as a comparison. The reference solution is given by a refine mesh with 4000 cells. We can see that using HLLCE, the Cauchy stress is not continuous across the interface, which does not confirm with the relation of Eq.(\ref{e28}), while with MHLLCEP, we can get a correct and stable result.
-\begin{figure}
-  \begin{tikzpicture}
-	\matrix[column sep=0mm, row sep = 0mm]
-	{
-	  \node[rectangle](1){
 		\includegraphics[width = 7cm]{TwoMatterRho.eps}};&
 	  \node[rectangle](2){
 		\includegraphics[width = 7cm]{TwoMatterU.eps}};\\
@@ -1306,16 +1281,46 @@ Fig.\ref{fig:multi2} gives the results at final time $ t= 2 \times 10^{-6} \text
 		\includegraphics[width = 7cm]{TwoMatterSigma.eps}};\\
 	  };
 	  \node  at (-7,3) [rotate = 90] {$\rho$ ($\text{kg}/\text{m}^3$)};
-	  \node at (0.6,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
+	  \node at (0,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
 	  \node  at (-7,-3)[ rotate = 90]{$p$ ($\text{Pa}$)};
-	  \node at (0.6,-3)[ rotate = 90]{$\sigma_{xx}$ ($\text{Pa}$)};
+	  \node at (0,-3)[ rotate = 90]{$\sigma_{xx}$ ($\text{Pa}$)};
 	  \end{tikzpicture}
+	  \caption{ The result of two-materials  problem 1}
+	  \label{fig:multi1}
+	\end{figure}
+
+\subsection{Two materials problem 2}
+Next, we consider a similar problem but with plasticity effect. The yield strengths are $Y_0^{\text{Copper}} = 9\times 10^7$ and $Y_0^{\text{Al}} = 3\times 10^8$, respectively. All other  parameters are same to those in problem \ref{pro:multi1}. The initial condition is also as  same as  Eq.(\ref{eq:initmulti}), we consider this case with a velocity of $u_0 = 60 \text{m}/\text{s}$.
+Fig.\ref{fig:multi2} gives the results at final time $ t= 2 \times 10^{-6} \text{s}$ with 400 cells, the solution computed by the scheme with HLLCE is taken as a comparison. The reference solution is given by a refine mesh with 4000 cells. We can see that using HLLCE, the Cauchy stress is not continuous across the interface, which does not confirm with the relation of Eq.(\ref{e28}), while with MHLLCEP, we can get a correct and stable result.
+\begin{figure}
+ \begin{tikzpicture}
+	\matrix[column sep=0mm, row sep = 0mm]
+	{
+	  \node[rectangle](1){
+		\includegraphics[width = 7cm]{Mult-MaterialsRho.eps}};&
+	  \node[rectangle](2){
+		\includegraphics[width = 7cm]{Mult-MaterialsU.eps}};\\
+	  \node[rectangle](3){
+		\includegraphics[width = 7cm]{Mult-MaterialsP.eps}};&
+	  \node[rectangle](4){
+		\includegraphics[width = 7cm]{Mult-MaterialsSigma.eps}};\\
+	  };
+	  \node  at (-7.5,3) [rotate = 90] {$\rho$ ($\text{kg}/\text{m}^3$)};
+	  \node at (0.0,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
+	  \node  at (-7.5,-3)[ rotate = 90]{$p$ ($\text{Pa}$)};
+	  \node at (0.0,-3)[ rotate = 90]{$\sigma_{xx}$ ($\text{Pa}$)};
+	  \end{tikzpicture}
+
 	  \caption{ The result of two-materials  problem 2}
 	  \label{fig:multi2}
 	\end{figure}
 
 \section*{Conclutions}
-In this paper, a new HLLC-type approximate Reimann solver is constructed to simulate 1D multi-material elastic-plastic flows with the hypo-elastic constitutive model and the von Mises yield criterion. For the elastic-plastic problems with multi-materials, the relations between the interface is difficult to satisfied.  Within  a detail consideration of the plastic waves, there is no unreasonable assumption,  such as  the continuous pressure assumption between the interface, is used in the new HLLCEP method. And thus, the new method can resolve all the  wave structures in multi-material elastic-plasitc problems with accuracy and stability.
+\color{red}
+In this paper,  a multi-material HLLC-type  approximate Riemann solver with both the elastic and plastic waves (MHLLCEP) is constructed for 1D elastic-plastic flows with a hypo-elastic constitutive model and the von Mises yielding condition. In the  construction of  MHLLCEP, we do not use any assumption and so describe and evaluate the plastic waves more accurate than that in HLLCE.  Based on MHLLCEP, combining with the ghost cell method near the multi-material interface,   a  third-order WENO reconstruction method and a third-order TVD-Runge-Kutta method in time, a high-order cell-centered Lagrangian scheme for 1D multi-material elastic flows is built. Verified by the numerical experiments, both the plastic waves and elastic waves can be resolved stably and accurately. Especially in the multi-material elastic-plastic case,  the result solved by HLLCE scheme is with large error, but with the  new scheme  we  can get a more reasonable result. 
+
+\color{}
+
 
 
 
