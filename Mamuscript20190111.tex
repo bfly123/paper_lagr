@@ -3,10 +3,10 @@
 \modulolinenumbers[5]
 \usepackage{color}
 \usepackage[colorlinks,linkcolor=black,hyperindex,CJKbookmarks,dvipdfm]{hyperref}
-\usepackage{tikz}
-\usetikzlibrary{arrows,shapes,chainsexit}
-\usetikzlibrary{shapes.geometric}
-\usetikzlibrary{arrows.meta}
+%\usepackage{tikz}
+%\usetikzlibrary{arrows,shapes,chainsexit}
+%\usetikzlibrary{shapes.geometric}
+%\usetikzlibrary{arrows.meta}
 \usepackage{authblk}
 \usepackage{graphics,graphicx}
 \usepackage{mathrsfs}
@@ -18,7 +18,7 @@
 \usepackage{listings}
 \usepackage{setspace}
 \usepackage[margin=2.5cm]{geometry}
-\usetikzlibrary{shapes.geometric, arrows.meta,matrix,positioning,calc}
+%\usetikzlibrary{shapes.geometric, arrows.meta,matrix,positioning,calc}
 \intextsep=8pt plus 3pt minus 1pt
 \definecolor{ColorMark}{rgb}{1,1,1}
 \numberwithin{equation}{section}
@@ -38,7 +38,7 @@
 %\address{$^1$  Institute of Applied Physics and Computational Mathematics, Beijing 100094, China }
 
 \begin{abstract}
-  A multi-material HLLC-type  approximate Riemann solver with both the elastic and plastic waves (MHLLCEP) is constructed for 1D elastic-plastic flows with a hypo-elastic constitutive model and the von Mises yielding condition. Comparing with the HLLCE Riemann solver introduced in Cheng, during constructing MHLLCEP, we do not use any assumption and so describe and evaluate the plastic waves more accurate than that in HLLCE. Moreover, if the non-linear waves in the Riemann problem are only shock waves, even with the plastic waves, MHLLCEP is theoretically accurate. For multi-material system, in this paper,  a ghost cell method is also used to achieve a high-order spatial reconstruction across the interface without oscillation. Based on MHLLCEP, combining with the third-order WENO reconstruction method and the third-order Runge-Kutta method in time, a high-order cell-centered Lagrangian scheme for 1D multi-material  elastic-plastic flows is built in this paper. A number of numerical experiments are carried out and numerical results showed the presented third-order scheme is convergent, stable, and essentially non-oscillatory. Moreover, for multi-material elastic-plastic flows, the scheme with MHLLCEP is more accurate and more reasonable in resolving the multi-material interface than the scheme with HLLCE.
+  A multi-material HLLC-type  approximate Riemann solver with both the elastic and plastic waves (MHLLCEP) is constructed for 1D elastic-plastic flows with a hypo-elastic constitutive model and the von Mises yielding condition. Comparing with the HLLCE Riemann solver introduced in Cheng, during constructing MHLLCEP, we do not use any assumption and so describe and evaluate the plastic waves more accurate than that in HLLCE. Moreover, if the non-linear waves in the Riemann problem are only shock waves, even with the plastic waves, MHLLCEP is theoretically accurate. \color{red} For multi-material system, in this paper,  a ghost cell method is also used to achieve a high-order spatial reconstruction across the interface without oscillation. \color{} Based on MHLLCEP, combining with the third-order WENO reconstruction method and the third-order Runge-Kutta method in time, a high-order cell-centered Lagrangian scheme for 1D multi-material  elastic-plastic flows is built in this paper. A number of numerical experiments are carried out and numerical results showed the presented third-order scheme is convergent, stable, and essentially non-oscillatory. Moreover, for multi-material elastic-plastic flows, the scheme with MHLLCEP is more accurate and more reasonable in resolving the multi-material interface than the scheme with HLLCE.
 \end{abstract}
 
 %\begin{keyword}
@@ -66,7 +66,7 @@ In \cite{cheng2016harten}, for one-dimensional elastic-plastic flows, Cheng intr
 
 For the above consideration, in this paper, we aim to construct a new HLLC-type Riemann solver which is suitable for 1D multi-material elastic-plastic flows. In the new solver, both the elastic waves and plastic waves are resolved and the assumption in \cite{cheng2016harten} that the pressure is continuous across the interface is deleted; Correspondingly, the errors introduced by the assumption will also be eliminated.
 
-With a high-order reconstruction method,  one stencil may across the interface and in a multi-material state, which will cause oscillation near the interface. In this paper, we use a ghost cell method in multi-material system to obtain a stable high-order reconstruction.   Combined with an improved third-order WENO scheme\cite{liu2018novel} and Runge-Kutta scheme, a high-order cell-centered Lagrangian scheme is given in this paper for one-dimensional multi-material elastic-plastic flows.
+\color{red} With a high-order reconstruction method,  one stencil may across the interface and in a multi-material state, which will cause oscillation near the interface. In this paper, we use a ghost cell method in multi-material system to obtain a stable high-order reconstruction. \color{}  Combined with an improved third-order WENO scheme\cite{liu2018novel} and Runge-Kutta scheme, a high-order cell-centered Lagrangian scheme is given in this paper for one-dimensional multi-material elastic-plastic flows.
 
 This paper is organized as follows. In section 2, we briefly introduce the governing equations to be studied. In section 3, the MHLLEP method is constructed.  Then, high-order elastic-plastic cell-centered Lagrangian scheme is given in section 4. Some numerical examples are presented to validate the method.  Conclusions are shown in section 5.
 \section{Governing equations}
@@ -431,24 +431,24 @@ where,
 
 \begin{figure}
   \centering
-  \begin{tikzpicture}
-	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
-	\draw [line width =1pt] (-4,0) -- (0,0);
-	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
-	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
-	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
-	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
-	\node at (-1.3,0.5) {$\bm{Q}_L$};
-	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
-	\node at (0.7,1.2) {$\bm{Q}_R^*$};
-	\node at (1.3,0.5) {$\bm{Q}_R$};
-\end{tikzpicture}
+%  \begin{tikzpicture}
+%	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
+%	\draw [line width =1pt] (-4,0) -- (0,0);
+%	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
+%	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
+%	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
+%	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
+%	\node at (-1.3,0.5) {$\bm{Q}_L$};
+%	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
+%	\node at (0.7,1.2) {$\bm{Q}_R^*$};
+%	\node at (1.3,0.5) {$\bm{Q}_R$};
+%\end{tikzpicture}
 \caption{The  structures of MHLLCEP method, case 1: without plastic wave.}
 \label{fig:case1}
 \end{figure}
 
  \subsubsection{Case 2:  with only  the left plastic wave}\label{sec:case2}
-If  $|s_{xxL}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxL}^*|$ and [($|s_{xxR}|<\frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| < \frac{2}{3}Y_0$) or ($|s_{xxR}|\geq \frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| \geq \frac{2}{3}Y_0$)], there will be only one plastic wave which is in the left. Correspondingly, the Riemann structure of this case is showed in Fig.\ref{fig:case2}. We need to solve the yielding state of $\widetilde{\bm{Q}}_L$. The MHLLCEP is given as follows in this case,
+ In the left, if  $|s_{xxL}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxL}^*|$; but in the right, ($|s_{xxR}|<\frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| < \frac{2}{3}Y_0$) or ($|s_{xxR}|\geq \frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| \geq \frac{2}{3}Y_0$), there will be only one plastic wave which is in the left. Correspondingly, the Riemann structure of this case is showed in Fig.\ref{fig:case2}. We need to solve the yielding state of $\widetilde{\bm{Q}}_L$. The MHLLCEP is given as follows in this case,
  \begin{equation}\label{eq:HLLCEP2}
    \bm{U}^{\text{MHLLCEP}}_{\text{Case2}}(x,t) = \left\{ \begin{aligned}
 	   & \bm{U}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\le \widetilde{s}_L, \\
@@ -588,26 +588,26 @@ and the pressures are
 
  \begin{figure}
    \centering
-\begin{tikzpicture}
-	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
-	\draw [line width =1pt] (-4,0) -- (0,0);
-	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
-	\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
-	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
-	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
-	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
-	\node at (-1.5,0.3) {$\bm{Q}_L$};
-	\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
-	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
-	\node at (0.7,1.2) {$\bm{Q}_R^*$};
-	\node at (1.3,0.5) {$\bm{Q}_R$};
-\end{tikzpicture}
+%\begin{tikzpicture}
+%	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
+%	\draw [line width =1pt] (-4,0) -- (0,0);
+%	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
+%	\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
+%	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
+%	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
+%	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
+%	\node at (-1.5,0.3) {$\bm{Q}_L$};
+%	\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
+%	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
+%	\node at (0.7,1.2) {$\bm{Q}_R^*$};
+%	\node at (1.3,0.5) {$\bm{Q}_R$};
+%\end{tikzpicture}
 \caption{The  structures of MHLLCEP method, case 2: with only  the left plastic wave.}
 \label{fig:case2}
 \end{figure}
 
 \subsubsection {Case 3: with only the right plastic wave}\label{sec:case3}
-If  [($|s_{xxL}|<\frac{2}{3}Y_0$ and $|\hat{s}_{xxL}^*| < \frac{2}{3}Y_0$) or ($|s_{xxR}|\geq \frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| \geq \frac{2}{3}Y_0$)] and $|s_{xxR}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxR}^*|$, there will be only one plastic wave which is in the right. Correspondingly, the Riemann structure of this case is showed in Fig.\ref{fig:case3}. We need to solve the yielding state of $\widetilde{\bm{Q}}_R$. The MHLLCEP is given as follows in this case,
+ In the left, if  ($|s_{xxL}|<\frac{2}{3}Y_0$ and $|\hat{s}_{xxL}^*| < \frac{2}{3}Y_0$) or ($|s_{xxR}|\geq \frac{2}{3}Y_0$ and $|\hat{s}_{xxR}^*| \geq \frac{2}{3}Y_0$); but in the right, $|s_{xxR}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxR}^*|$, there will be only one plastic wave which is in the right. Correspondingly, the Riemann structure of this case is showed in Fig.\ref{fig:case3}. We need to solve the yielding state of $\widetilde{\bm{Q}}_R$. The MHLLCEP is given as follows in this case,
 
 %If   there is the plastic wave in the right as showed in Fig.\ref{fig:case3}. We need to solve the state  of $\widetilde{\bm{Q}}_R$ at first. Using the same methods introduced in Section \ref{sec:case2}, the MHLLCEP is given in this case as,
 
@@ -702,27 +702,27 @@ and the pressures are
 
 \begin{figure}
   \centering
- \begin{tikzpicture}
-\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
-\draw [line width =1pt] (-4,0) -- (0,0);
-\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
-\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
-\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
-\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
-\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left going} ;
-\node at (-1.3,0.5) {$\bm{Q}_L$};
-\node at (-0.6,1.2) {$\bm{Q}_L^*$};
-\node at (0.7,1.2) {$\bm{Q}_R^*$};
-\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
-\node at (1.5,0.28) {$\bm{Q}_R$};
-\end{tikzpicture}
+% \begin{tikzpicture}
+%\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
+%\draw [line width =1pt] (-4,0) -- (0,0);
+%\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
+%\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
+%\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
+%\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
+%\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left going} ;
+%\node at (-1.3,0.5) {$\bm{Q}_L$};
+%\node at (-0.6,1.2) {$\bm{Q}_L^*$};
+%\node at (0.7,1.2) {$\bm{Q}_R^*$};
+%\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
+%\node at (1.5,0.28) {$\bm{Q}_R$};
+%\end{tikzpicture}
 \caption{The  structures of HLLCEP method, case 3: with only  the right  plastic wave.}
 \label{fig:case3}
 \end{figure}
 
 \subsubsection{Case 4: with both the left and right plastic waves}
 
-If $|s_{xxL}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxL}^*|$ and  $|s_{xxR}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxR}^*|$. There are two plastic waves showed in Fig.\ref{fig:case4}. For this case, the MHLLCEP Riemann solver is given as
+If $|s_{xxL}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxL}^*|$ and  $|s_{xxR}| \le \frac{2}{3}Y_0 \le  |\hat{s}_{xxR}^*|$. In the left side  and right side of contact wave, there are two plastic waves showed in Fig.\ref{fig:case4}. For this case, the MHLLCEP Riemann solver is given as
  \begin{equation}
    \bm{U}^{\text{MHLLCEP}}_{\text{Case4}}(x,t) = \left\{ \begin{aligned}
 		& \bm{U}_L, \hspace{0.3cm} \text{if} \hspace{0.3cm} \frac{x}{t}\le s_L, \\
@@ -789,22 +789,22 @@ So we can get the pressure by $p =s_{xx}-\sigma$,
 
 \begin{figure}
   \centering
-\begin{tikzpicture}
-	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
-	\draw [line width =1pt] (-4,0) -- (0,0);
-	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
-	\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
-	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
-	\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
-	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
-	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
-	\node at (-1.5,0.3) {$\bm{Q}_L$};
-	\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
-	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
-	\node at (0.7,1.2) {$\bm{Q}_R^*$};
-	\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
-	\node at (1.5,0.28) {$\bm{Q}_R$};
-\end{tikzpicture}
+%\begin{tikzpicture}
+%	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (4,0) node[below]{$x$};
+%	\draw [line width =1pt] (-4,0) -- (0,0);
+%	\draw [line width =1pt,-{Stealth[length=2.5mm]}] (0,0) -- (0,4) node[left]{$t$};
+%	\draw (0,0)[dashed] node [below]{$O$} -- ([turn]-110:3.5) node [above]{Left plastic};
+%	\draw [double](0,0) -- ([turn]165:3.5)   node [above]{Contact};
+%	\draw [dashed](0,0) -- ([turn]110:3.5)  node [above]{Right plastic};
+%	\draw  (0,0) -- ([turn]135:3.5) node [above]{Right elastic};
+%	\draw  (0,0) -- ([turn]-135:3.5) node [above]{Left elastic} ;
+%	\node at (-1.5,0.3) {$\bm{Q}_L$};
+%	\node at (-1.2,0.8) {$\widetilde{\bm{Q}}_L$};
+%	\node at (-0.6,1.2) {$\bm{Q}_L^*$};
+%	\node at (0.7,1.2) {$\bm{Q}_R^*$};
+%	\node at (1.2,0.8) {$\widetilde{\bm{Q}}_R$};
+%	\node at (1.5,0.28) {$\bm{Q}_R$};
+%\end{tikzpicture}
 \caption{The  structures of MHLLCEP method, case 4: with both left and right plastic waves.}
 \label{fig:case4}
 \end{figure}
@@ -1067,47 +1067,47 @@ On the right side with the EOS of material B, setting a ghost cell of $I'_{ii}$ 
 
 \begin{figure}
   \centering
-\begin{tikzpicture}
-    \coordinate (A2)  at (1,0){ };
-    \node (A3) [circle,draw, inner sep=0.2mm,fill=black!30] at (3,0){ };
-    \node (A4) [line width=1pt,circle,draw, fill=black!30,inner sep=0.2mm] at (6,0){ };
-    \node  [line width=1pt,circle,draw, fill=black!30,inner sep=0.2mm] at (9,2){ };
-    \node (A5) [circle,draw=blue!60, inner sep=0.2mm] at (9,0){ };
-    %\node (A51)[circle,draw, inner sep=0.2mm,fill=black!30] at (5,1.5){ };
-    \coordinate  (A6)  at (11,0){ };
-    %\node (A71) [circle,draw, inner sep=1.2mm,fill=black!30] at (7,1.5){ };
-
-
-%\draw  [line width=2pt,color=black!30](4.4,-0.5)--(4.4,2.5);
-%\draw  [line width=1pt,color=black!60] (0.45,0)-- (A1)node [below=0.2cm] {\scriptsize $i-3$};
-	\draw  [line width=1pt](A2) --(A3)  node [below=0.2cm] {\scriptsize $I_{ii-1}$};  
-	\draw  [line width=1pt,dashed](1.5, -0.25) --(1.5, 0.25)  node [above=0.2cm] {\scriptsize $ii-\frac{3}{2}$};  
-\draw  [line width=1pt,dashed](4.5, -0.25) --(4.5, 0.25)  node [above=0.2cm] {\scriptsize $ii-\frac{1}{2}$};  
-\draw  [line width=2pt](7.5, -0.5) --(7.5, 0.5)  node [above=0.2cm] { Interface};  
-\draw  [line width=1pt,dashed](10.5, -0.25) --(10.5, 0.25)  node [above=0.2cm] {\scriptsize $ii+\frac{3}{2}$};  
-\draw  [line width=1pt](A3)--(A4)   node [below=0.2cm] {\scriptsize $I_{ii}$};
-
-\draw  [line width=1pt](A4)--(7.5,0);
-\draw  [line width=1pt, dashed](7.5,0)--(A5) node [below=0.2cm] {\scriptsize $I'_{ii+1}$};
-\draw  [line width=1pt, dashed](A5)--(A6);
-
-\draw  [line width=1pt](7.5,2)--(9,2) node [above=0.2cm] {\scriptsize $I_{ii+1}$};
-\draw  [line width=1pt](9,2)--(10.5,2);
-
-\draw [line width=1pt,dashed](10.5,2.25)--(10.5,1.75);
-\draw [line width=1pt,dashed](7.5,2.25)--(7.5,1.75);
-%\draw  [->,line width=1pt,color=black!50](A51)--  (A5) {};
-
-\draw [-{Stealth[length=2.5mm]},line width=1pt, color=black!50] (6,-0.1).. controls (7.0,-1.0).. (9,-0.1);
-\draw [-{Stealth[length=2.5mm]},line width=1pt, color=black!50] (9,1.9)-- (9,0.1);
-%\draw [->,line width=1pt, color=black!50] (4.4,0).. controls (4.7,0.7).. (5,0.15);
-%\draw [->,line width=1pt, color=black!50] (4.4,0).. controls (5.2,0.7).. (6,0.15);
-%\draw [->,line width=1pt, color=black!50] (4.4,0).. controls (5.7,0.7).. (7,0.15);
-%\node at (1.5,0.5) { \scriptsize 左侧求解};
-\node at (8.0,0.5) {  \scriptsize $ii+\frac{1}{2}$};
-\node[text width=1em] at (7.5,-1.0) {\scriptsize $\overline{p},\overline{\rho}$}; 
-\node[text width=1em] at (9.3,1.0) {\scriptsize $\overline{\sigma},\overline{u}$}; 
-\end{tikzpicture}
+%\begin{tikzpicture}
+%    \coordinate (A2)  at (1,0){ };
+%    \node (A3) [circle,draw, inner sep=0.2mm,fill=black!30] at (3,0){ };
+%    \node (A4) [line width=1pt,circle,draw, fill=black!30,inner sep=0.2mm] at (6,0){ };
+%    \node  [line width=1pt,circle,draw, fill=black!30,inner sep=0.2mm] at (9,2){ };
+%    \node (A5) [circle,draw=blue!60, inner sep=0.2mm] at (9,0){ };
+%    %\node (A51)[circle,draw, inner sep=0.2mm,fill=black!30] at (5,1.5){ };
+%    \coordinate  (A6)  at (11,0){ };
+%    %\node (A71) [circle,draw, inner sep=1.2mm,fill=black!30] at (7,1.5){ };
+%
+%
+%%\draw  [line width=2pt,color=black!30](4.4,-0.5)--(4.4,2.5);
+%%\draw  [line width=1pt,color=black!60] (0.45,0)-- (A1)node [below=0.2cm] {\scriptsize $i-3$};
+%	\draw  [line width=1pt](A2) --(A3)  node [below=0.2cm] {\scriptsize $I_{ii-1}$};  
+%	\draw  [line width=1pt,dashed](1.5, -0.25) --(1.5, 0.25)  node [above=0.2cm] {\scriptsize $ii-\frac{3}{2}$};  
+%\draw  [line width=1pt,dashed](4.5, -0.25) --(4.5, 0.25)  node [above=0.2cm] {\scriptsize $ii-\frac{1}{2}$};  
+%\draw  [line width=2pt](7.5, -0.5) --(7.5, 0.5)  node [above=0.2cm] { Interface};  
+%\draw  [line width=1pt,dashed](10.5, -0.25) --(10.5, 0.25)  node [above=0.2cm] {\scriptsize $ii+\frac{3}{2}$};  
+%\draw  [line width=1pt](A3)--(A4)   node [below=0.2cm] {\scriptsize $I_{ii}$};
+%
+%\draw  [line width=1pt](A4)--(7.5,0);
+%\draw  [line width=1pt, dashed](7.5,0)--(A5) node [below=0.2cm] {\scriptsize $I'_{ii+1}$};
+%\draw  [line width=1pt, dashed](A5)--(A6);
+%
+%\draw  [line width=1pt](7.5,2)--(9,2) node [above=0.2cm] {\scriptsize $I_{ii+1}$};
+%\draw  [line width=1pt](9,2)--(10.5,2);
+%
+%\draw [line width=1pt,dashed](10.5,2.25)--(10.5,1.75);
+%\draw [line width=1pt,dashed](7.5,2.25)--(7.5,1.75);
+%%\draw  [->,line width=1pt,color=black!50](A51)--  (A5) {};
+%
+%\draw [-{Stealth[length=2.5mm]},line width=1pt, color=black!50] (6,-0.1).. controls (7.0,-1.0).. (9,-0.1);
+%\draw [-{Stealth[length=2.5mm]},line width=1pt, color=black!50] (9,1.9)-- (9,0.1);
+%%\draw [->,line width=1pt, color=black!50] (4.4,0).. controls (4.7,0.7).. (5,0.15);
+%%\draw [->,line width=1pt, color=black!50] (4.4,0).. controls (5.2,0.7).. (6,0.15);
+%%\draw [->,line width=1pt, color=black!50] (4.4,0).. controls (5.7,0.7).. (7,0.15);
+%%\node at (1.5,0.5) { \scriptsize 左侧求解};
+%\node at (8.0,0.5) {  \scriptsize $ii+\frac{1}{2}$};
+%\node[text width=1em] at (7.5,-1.0) {\scriptsize $\overline{p},\overline{\rho}$}; 
+%\node[text width=1em] at (9.3,1.0) {\scriptsize $\overline{\sigma},\overline{u}$}; 
+%\end{tikzpicture}
 \caption{Ghost cell near the interface.}
 \label{fig:ghost}
 \end{figure}
@@ -1202,23 +1202,23 @@ We use the velocity boundary condition with $u_{\text{piston}} = 20 \text{m}/\te
 
 In Fig.\ref{fig:piston1}, we test the convergence of the scheme with different meshes of 100, 200 and 400 cells. The final time is $t = 150 \mu s $.  We can  see that the current scheme can capture the leading elastic shock wave and the followed plastic wave well without numerical oscillation.
 \begin{figure}
-  \begin{tikzpicture}
-	\matrix[column sep=0mm, row sep = 0mm]
-	{
-	  \node[rectangle](1){
-		\includegraphics[width = 7cm]{PistonRho.eps}};&
-	  \node[rectangle](2){
-		\includegraphics[width = 7cm]{PistonU.eps}};\\
-	  \node[rectangle](3){
-		\includegraphics[width = 7cm]{PistonP.eps}};&
-	  \node[rectangle](4){
-		\includegraphics[width = 7cm]{PistonSxx.eps}};\\
-	  };
-	  \node  at (-7,3) [rotate = 90] {$\rho$ ($\text{kg}/\text{m}^3$)};
-	  \node at (0.3,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
-	  \node  at (-7,-3)[ rotate = 90]{$p$ ($\text{Pa}$)};
-	  \node at (0.3,-3)[ rotate = 90]{$s_{xx}$ ($\text{Pa}$)};
-	  \end{tikzpicture}
+%  \begin{tikzpicture}
+%	\matrix[column sep=0mm, row sep = 0mm]
+%	{
+%	  \node[rectangle](1){
+%		\includegraphics[width = 7cm]{PistonRho.eps}};&
+%	  \node[rectangle](2){
+%		\includegraphics[width = 7cm]{PistonU.eps}};\\
+%	  \node[rectangle](3){
+%		\includegraphics[width = 7cm]{PistonP.eps}};&
+%	  \node[rectangle](4){
+%		\includegraphics[width = 7cm]{PistonSxx.eps}};\\
+%	  };
+%	  \node  at (-7,3) [rotate = 90] {$\rho$ ($\text{kg}/\text{m}^3$)};
+%	  \node at (0.3,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
+%	  \node  at (-7,-3)[ rotate = 90]{$p$ ($\text{Pa}$)};
+%	  \node at (0.3,-3)[ rotate = 90]{$s_{xx}$ ($\text{Pa}$)};
+%	  \end{tikzpicture}
 	  \caption{ The result of Piston problem}
 	  \label{fig:piston1}
 	\end{figure}
@@ -1235,23 +1235,23 @@ This problem, first introduced by Wilkins, is used to test the  ability of captu
 The left boundary is set as free boundary and on  the right we use a wall boundary condition. The final time is $t =5\times 10^{-6} \text{s}$. In Fig.\ref{fig:Wilkins1}, we give the results  simulated with 200, 400 and 800 cells, the reference result is given by the refined mesh with 4000 cells. Showed in the figures and their locally enlarged plots, the elastic and plastic right-going shocks and the reflected elastic and plastic rarefaction waves are well resolved without numerical oscillation.
 
 \begin{figure}
-  \begin{tikzpicture}
-	\matrix[column sep=0mm, row sep = 0mm]
-	{
-	  \node[rectangle](1){
-		\includegraphics[width = 7cm]{WilkinsRho.eps}};&
-	  \node[rectangle](2){
-		\includegraphics[width = 7cm]{WilkinsU.eps}};\\
-	  \node[rectangle](3){
-		\includegraphics[width = 7cm]{WilkinsP.eps}};&
-	  \node[rectangle](4){
-		\includegraphics[width = 7cm]{WilkinsSxx.eps}};\\
-	  };
-	  \node  at (-7,3) [rotate = 90] {$\rho$ ($\text{kg}/\text{m}^3$)};
-	  \node at (0.3,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
-	  \node  at (-7,-3)[ rotate = 90]{$p$ ($\text{Pa}$)};
-	  \node at (0.3,-3)[ rotate = 90]{$s_{xx}$ ($\text{Pa}$)};
-	  \end{tikzpicture}
+%  \begin{tikzpicture}
+%	\matrix[column sep=0mm, row sep = 0mm]
+%	{
+%	  \node[rectangle](1){
+%		\includegraphics[width = 7cm]{WilkinsRho.eps}};&
+%	  \node[rectangle](2){
+%		\includegraphics[width = 7cm]{WilkinsU.eps}};\\
+%	  \node[rectangle](3){
+%		\includegraphics[width = 7cm]{WilkinsP.eps}};&
+%	  \node[rectangle](4){
+%		\includegraphics[width = 7cm]{WilkinsSxx.eps}};\\
+%	  };
+%	  \node  at (-7,3) [rotate = 90] {$\rho$ ($\text{kg}/\text{m}^3$)};
+%	  \node at (0.3,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
+%	  \node  at (-7,-3)[ rotate = 90]{$p$ ($\text{Pa}$)};
+%	  \node at (0.3,-3)[ rotate = 90]{$s_{xx}$ ($\text{Pa}$)};
+%	  \end{tikzpicture}
 	  \caption{ The result of Wilkins problem}
 	  \label{fig:Wilkins1}
 	\end{figure}
@@ -1268,56 +1268,58 @@ $ (\rho_0, a_0, \Gamma_0, s, \mu)_{\text{Al}} =(8930 \text{kg}/\text{m}^3, 3940 
 \end{equation}
 In this case we take $u_0 = 100 \text{m}/\text{s}$. Figure \ref{fig:multi1}  shows  the numerical results computed by the scheme with HLLCE and the scheme with MHLLCEP at the final time $ t= 2 \times 10^{-6}s$, the reference is given by a refined mesh  with 4000 cells.  We can see there is little difference between the two schemes  for  the multi-material case without plastic waves.
 \begin{figure}
-  \begin{tikzpicture}
-	\matrix[column sep=0mm, row sep = 0mm]
-	{
-	  \node[rectangle](1){
-		\includegraphics[width = 7cm]{TwoMatterRho.eps}};&
-	  \node[rectangle](2){
-		\includegraphics[width = 7cm]{TwoMatterU.eps}};\\
-	  \node[rectangle](3){
-		\includegraphics[width = 7cm]{TwoMatterP.eps}};&
-	  \node[rectangle](4){
-		\includegraphics[width = 7cm]{TwoMatterSigma.eps}};\\
-	  };
-	  \node  at (-7,3) [rotate = 90] {$\rho$ ($\text{kg}/\text{m}^3$)};
-	  \node at (0,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
-	  \node  at (-7,-3)[ rotate = 90]{$p$ ($\text{Pa}$)};
-	  \node at (0,-3)[ rotate = 90]{$\sigma_{xx}$ ($\text{Pa}$)};
-	  \end{tikzpicture}
-	  \caption{ The result of multi-material problem 1}
+%  \begin{tikzpicture}
+%	\matrix[column sep=0mm, row sep = 0mm]
+%	{
+%	  \node[rectangle](1){
+%		\includegraphics[width = 7cm]{TwoMatterRho.eps}};&
+%	  \node[rectangle](2){
+%		\includegraphics[width = 7cm]{TwoMatterU.eps}};\\
+%	  \node[rectangle](3){
+%		\includegraphics[width = 7cm]{TwoMatterP.eps}};&
+%	  \node[rectangle](4){
+%		\includegraphics[width = 7cm]{TwoMatterSigma.eps}};\\
+%	  };
+%	  \node  at (-7,3) [rotate = 90] {$\rho$ ($\text{kg}/\text{m}^3$)};
+%	  \node at (0,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
+%	  \node  at (-7,-3)[ rotate = 90]{$p$ ($\text{Pa}$)};
+%	  \node at (0,-3)[ rotate = 90]{$\sigma_{xx}$ ($\text{Pa}$)};
+%	  \end{tikzpicture}
+	  \caption{ The result of two-materials  problem 1}
 	  \label{fig:multi1}
 	\end{figure}
 
-\subsection{Multi-material problem 2}
+\subsection{Two materials problem 2}
 Next, we consider a similar problem but with plasticity effect. The yield strengths are $Y_0^{\text{Copper}} = 9\times 10^7$ and $Y_0^{\text{Al}} = 3\times 10^8$, respectively. All other  parameters are same to those in problem \ref{pro:multi1}. The initial condition is also as  same as  Eq.(\ref{eq:initmulti}), we consider this case with a velocity of $u_0 = 60 \text{m}/\text{s}$.
 Fig.\ref{fig:multi2} gives the results at final time $ t= 2 \times 10^{-6} \text{s}$ with 400 cells, the solution computed by the scheme with HLLCE is taken as a comparison. The reference solution is given by a refine mesh with 4000 cells. We can see that using HLLCE, the Cauchy stress is not continuous across the interface, which does not confirm with the relation of Eq.(\ref{e28}), while with MHLLCEP, we can get a correct and stable result.
 \begin{figure}
- \begin{tikzpicture}
-	\matrix[column sep=0mm, row sep = 0mm]
-	{
-	  \node[rectangle](1){
-		\includegraphics[width = 7cm]{Mult-MaterialsRho.eps}};&
-	  \node[rectangle](2){
-		\includegraphics[width = 7cm]{Mult-MaterialsU.eps}};\\
-	  \node[rectangle](3){
-		\includegraphics[width = 7cm]{Mult-MaterialsSxx.eps}};&
-	  \node[rectangle](4){
-		\includegraphics[width = 7cm]{Mult-MaterialsSigma.eps}};\\
-	  };
-	  \node  at (-7.5,3) [rotate = 90] {$\rho$ ($\text{kg}/\text{m}^3$)};
-	  \node at (0.0,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
-	  \node  at (-7.5,-3)[ rotate = 90]{$S_{xx}$ ($\text{Pa}$)};
-	  \node at (0.0,-3)[ rotate = 90]{$\sigma_{xx}$ ($\text{Pa}$)};
-	  \end{tikzpicture}
+% \begin{tikzpicture}
+%	\matrix[column sep=0mm, row sep = 0mm]
+%	{
+%	  \node[rectangle](1){
+%		\includegraphics[width = 7cm]{Mult-MaterialsRho.eps}};&
+%	  \node[rectangle](2){
+%		\includegraphics[width = 7cm]{Mult-MaterialsU.eps}};\\
+%	  \node[rectangle](3){
+%		\includegraphics[width = 7cm]{Mult-MaterialsP.eps}};&
+%	  \node[rectangle](4){
+%		\includegraphics[width = 7cm]{Mult-MaterialsSigma.eps}};\\
+%	  };
+%	  \node  at (-7.5,3) [rotate = 90] {$\rho$ ($\text{kg}/\text{m}^3$)};
+%	  \node at (0.0,3) [rotate = 90]{$u$ ($\text{m}/\text{s}$)};
+%	  \node  at (-7.5,-3)[ rotate = 90]{$p$ ($\text{Pa}$)};
+%	  \node at (0.0,-3)[ rotate = 90]{$\sigma_{xx}$ ($\text{Pa}$)};
+%	  \end{tikzpicture}
 
-	  \caption{ The result of multi-material  problem 2}
+	  \caption{ The result of two-materials  problem 2}
 	  \label{fig:multi2}
 	\end{figure}
 
 \section*{Conclutions}
+\color{red}
 In this paper,  a multi-material HLLC-type  approximate Riemann solver with both the elastic and plastic waves (MHLLCEP) is constructed for 1D elastic-plastic flows with a hypo-elastic constitutive model and the von Mises yielding condition. In the  construction of  MHLLCEP, we do not use any assumption and so describe and evaluate the plastic waves more accurate than that in HLLCE.  Based on MHLLCEP, combining with the ghost cell method near the multi-material interface,   a  third-order WENO reconstruction method and a third-order TVD-Runge-Kutta method in time, a high-order cell-centered Lagrangian scheme for 1D multi-material elastic flows is built. Verified by the numerical experiments, both the plastic waves and elastic waves can be resolved stably and accurately. Especially in the multi-material elastic-plastic case,  the result solved by HLLCE scheme is with large error, but with the  new scheme  we  can get a more reasonable result. 
 
+\color{}
 
 
 

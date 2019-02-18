@@ -1,0 +1,565 @@
+This is XeTeX, Version 3.14159265-2.6-0.99992 (TeX Live 2015/Debian) (preloaded format=xelatex 2019.2.17)  18 FEB 2019 15:20
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**"Manuscript20190210 new.tex"
+(./Manuscript20190210 new.tex
+LaTeX2e <2016/02/01>
+Babel <3.9q> and hyphenation patterns for 81 language(s) loaded.
+(/usr/share/texlive/texmf-dist/tex/latex/elsarticle/elsarticle.cls
+Document Class: elsarticle 2009/09/17, 1.2.0: Elsevier Ltd
+\@bls=\dimen102
+(/usr/share/texlive/texmf-dist/tex/latex/base/article.cls
+Document Class: article 2014/09/29 v1.4h Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size10.clo
+File: size10.clo 2014/09/29 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen103
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2014/10/28 v1.0g Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks14
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2016/01/03 v1.0q Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: xetex.def on input line 95.
+
+(/usr/share/texlive/texmf-dist/tex/xelatex/xetex-def/xetex.def
+File: xetex.def 2015/09/11 v4.06 LaTeX color/graphics driver for XeTeX (TeX Liv
+e/RRM/JK)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)))
+\Gin@req@height=\dimen104
+\Gin@req@width=\dimen105
+)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/pifont.sty
+Package: pifont 2005/04/12 PSNFSS-v9.2a Pi font support (SPQR) 
+LaTeX Font Info:    Try loading font information for U+pzd on input line 63.
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/upzd.fd
+File: upzd.fd 2001/06/04 font definitions for U/pzd.
+)
+LaTeX Font Info:    Try loading font information for U+psy on input line 64.
+
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/upsy.fd
+File: upsy.fd 2001/06/04 font definitions for U/psy.
+))
+\c@tnote=\count87
+\c@fnote=\count88
+\c@cnote=\count89
+\c@ead=\count90
+\c@author=\count91
+\@eadauthor=\toks15
+\c@affn=\count92
+\absbox=\box26
+\keybox=\box27
+\Columnwidth=\dimen106
+\space@left=\dimen107
+\els@boxa=\box28
+\els@boxb=\box29
+\leftMargin=\dimen108
+\@enLab=\toks16
+\@sep=\skip43
+\@@sep=\skip44
+
+(/usr/share/texlive/texmf-dist/tex/latex/natbib/natbib.sty
+Package: natbib 2010/09/13 8.31b (PWD, AO)
+\bibhang=\skip45
+\bibsep=\skip46
+LaTeX Info: Redefining \cite on input line 694.
+\c@NAT@ctr=\count93
+)
+\splwrite=\write3
+\openout3 = `"Manuscript20190210 new.spl"'.
+
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\@emptytoks=\toks17
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2016/03/03 v2.15a AMS math features
+\@mathmargin=\skip47
+
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01 AMS text
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks18
+\ex@=\dimen109
+))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen110
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count94
+LaTeX Info: Redefining \frac on input line 199.
+\uproot@=\count95
+\leftroot@=\count96
+LaTeX Info: Redefining \overline on input line 297.
+\classnum@=\count97
+\DOTSCASE@=\count98
+LaTeX Info: Redefining \ldots on input line 394.
+LaTeX Info: Redefining \dots on input line 397.
+LaTeX Info: Redefining \cdots on input line 518.
+\Mathstrutbox@=\box30
+\strutbox@=\box31
+\big@size=\dimen111
+LaTeX Font Info:    Redeclaring font encoding OML on input line 630.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 631.
+\macc@depth=\count99
+\c@MaxMatrixCols=\count100
+\dotsspace@=\muskip10
+\c@parentequation=\count101
+\dspbrk@lvl=\count102
+\tag@help=\toks19
+\row@=\count103
+\column@=\count104
+\maxfields@=\count105
+\andhelp@=\toks20
+\eqnshift@=\dimen112
+\alignsep@=\dimen113
+\tagshift@=\dimen114
+\tagwidth@=\dimen115
+\totwidth@=\dimen116
+\lineht@=\dimen117
+\@envbody=\toks21
+\multlinegap=\skip48
+\multlinetaggap=\skip49
+\mathdisplay@stack=\toks22
+LaTeX Info: Redefining \[ on input line 2735.
+LaTeX Info: Redefining \] on input line 2736.
+)
+No file "Manuscript20190210 new".aux.
+\openout1 = `"Manuscript20190210 new.aux"'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Try loading font information for U+msa on input line 17.
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Try loading font information for U+msb on input line 17.
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) [1
+
+
+] [2
+
+]
+
+Package natbib Warning: Citation `wilkins1963calculation' on page 3 undefined o
+n input line 33.
+
+
+Package natbib Warning: Citation `trangenstein1991higher' on page 3 undefined o
+n input line 35.
+
+
+Package natbib Warning: Citation `miller2001high' on page 3 undefined on input 
+line 35.
+
+
+Package natbib Warning: Citation `barton2009exact' on page 3 undefined on input
+ line 35.
+
+
+Package natbib Warning: Citation `wilkins1963calculation' on page 3 undefined o
+n input line 35.
+
+
+Package natbib Warning: Citation `burton2013cell' on page 3 undefined on input 
+line 35.
+
+
+Package natbib Warning: Citation `kluth2010discretization' on page 3 undefined 
+on input line 35.
+
+
+Package natbib Warning: Citation `maire2013nominally' on page 3 undefined on in
+put line 35.
+
+
+Package natbib Warning: Citation `cheng2017third' on page 3 undefined on input 
+line 35.
+
+
+Package natbib Warning: Citation `burton2013cell' on page 3 undefined on input 
+line 35.
+
+
+Package natbib Warning: Citation `kluth2010discretization' on page 3 undefined 
+on input line 35.
+
+
+Package natbib Warning: Citation `maire2013nominally' on page 3 undefined on in
+put line 35.
+
+
+Package natbib Warning: Citation `cheng2017third' on page 3 undefined on input 
+line 35.
+
+
+Package natbib Warning: Citation `gavrilyuk2008modelling' on page 3 undefined o
+n input line 43.
+
+
+Package natbib Warning: Citation `despres2007geometrical' on page 3 undefined o
+n input line 43.
+
+
+Package natbib Warning: Citation `cheng2015high' on page 3 undefined on input l
+ine 43.
+
+
+Package natbib Warning: Citation `cheng2016harten' on page 3 undefined on input
+ line 44.
+
+[3]
+
+Package natbib Warning: Citation `cheng2016harten' on page 4 undefined on input
+ line 57.
+
+
+Package natbib Warning: Citation `liu2018novel' on page 4 undefined on input li
+ne 59.
+
+
+Package natbib Warning: Citation `liu2018novel' on page 4 undefined on input li
+ne 65.
+
+[4]
+
+Package natbib Warning: Citation `maire2013nominally' on page 5 undefined on in
+put line 69.
+
+
+Package natbib Warning: Citation `gavrilyuk2008modelling' on page 5 undefined o
+n input line 69.
+
+[5]
+
+LaTeX Warning: Reference `eq:vare' on page 6 undefined on input line 124.
+
+
+LaTeX Warning: Reference `eq:sxx1' on page 6 undefined on input line 124.
+
+[6]
+
+LaTeX Warning: Reference `eq:1d' on page 7 undefined on input line 157.
+
+[7]
+
+LaTeX Warning: Reference `eq:eiv' on page 8 undefined on input line 227.
+
+
+LaTeX Warning: Reference `eq:eiv' on page 8 undefined on input line 231.
+
+
+LaTeX Warning: Reference `eq:eiv' on page 8 undefined on input line 255.
+
+[8]
+
+LaTeX Warning: Reference `e24d' on page 9 undefined on input line 278.
+
+
+LaTeX Warning: Reference `eq:mt' on page 9 undefined on input line 297.
+
+
+LaTeX Warning: Reference `eq:1d' on page 9 undefined on input line 297.
+
+
+LaTeX Warning: Reference `eq:d1' on page 9 undefined on input line 306.
+
+
+LaTeX Warning: Reference `eq:s1' on page 9 undefined on input line 306.
+
+[9]
+
+LaTeX Warning: Reference `fig:case1' on page 10 undefined on input line 324.
+
+
+LaTeX Warning: Reference `fig:case2' on page 10 undefined on input line 324.
+
+
+LaTeX Warning: Reference `fig:case4' on page 10 undefined on input line 324.
+
+
+LaTeX Warning: Reference `fig:case1' on page 10 undefined on input line 326.
+
+[10]
+
+LaTeX Warning: Reference `eq:contact' on page 11 undefined on input line 367.
+
+
+LaTeX Warning: Reference `eq:rhosxx' on page 11 undefined on input line 380.
+
+[11]
+
+LaTeX Warning: Reference `sxx1' on page 12 undefined on input line 391.
+
+
+LaTeX Warning: Reference `fig:case1' on page 12 undefined on input line 397.
+
+
+LaTeX Warning: Reference `eq:sigma' on page 12 undefined on input line 413.
+
+
+LaTeX Warning: Reference `fig:case2' on page 12 undefined on input line 441.
+
+[12] [13]
+
+LaTeX Warning: Reference `eq:RHp1' on page 14 undefined on input line 496.
+
+
+LaTeX Warning: Reference `eq:RHp1' on page 14 undefined on input line 500.
+
+
+LaTeX Warning: Reference `eq:RHp2' on page 14 undefined on input line 500.
+
+
+LaTeX Warning: Reference `eq:RHp1' on page 14 undefined on input line 504.
+
+
+LaTeX Warning: Reference `eq:u1_s' on page 14 undefined on input line 508.
+
+
+LaTeX Warning: Reference `eq:rho1' on page 14 undefined on input line 508.
+
+
+LaTeX Warning: Reference `eq:rho1' on page 14 undefined on input line 516.
+
+
+LaTeX Warning: Reference `eq:RHp2' on page 14 undefined on input line 516.
+
+[14]
+
+LaTeX Warning: Reference `eq:mie' on page 15 undefined on input line 524.
+
+
+LaTeX Warning: Reference `eq:eos1' on page 15 undefined on input line 530.
+
+
+LaTeX Warning: Reference `eq:e21' on page 15 undefined on input line 530.
+
+
+LaTeX Warning: Reference `eq:tu_2' on page 15 undefined on input line 534.
+
+
+LaTeX Warning: Reference `sec:case1' on page 15 undefined on input line 547.
+
+[15]
+
+LaTeX Warning: Reference `fig:case3' on page 16 undefined on input line 600.
+
+[16]
+Overfull \hbox (5.65517pt too wide) detected at line 645
+[] \OT1/cmr/m/n/10 = []  [] = []
+ []
+
+[17]
+
+LaTeX Warning: Reference `fig:case4' on page 18 undefined on input line 714.
+
+[18]
+
+LaTeX Warning: Reference `sec:case2' on page 19 undefined on input line 747.
+
+
+LaTeX Warning: Reference `sec:case3' on page 19 undefined on input line 747.
+
+
+LaTeX Warning: Reference `eq:rhoLs' on page 19 undefined on input line 756.
+
+[19] [20]
+Overfull \hbox (52.6552pt too wide) detected at line 872
+[] \OT1/cmr/m/n/10 = []  [] = []
+ []
+
+[21] [22]
+
+LaTeX Warning: Reference `eq:gveq' on page 23 undefined on input line 959.
+
+
+LaTeX Warning: Reference `eq:1d' on page 23 undefined on input line 975.
+
+
+LaTeX Warning: Reference `sec:HLLCEP' on page 23 undefined on input line 982.
+
+
+LaTeX Warning: Reference `eq:Jcb' on page 23 undefined on input line 994.
+
+[23]
+
+Package natbib Warning: Citation `liu2018novel' on page 24 undefined on input l
+ine 996.
+
+
+LaTeX Warning: Reference `eq:sxx' on page 24 undefined on input line 1003.
+
+
+LaTeX Warning: Reference `eq:dxt' on page 24 undefined on input line 1016.
+
+
+LaTeX Warning: Reference `eq:V' on page 24 undefined on input line 1020.
+
+
+LaTeX Warning: Reference `eq:vare' on page 24 undefined on input line 1024.
+
+
+LaTeX Warning: Reference `hor' on page 24 undefined on input line 1036.
+
+[24]
+
+LaTeX Warning: Reference `hor' on page 25 undefined on input line 1050.
+
+
+LaTeX Warning: Reference `fig:ghost' on page 25 undefined on input line 1051.
+
+
+LaTeX Warning: Reference `e28' on page 25 undefined on input line 1056.
+
+[25]
+
+LaTeX Warning: Reference `hor' on page 26 undefined on input line 1067.
+
+
+Package natbib Warning: Citation `cheng2016harten' on page 26 undefined on inpu
+t line 1128.
+
+[26]
+
+LaTeX Warning: Reference `eq:sem' on page 27 undefined on input line 1164.
+
+
+LaTeX Warning: Reference `eq:semSxx' on page 27 undefined on input line 1164.
+
+[27]
+
+LaTeX Warning: Reference `tab:1' on page 28 undefined on input line 1176.
+
+
+Package natbib Warning: Citation `maire2007cell' on page 28 undefined on input 
+line 1202.
+
+[28]
+
+LaTeX Warning: Reference `fig:piston1' on page 29 undefined on input line 1216.
+
+
+
+Overfull \hbox (17.2299pt too wide) detected at line 1247
+[]
+ []
+
+
+LaTeX Warning: Reference `fig:Wilkins1' on page 29 undefined on input line 1248
+.
+
+
+Package natbib Warning: Citation `ghaisas2016high' on page 29 undefined on inpu
+t line 1273.
+
+
+Overfull \hbox (5.02368pt too wide) in paragraph at lines 1273--1275
+\OT1/cmr/m/n/10 10[][])$ and $(\OML/cmm/m/it/10 ^^Z[]; a[]; \OT1/cmr/m/n/10 ^^@
+[]\OML/cmm/m/it/10 ; s; ^^V\OT1/cmr/m/n/10 )[] = (2785[]\OML/cmm/m/it/10 =[][];
+ \OT1/cmr/m/n/10 5328[]\OML/cmm/m/it/10 =[]; \OT1/cmr/m/n/10 2\OML/cmm/m/it/10 
+; \OT1/cmr/m/n/10 1\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 338\OML/cmm/m/it/10 ; \OT1
+/cmr/m/n/10 4\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 5 \OMS/cmsy/m/n/10 ^^B \OT1/cmr/
+m/n/10 10[][])$,
+ []
+
+[29]
+
+LaTeX Warning: Reference `fig:multi1' on page 30 undefined on input line 1282.
+
+
+LaTeX Warning: Reference `pro:multi1' on page 30 undefined on input line 1306.
+
+
+LaTeX Warning: Reference `pro:multi1' on page 30 undefined on input line 1306.
+
+
+LaTeX Warning: Reference `eq:initmulti' on page 30 undefined on input line 1306
+.
+
+
+LaTeX Warning: Reference `fig:multi2' on page 30 undefined on input line 1307.
+
+
+LaTeX Warning: Reference `e28' on page 30 undefined on input line 1307.
+
+[30]
+No file "Manuscript20190210 new".bbl.
+[31]
+
+Package natbib Warning: There were undefined citations.
+
+(./Manuscript20190210 new.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 2349 strings out of 493638
+ 27430 string characters out of 6146796
+ 91759 words of memory out of 5000000
+ 5735 multiletter control sequences out of 15000+600000
+ 13217 words of font info for 50 fonts, out of 8000000 for 9000
+ 1328 hyphenation exceptions out of 8191
+ 34i,17n,30p,1648b,335s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on Manuscript20190210 new.pdf (31 pages).
