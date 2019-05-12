@@ -39,7 +39,7 @@ Correspondence to: Junbo Cheng, Institute of Applied Physics and Computational M
 \address{$^2$  Applied Mechanics Laboratory, Department of Engineering Mechanics, School of Aerospace, Tsinghua University, Beijing, China }
 
 \begin{abstract}
-  A multi-material HLLC-type  approximate Riemann solver with both elastic and plastic waves (MHLLCEP) is constructed for 1D elastic-plastic flows with the  hypo-elastic model and the von Mises yielding condition. Although Cheng in 2016 \cite{cheng2016harten} introduced a HLLC Riemann solver with elastic waves(HLLCE) for 1D elastic-plastic flows, Cheng assumed that pressure is continuous across the contact wave. This assumption may lead to big errors, especially for multi-material elastic-plastic flows. In our MHLLCEP, this assumption is not used again, and correspondingly the errors introduced by the assumption are deleted, describing and evaluating the plastic waves are more accurate than that in the HLLCE. Moreover, if the non-linear waves in the Riemann problem are only shock waves, even with the plastic waves, our MHLLCEP is theoretically accurate. For  the multi-material system, in this paper, a ghost cell method is used to eliminate the  oscillations  and keep a high-order spatial reconstruction across the interface. Based on the MHLLCEP, combining with the third-order WENO reconstruction method and the third-order Runge-Kutta method in time, a high-order cell-centered Lagrangian scheme for 1D multi-material elastic-plastic flows is built in this paper. A number of numerical experiments are carried out. Numerical results suggest  that the presented third-order scheme is convergent, robust, and essentially non-oscillatory. Moreover, for multi-material elastic-plastic flows, the scheme with  the MHLLCEP is more accurate and reasonable in resolving the multi-material interface than the scheme with the  HLLCE.
+  A multi-material HLLC-type  approximate Riemann solver with both elastic and plastic waves (MHLLCEP) is constructed for 1D elastic-plastic flows with the  hypo-elastic model and the von Mises yielding condition. Although Cheng in 2016 \cite{cheng2016harten} introduced a HLLC Riemann solver with elastic waves (HLLCE) for 1D elastic-plastic flows, Cheng assumed that pressure is continuous across the contact wave. This assumption may lead to big errors, especially for multi-material elastic-plastic flows. In our MHLLCEP, this assumption is not used again. Correspondingly, the errors introduced by the assumption are deleted, describing and evaluating the plastic waves are more accurate than that in the HLLCE. Moreover, if the non-linear waves in the Riemann problem are only shock waves, even with the plastic waves, our MHLLCEP is theoretically accurate. For  the multi-material system, in this paper, a ghost cell method is used to eliminate the  oscillations  and keep a high-order spatial reconstruction across the interface. Based on the MHLLCEP, combining with the third-order WENO reconstruction method and the third-order Runge-Kutta method in time, a high-order cell-centered Lagrangian scheme for 1D multi-material elastic-plastic flows is built in this paper. A number of numerical experiments are carried out. Numerical results suggest  that the presented third-order scheme is convergent, robust and essentially non-oscillatory. Moreover, for multi-material elastic-plastic flows, the scheme with  the MHLLCEP is more accurate and reasonable in resolving the multi-material interface than the scheme with the  HLLCE.
 \end{abstract}
 
 \begin{keyword}
@@ -50,7 +50,7 @@ Correspondence to: Junbo Cheng, Institute of Applied Physics and Computational M
 
 \section{Introduction}
 
-In this paper, a multi-material elastic-plastic HLLC-type \cite{toro1994restoration} approximate Riemann solver(MHLLCEP) is developed, with the capability of resolving both elastic and plastic waves, to simulate one-dimensional  multi-material elastic-plastic solid problems with the isotropic elastic-plastic model \cite{wilkins1963calculation} and  the von Mises' yielding condition in the framework of the  high-order cell-centered Lagrangian scheme.
+In this paper, a multi-material elastic-plastic HLLC-type \cite{toro1994restoration} approximate Riemann solver (MHLLCEP) is developed, with the capability of resolving both elastic and plastic waves, to simulate one-dimensional  multi-material elastic-plastic solid problems with the isotropic elastic-plastic model \cite{wilkins1963calculation} and  the von Mises' yielding condition in the framework of the  high-order cell-centered Lagrangian scheme.
 
 Generally, elastic-plastic flows can be mainly simulated in three ways, Eulerian methods \cite{trangenstein1991higher,miller2001high,barton2009exact,liu2008modified}, staggered Lagrangian schemes \cite{wilkins1963calculation} and cell-centered Lagrangian schemes \cite{burton2013cell,kluth2010discretization,maire2013nominally,cheng2017third} that  is considered in this paper. Comparing with the staggered Lagrangian scheme, the cell-centered Lagrangian  schemes  have many advantages. Firstly, it is  not necessary to add  extra artificial viscosity  which  must be used in the staggered Lagrangian schemes; Secondly, it is easy to guarantee the total energy conservation; Besides, it can also be used to simulate the problems with both  hyper-elastic and hypo-elastic models  \cite{burton2013cell,kluth2010discretization,maire2013nominally,cheng2017third}  as a Lagrangian scheme.
 
@@ -60,8 +60,8 @@ For a cell-centered Lagrangian scheme, a core process is to move the node of gri
  by solving a Riemann problem at each cell face. As the Riemann problem contains many physical structures, especially in elastic-plastic flows, such as elastic waves, plastic waves and contact waves
   %or interfaces between different materials
   , the property of the approximate Riemann solver is of great importance in the simulation. Recently, a lot of works have been done in
-  this area. For example, Gavrilyuk et al. \cite{gavrilyuk2008modelling} analyzed the structure of the Riemann solution and construct a Riemann solver for the linear elastic system  of hyperbolic non-conservative models for transverse waves, wherein, an extra evolution equation was added in order to make the elastic transformations reversible in the absence of shock waves. Despres \cite{despres2007geometrical} built a shock solution to a non-conservative reversible system of hypo-elasticity models and found that a sonic point is necessary to construct  the compression solution that begins at a constrained compressed state.  Cheng et al.  \cite{cheng2015high} analyzed the wave structures of one-dimensional elastic-plastic flows and developed an effective two-rarefaction approximate Riemann solver with elastic waves (TRRSE) and built a  second-order and  a third-order cell-centered Lagrangian schemes based on the TRRSE, but the TRRSE is a little  expensive as  the iteration method is used.
-In \cite{cheng2016harten}, for one-dimensional elastic-plastic flows, Cheng introduced a HLLCE Riemann solver, which is fast and efficient in resolving elastic waves and plastic waves. In the HLLCE,  Cheng evaluated the deviatoric stresses from the following \emph{assumption: a pressure is continuous across the contact wave}. This assumption is valid for pure fluids, but  in  elastic-plastic flows, this assumption may lead to some errors. There are three cases we need  to consider.
+  this area. For example, Gavrilyuk et al. \cite{gavrilyuk2008modelling} analyzed the structure of the Riemann solution and constructed a Riemann solver for the linear elastic system  of hyperbolic non-conservative models for transverse waves, wherein, an extra evolution equation was added in order to make the elastic transformations reversible in the absence of shock waves. Despres \cite{despres2007geometrical} built a shock solution to a non-conservative reversible system of hypo-elasticity models and found that a sonic point is necessary to construct  the compression solution that begins at a constrained compressed state.  Cheng et al.  \cite{cheng2015high} analyzed the wave structures of one-dimensional elastic-plastic flows and developed an effective two-rarefaction approximate Riemann solver with elastic waves (TRRSE) and built a  second-order and  a third-order cell-centered Lagrangian schemes based on the TRRSE, but the TRRSE is a little  expensive as  the iteration method is used.
+In \cite{cheng2016harten}, for one-dimensional elastic-plastic flows, Cheng introduced a HLLCE Riemann solver, which is fast and efficient in resolving elastic waves and plastic waves. In the HLLCE,  Cheng evaluated the deviatoric stresses from the following \emph{assumption: the  pressure is continuous across the contact wave}. This assumption is valid for pure fluids, but  in  elastic-plastic flows, this assumption may lead to some errors. There are three cases we need  to consider.
 \begin{enumerate}
   \item If states in the star regions on both sides of the contact wave are elastic, this assumption does not result in errors;
   \item If both states reach the elastic limit, there are two cases that  need to be taken into account:
@@ -69,7 +69,7 @@ In \cite{cheng2016harten}, for one-dimensional elastic-plastic flows, Cheng intr
     \item if both  materials on both sides of the interface are the  same, this assumption does not result in errors either.
     \item if  materials are different, this assumption will result in big errors because the yielding strengths of different materials are always different;
   \end{enumerate}
-  \item If one state in one side of the interface reaches the elastic limit, but another is  not,  this assumption will  also result in big errors.
+  \item If the  state in one side of the interface reaches the elastic limit, but on another side  is  not,  this assumption will  also result in big errors.
 \end{enumerate}
 
 %For above considerations,
@@ -80,7 +80,7 @@ Based on the MHLLCEP, we develop a high-order elastic-plastic cell-centered Lagr
 %With a high-order reconstruction scheme,
 the spacial stencil may cross the material interface
 % and in a multi-material state, and  will cause oscillation
- and numerical oscillations may be caused near the interface. In order to delete the numerical oscillations near the material interface, a ghost cell method is used
+ and numerical oscillations may be caused near the interface. In order to delete the numerical oscillations near the material interface, a ghost cell method is used.
    %in the  multi-material system to obtain a stable high-order reconstruction.
    Combined with an improved third-order WENO scheme\cite{liu2018novel} and the third-order Runge-Kutta scheme, a high-order cell-centered Lagrangian scheme is given in this paper for one-dimensional multi-material elastic-plastic flows.
 
@@ -110,14 +110,14 @@ where
       (\rho E -\sigma_x)u\\
   \end{array} \right],
 \end{equation}
-$\rho$, $u$, $\sigma_x$ and $E$ are  the density, velocity in $x-$direction, Cauchy stress and total energy per unit volume, respectively, $E$ has the relation with specific internal energy $e$ as
+$\rho$, $u$, $\sigma_x$ and $E$ are  the density, the  velocity in $x-$direction,  the Cauchy stress and  the total energy per unit volume, respectively, $E$ has the relation with  the specific internal energy $e$ as
 \begin{equation}
   E = e+\frac{1}{2}u^2,
 \end{equation}
 \begin{equation}
   \sigma_x = -p +s_{xx},
 \end{equation}
-where $p$ and $s_{xx}$ denote hydrostatic pressure and deviatoric stress in the $x-$ direction, respectively.
+where $p$ and $s_{xx}$ denote the  hydrostatic pressure and the  deviatoric stress in the $x-$ direction, respectively.
 
 \subsection{The equation of state (EOS)}
 
@@ -159,7 +159,6 @@ where $Y_0$ is the yield strength of the material in simple tension.
 
 The Riemann problem for the 1D time dependent elastic-plastic equations is given as follows:
  \begin{equation}\label{eq:1d}
-
    \left\{ \begin{aligned}
        & \partial _t \rho +\partial_x(\rho u)=0,\\
        & \partial _t (\rho u)+\partial_x(\rho u^2 + p -s_{xx})=0,\\
@@ -173,6 +172,7 @@ The Riemann problem for the 1D time dependent elastic-plastic equations is given
      \end{aligned}
   \right.
 \end{equation}
+
 where $Q = (\rho, \rho u, \rho E, s_{xx})^T$.
 
 \subsection{Jacobian matrix} %and the eigenvalues and eigenvectors}
@@ -847,7 +847,7 @@ Here, we present all the procedures of MHLLCEP in a more simple way.
   \end{enumerate}
   \item Decide whether the state reach the elastic limit or not
         \begin{enumerate}
-          \item If $|s_{xxL}| < \frac{2}{3}Y_0 \le |\hat{s}_{xxL}^*| $, there exist  two  waves in the left, we need to  evaluate the left yielding state.
+          \item If $|s_{xxL}| < \frac{2}{3}Y_0 \le |\hat{s}_{xxL}^*| $, two  waves exist in the left, we need to  evaluate the left yielding state.
 
           The deviatoric stress, density and pressure behind the left elastic  wave are given as
 \begin{equation*}
