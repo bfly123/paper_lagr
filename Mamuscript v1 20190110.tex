@@ -289,17 +289,20 @@ Using  the Rankine-Hugoniot relations between the contact wave  or  the interfac
 \end{equation}
 where $s^*$ denotes the velocity of the contact wave.
 
-From the first and second components of the above system, one can get
-\begin{align}
-  & \rho_R^* u_R^*=\rho_L^* u_L^*+s^*(\rho_R^*-\rho_L^*),\\
-  & \rho_R^* u_R^{*2}-\sigma^*_R=\rho_L^* u_L^{*2}-\sigma_L^*+s^*(\rho_R^* u_R^*-\rho_L^* u_L^*).
-\end{align}
-%take $u_L^* = u_R^*$ in, we can get
+From the second equation in Eq.(\ref{eq:RH11}),
+\begin{equation}
+  \rho_R^* u_R^{*2}-\sigma^*_R=\rho_L^* u_L^{*2}-\sigma_L^*+s^*(\rho_R^* u_R^*-\rho_L^* u_L^*).
+\end{equation}
+and taking  $ s^* = u_L^* = u_R^*$ in, we can get the relation of Chauchy stresses
+\begin{equation} 
+  \sigma^*_L = \sigma^*_R,
+\end{equation}
+is always satisfied.
+
 Generally, for convenience, we define
 \begin{equation}\label{eq:contact}
   s^* = u_L^* = u_R^*. % \hspace{0.3cm} \sigma_L^* = \sigma_R^*.
 \end{equation}
-
 \subsection{A relation between $\rho$ and $s_{xx}$ in 1D elastic-plastic  equation system}
 
 According  to (\ref{eq:mt}), from the 1D elastic-plastic  equations in Eq.(\ref{eq:1d}), the equations of the density and the deviatoric stress can be written as
